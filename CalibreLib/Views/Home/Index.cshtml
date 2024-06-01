@@ -2,10 +2,83 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="container-fluid">
+    @{
+        List<BookCardModel> books = new();
 
-<div>Graph API result</div>
-<div>@ViewData["GraphApiResult"]</div>
+        var book = new BookCardModel()
+        {
+            id = 0,
+            title = "Book 1",
+            Author = "Me Too",
+            rating = 2
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        book = new BookCardModel()
+        {
+            id = 1,
+            title = "Book 2",
+            Author = "Me Too",
+            rating = 3
+        };
+        books.Add(book);
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", books)
+    }
+    
+</div>

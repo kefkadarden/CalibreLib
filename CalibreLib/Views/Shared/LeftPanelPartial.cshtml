@@ -1,0 +1,40 @@
+﻿<div class="input-group" style="width:300px;">
+    <form method="get" asp-controller="Search" asp-action="Index">
+        <input class="border-end-0 border rounded-3" type="text" placeholder="Search Libary" name="query" id="searchinput">
+    <span class="input-group-append">
+        
+            <button class="btn btn-outline-secondary bg-gradient border-start-0 border rounded-3 ms-n3" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+    </span>
+    </form>
+</div>
+<div>
+    <a class="nav-link text-dark" href="@Url.Action("Advanced","Search")">
+        <i class="fa fa-search"></i>
+        <i> Advanced Search</i>
+    </a>
+</div>
+<div class="d-sm-inline-flex justify-content-between" id="navbarNav">
+    <ul class="navbar-nav flex-grow-1">
+        <li class="nav-item active">
+            <a class="nav-link text-dark" href="#">Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Categories</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Series</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Authors</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Publishers</a>
+        </li>
+    </ul>
+</div>
+<div class="mt-4 border-top">
+    <h5 class="text-muted mt-2 mb-3">Shelves</h5>
+    <button class="btn btn-primary w-100"><a class="nav-link text-light" href="@Url.Action("Create","Shelf")">Create a shelf</a></button>
+</div>

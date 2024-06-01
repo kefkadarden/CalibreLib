@@ -20,3 +20,93 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/*.dropdown:hover > .dropdown-menu {
+    display: block;
+    margin-top: 35px;
+}
+
+.dropdown > .dropdown-toggle:active {
+    pointer-events: none;
+}
+*/
+
+.dropdown-menu-right {
+    right: 0 !important;
+    left: auto !important;
+}
+
+/* Account */
+.account-background {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+    .account-background div {
+        border-radius: 50%;
+    }
+
+    .account-background .empty-image {
+        width: 16px;
+        height: 16px;
+        margin: 8px;
+        display: inline-block;
+        background: url('/images/user.svg');
+    }
+
+    .account-background .account-image {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8em;
+        font-weight: 600;
+        line-height: 32px;
+        text-align: center;
+        margin: 0 auto;
+        display: table;
+        background-size: 100%;
+    }
+
+.user-info .avatar img {
+    float: left;
+    height: 43px;
+    border-radius: 50%;
+}
+
+.user-info .text-container {
+    height: 3.13rem;
+    margin-left: 60px;
+}
+
+    .user-info .text-container .user-name {
+        color: #444444;
+        font-size: 1.14em;
+    }
+
+    .user-info .text-container .email {
+        display: block;
+        color: #666666;
+        font-size: 0.86em;
+    }
+
+.myaccount-item {
+    background-color: #e4e4e4;
+}
+
+.sign-out-image {
+    width: 20px;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.sign-out-container {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}
+
+    .sign-out-container .sign-out-button {
+        text-align: left;
+        width: 100%;
+    }

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BookCardModel>
+<h2>Books</h2>
+<div class="btn-group mb-4" role="group">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+  <label class="btn btn-outline-primary" for="btnradio1">Date newest</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio2">Date oldest</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio3">Alphabetical</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio4">Alphabetical reversed</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio5">Author</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio6">Author reversed</label>
+</div>
+@{
+    
+    var strHeader = @"<div class=""container row display-flex"">
+                <div class=""row"">";
+    ViewContext.Writer.WriteLine(strHeader);
+
+    foreach(var book in Model)
+    {
+        ViewContext.Writer.WriteLine($@"<div class=""col mb-4"">");
+        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardPartial.cshtml", book);
+
+        ViewContext.Writer.WriteLine("</div>");
+    }
+
+    var strFooter = @"</div>
+            </div>";
+    ViewContext.Writer.WriteLine(strFooter);
+}

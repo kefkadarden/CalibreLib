@@ -1,17 +1,49 @@
 ﻿@using System.Security.Principal
-
-<ul class="navbar-nav">
+@using System.Security.Claims
+@using CalibreLib.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> userManager
+@{
+    var user = await userManager.GetUserAsync(User);
+    var firstInitial = (user != null && user?.FirstName != null) ? user?.FirstName?.Substring(0, 1) : "";
+    var lastInitial = (user != null && user?.LastName != null) ? user?.LastName?.Substring(0, 1) : "";
+    string className = User.Identity?.IsAuthenticated == true ? "account-image" : "empty-image";
+}
+<div class="navbar-nav dropdown">
+    <div class="account-background" type="button" data-bs-toggle="dropdown">
+        <div class="@className">@string.Format("{0}{1}", firstInitial, lastInitial).ToUpper()</div>
+    </div>
+    <ul class="dropdown-menu dropdown-menu-right">
 @if (User.Identity?.IsAuthenticated == true)
 {
-        <span class="navbar-text text-dark">Hello @User.Identity?.Name!</span>
+    <li class="dropdown-item">
+        <a asp-area="Identity" asp-controller="Account" asp-action="Manage" class="nav-link"><partial name="UserMenuItemPartial" model="user" /></a>
+        
+    </li>
+    <li class="dropdown-item">
+                <img class="sign-out-image" src="~/images/sign-out.svg" />
+                <div class="sign-out-container">
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="nav-link btn btn-link text-dark sign-out-button">Sign Out</button>
+                    </form>
+                </div>
+    </li>
+        @* <a class="nav-link text-dark" asp-area="Identity" asp-controller="Account" asp-action="Manage">Hello @user.DisplayName</a>@* @User.Identity?.Name!</span> 
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a>
-        </li>
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button type="submit" class="nav-link btn btn-link text-dark">Sign out</button>
+            </form>
+    </li>*@
 }
 else
 {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Sign in</a>
+        <li class="dropdown-item">
+            @* <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Sign in</a> *@
+            @* <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Sign in</a> *@
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Login">
+                <button type="submit" class="nav-link btn btn-link text-dark">Sign In</button>
+            </form>
         </li>
 }
-</ul>
+    </ul>
+</div>

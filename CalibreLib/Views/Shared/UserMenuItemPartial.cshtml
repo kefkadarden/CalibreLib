@@ -1,0 +1,16 @@
+﻿@model CalibreLib.Areas.Identity.Data.ApplicationUser
+
+@{
+    var avatarUrl = "~/images/user.svg";
+    var userName = Model.UserName + " (" + Model.FirstName + " " + Model.LastName + ")";
+}
+
+<div class="user-info">
+    <div class="avatar">
+        <img id="AvatarUrl" src="@Url.Content(avatarUrl)" />
+    </div>
+    <div class="text-container">
+        <div class="user-name" id="userNameLabel">@userName</div>
+        <div class="email" id="emailLabel">@Model.Email</div>
+    </div>
+</div>

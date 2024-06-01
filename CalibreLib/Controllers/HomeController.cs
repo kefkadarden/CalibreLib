@@ -4,26 +4,29 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
+using System.Security.Claims;
+using CalibreLib.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace CalibreLib.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class HomeController : Controller
     {
-        private readonly GraphServiceClient _graphServiceClient;
+        //private readonly GraphServiceClient _graphServiceClient;
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<ApplicationUser>   _userManager;
 
-        public HomeController(ILogger<HomeController> logger, GraphServiceClient graphServiceClient)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)//, GraphServiceClient graphServiceClient)
         {
             _logger = logger;
-            _graphServiceClient = graphServiceClient;;
+            //_graphServiceClient = graphServiceClient;
+            _userManager = userManager;
         }
 
-        [AuthorizeForScopes(ScopeKeySection = "MicrosoftGraph:Scopes")]
         public async Task<IActionResult> Index()
         {
-var user = await _graphServiceClient.Me.Request().GetAsync();
-ViewData["GraphApiResult"] = user.DisplayName;
+            var user = _userManager.GetUserAsync(HttpContext.User).Result;
             return View();
         }
 
