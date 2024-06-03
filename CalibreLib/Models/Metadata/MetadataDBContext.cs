@@ -147,11 +147,11 @@ public partial class MetadataDBContext : DbContext
         {
             entity.ToTable("books_authors_link");
 
-            entity.HasIndex(e => new { e.Book, e.Author }, "IX_books_authors_link_book_author").IsUnique();
+            entity.HasIndex(e => new { e.BookId, e.AuthorId }, "IX_books_authors_link_book_author").IsUnique();
 
-            entity.HasIndex(e => e.Author, "books_authors_link_aidx");
+            entity.HasIndex(e => e.AuthorId, "books_authors_link_aidx");
 
-            entity.HasIndex(e => e.Book, "books_authors_link_bidx");
+            entity.HasIndex(e => e.BookId, "books_authors_link_bidx");
 
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()

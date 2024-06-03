@@ -7,7 +7,7 @@ public partial class Identifier
 {
     public int Id { get; set; }
 
-    public Book Book { get; set; } = null!;
+    public virtual Book Book { get; set; } = null!;
     public int? BookId { get; set; }
 
     public string? Type { get; set; }
