@@ -1,84 +1,88 @@
+@using CalibreLib.Models
+@model IEnumerable<BookCardModel>
+
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="container-fluid">
-    @{
-        List<BookCardModel> books = new();
+     @{
+        // List<BookCardModel> books = new();
 
-        var book = new BookCardModel()
-        {
-            id = 0,
-            title = "Book 1",
-            Author = "Me Too",
-            rating = 2
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        book = new BookCardModel()
-        {
-            id = 1,
-            title = "Book 2",
-            Author = "Me Too",
-            rating = 3
-        };
-        books.Add(book);
-        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", books)
+        // var book = new BookCardModel()
+        // {
+        //     id = 0,
+        //     title = "Book 1",
+        //     Author = "Me Too",
+        //     rating = 2
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+        // book = new BookCardModel()
+        // {
+        //     id = 1,
+        //     title = "Book 2",
+        //     Author = "Me Too",
+        //     rating = 3
+        // };
+        // books.Add(book);
+
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
     }
     
 </div>
