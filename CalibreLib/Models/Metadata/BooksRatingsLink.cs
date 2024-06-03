@@ -7,9 +7,9 @@ public partial class BooksRatingsLink
 {
     public int Id { get; set; }
 
-    public Book Book { get; set; } = null!;
+    public virtual Book Book { get; set; } = null!;
     public int BookId { get; set; }
 
-    public Rating Rating { get; set; } = null!;
+    public virtual Rating Rating { get; set; } = null!;
     public int RatingId { get; set; }
 }
