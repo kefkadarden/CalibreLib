@@ -9,5 +9,16 @@
      @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
     }
-    
 </div>
+
+@section Scripts {
+    <script type="text/javascript" src="js/cardgrid.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("div#loading").hide();
+            loadBooks(ajaxCallUrl);
+        });
+
+        $(window).scroll(scrollHandler);
+    </script>
+}

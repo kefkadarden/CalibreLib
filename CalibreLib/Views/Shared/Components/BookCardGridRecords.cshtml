@@ -1,0 +1,14 @@
+﻿@model IEnumerable<BookCardModel>
+
+@{
+    if (Model != null)
+    {
+        foreach (var book in Model)
+        {
+            ViewContext.Writer.WriteLine($@"<div class=""col mb-4"">");
+            await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardPartial.cshtml", book);
+
+            ViewContext.Writer.WriteLine("</div>");
+        }
+    }
+}

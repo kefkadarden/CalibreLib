@@ -16,3 +16,4 @@ function uploadFile() {
     input.click();
 
 }
+

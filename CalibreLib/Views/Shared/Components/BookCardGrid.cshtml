@@ -1,39 +1,43 @@
 ﻿@model IEnumerable<BookCardModel>
 <h2>Books</h2>
 <div class="btn-group mb-4" role="group">
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked onclick="updateSortBy('datedesc');">
   <label class="btn btn-outline-primary" for="btnradio1">Date newest</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="updateSortBy('date');">
   <label class="btn btn-outline-primary" for="btnradio2">Date oldest</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" onclick="updateSortBy('title');">
   <label class="btn btn-outline-primary" for="btnradio3">Alphabetical</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" onclick="updateSortBy('titledesc');">
   <label class="btn btn-outline-primary" for="btnradio4">Alphabetical reversed</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off" onclick="updateSortBy('author');">
   <label class="btn btn-outline-primary" for="btnradio5">Author</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off" onclick="updateSortBy('authordesc');">
   <label class="btn btn-outline-primary" for="btnradio6">Author reversed</label>
+  <input type="checkbox" class="ms-3" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; if (btnPage.checked) {  } else { } });" /> <!--Need to implement the pagination here with hide and show. -->
+  <label class="btn-group-vertical ms-1" for="btnPage">Toggle Pages</label>
 </div>
-@{
-    
-    var strHeader = @"<div class=""container row display-flex"">
-                <div class=""row"">";
-    ViewContext.Writer.WriteLine(strHeader);
+<div id="mainCardGrid">
+    @{
 
-    foreach(var book in Model)
-    {
-        ViewContext.Writer.WriteLine($@"<div class=""col mb-4"">");
-        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardPartial.cshtml", book);
+        var strHeader = @"<div class=""container row display-flex"">
+            <div id=""cardGridRow"" class=""row"">";
+        ViewContext.Writer.WriteLine(strHeader);
 
-        ViewContext.Writer.WriteLine("</div>");
+        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml", Model);
+
+        var strFooter = @"</div>
+        </div>";
+        ViewContext.Writer.WriteLine(strFooter);
     }
+</div>
+<div class="row">  
+    <div id="loading" style="text-align:center; padding:0 0 0 0">  
+        <img src='~/images/loading.gif' />  
+    </div>  
+</div>
 
-    var strFooter = @"</div>
-            </div>";
-    ViewContext.Writer.WriteLine(strFooter);
-}

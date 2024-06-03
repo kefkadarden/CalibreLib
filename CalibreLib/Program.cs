@@ -35,6 +35,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
 
+builder.Services.AddScoped<BookRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
