@@ -40,7 +40,7 @@ namespace CalibreLib.Controllers
                     id = book.Id,
                     title = book.Title,
                     Author = String.Join(", ", book.BookAuthors.Select(x => x.Author.Name)),
-                    //CoverPath = "cover.jpg", //TODO: Need to have backend file explorer that builds whether a book has a cover based on there being a cover.jpg in the book directory.2
+                    //CoverPath = "cover.jpg", //TODO: Need to have backend file explorer that builds whether a book has a cover based on there being a cover.jpg in the book directory.
                     rating = book.BookRatings[0]?.Rating.RatingValue ?? 0,
                 };
                 model.Add(bcModel);
