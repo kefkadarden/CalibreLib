@@ -1,6 +1,7 @@
 using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
 using CalibreLib.Models.Metadata;
+using CalibreLib.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.UI;
 
@@ -24,6 +25,11 @@ builder.Services.AddAuthentication()
         options.Scope.Add("User.Read");
     });
 
+builder.Logging.ClearProviders();
+builder.Logging.AddEventLog(x => { x.SourceName = "CalibreLib"; x.LogName = "Application"; });
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddControllersWithViews();
 //options =>
 //{
@@ -45,6 +51,11 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+else
+{
+    app.UseExceptionHandler(_ => { });
+}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
