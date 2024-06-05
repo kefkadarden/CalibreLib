@@ -115,3 +115,36 @@ function loadBooks(ajaxCallUrl, isPaging) {
 
     getPageCount();
 }  
+
+
+let lblPageNum = document.getElementById('lblPageNum');
+
+lblPageNum.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
+        loadBooks(ajaxCallUrl, true);
+        lblPageNum.value = page;
+    }
+});
+lblPageNum.addEventListener('keypress', (event) => {
+    if (!Number.parseInt(event.key) && event.key != '0') {
+        event.preventDefault();
+    }
+});
+
+let lblPageSize = document.getElementById('lblPageSize');
+
+lblPageSize.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        localStorage.setItem('gridPageSize', lblPageSize.value);
+        pageSize = lblPageSize.value;
+        page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
+        loadBooks(ajaxCallUrl, true);
+        lblPageNum.value = page;
+    }
+});
+lblPageSize.addEventListener('keypress', (event) => {
+    if (!Number.parseInt(event.key) && event.key != '0') {
+        event.preventDefault();
+    }
+});

@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<BookCardModel>
+
 <h2>Books</h2>
 <div class="btn-group mb-4" role="group">
   <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
@@ -27,7 +28,7 @@
 <div id="mainCardGrid">
     @{
 
-        var strHeader = @"<div class=""container row display-flex"">
+        var strHeader = @"<div class=""container-fluid row display-flex"">
             <div id=""cardGridRow"" class=""row"">";
         ViewContext.Writer.WriteLine(strHeader);
 
@@ -49,37 +50,17 @@
     <button class="btn btn-outline-primary" for="btnNext" onclick="pagingNavigation('Next');">Next</button>
     <label id="lblPageCount" class="fw-bold p-3"></label>
 </div>
-<script>
-    let lblPageNum = document.getElementById('lblPageNum');
-
-    lblPageNum.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-            page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
-            loadBooks(ajaxCallUrl, true);
-            lblPageNum.value = page;
-        }
-    });
-    lblPageNum.addEventListener('keypress', (event) => {
-        if (!Number.parseInt(event.key) && event.key != '0') {
-            event.preventDefault();
-        }
-    });
-
-    let lblPageSize = document.getElementById('lblPageSize');
-
-    lblPageSize.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-            localStorage.setItem('gridPageSize', lblPageSize.value);
-            pageSize = lblPageSize.value;
-            page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
-            loadBooks(ajaxCallUrl, true);
-            lblPageNum.value = page;
-        }
-    });
-    lblPageSize.addEventListener('keypress', (event) => {
-        if (!Number.parseInt(event.key) && event.key != '0') {
-            event.preventDefault();
-        }
+<script type="text/javascript" src="js/cardgrid.js" asp-append-version="true"></script>
+<script type="text/javascript">
+    window.addEventListener('load', function () {
+        $("div#loading").hide();
+        const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
+        togglePagingEnabled(storedPagingEnabledValue);
+        const storedSortBy = localStorage.getItem('gridSortBy');
+        $('#' + storedSortBy)[0].checked = true;
+        $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
+        loadBooks(ajaxCallUrl);
+        $(window).scroll(scrollHandler);
     });
 </script>
 

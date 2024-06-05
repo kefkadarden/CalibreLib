@@ -10,20 +10,3 @@
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
     }
 </div>
-
-@section Scripts {
-    <script type="text/javascript" src="js/cardgrid.js" asp-append-version="true"></script>
-    <script type="text/javascript">
-        $(function () {
-            $("div#loading").hide();
-            const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
-            togglePagingEnabled(storedPagingEnabledValue);
-            const storedSortBy = localStorage.getItem('gridSortBy');
-            $('#' + storedSortBy)[0].checked = true;
-            $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
-            loadBooks(ajaxCallUrl);
-        });
-
-        $(window).scroll(scrollHandler);
-    </script>
-}
