@@ -6,10 +6,10 @@ namespace CalibreLib.Models
     {
         public int id { get; set; }
         public string? title { get; set; }
-        public string? CoverPath { get; set; } = "/images/nocover.gif";
+        public string CoverImage { get; set; }
         public string? Author { get; set; }
 
-        public int? rating { get; set; }
-        
+        public int? Rating { get; set; }
+       
     }
 }

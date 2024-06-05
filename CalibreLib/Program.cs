@@ -3,6 +3,7 @@ using CalibreLib.Data;
 using CalibreLib.Models.Metadata;
 using CalibreLib.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Identity.Web.UI;
 
 
@@ -29,6 +30,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddEventLog(x => { x.SourceName = "CalibreLib"; x.LogName = "Application"; });
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
 //options =>
@@ -59,6 +61,11 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(@"C:\Users\gnome\source\repos\CalibreLib\calibre"),
+    RequestPath = "/books"
+});
 
 app.UseRouting();
 

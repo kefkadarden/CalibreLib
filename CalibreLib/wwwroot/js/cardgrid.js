@@ -2,11 +2,13 @@
 var ajaxCallUrl = 'CardGrid/BookList',  
     page = 0,  
     pagingEnabled = false,
-    sortBy = 'datedesc',
+    sortBy = localStorage.getItem('gridSortBy') ?? 'datedesc',
+    pageSize = localStorage.getItem('gridPageSize') ?? 10,
     inCallback = false,  
     isReachedScrollEnd = false;  
   
 function updateSortBy(_sortBy) {
+    localStorage.setItem('gridSortBy', _sortBy);
     sortBy = _sortBy;
     page = 0;
     isReachedScrollEnd = false;
@@ -29,6 +31,9 @@ function togglePagingEnabled(enable) {
     page = 0;
     isReachedScrollEnd = false;
     pagingEnabled = enable;
+    localStorage.setItem('gridPagingEnabled', enable);
+    const btnPage = $('#btnPage')[0];
+    btnPage.checked = enable;
     $("#cardGridRow").empty();
     loadBooks(ajaxCallUrl);
     if (enable)
@@ -55,6 +60,23 @@ function updatePageLabel() {
     $('#lblPageNum')[0].innerText = page;
 }
 
+function getPageCount() {
+    if (pagingEnabled) {
+        $.ajax({
+            type: 'GET',
+            url: 'CardGrid/GetPageCount',
+            success: function (data) {
+                $('#lblPageCount')[0].innerText = "Pages: " + data.pageCount;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    } else {
+        $('#lblPageCount')[0].innerText = 'Pages: N/A';
+    }
+}
+
 function loadBooks(ajaxCallUrl, isPaging) {  
     if (page > -1 && !inCallback) {  
         inCallback = true;  
@@ -62,7 +84,7 @@ function loadBooks(ajaxCallUrl, isPaging) {
         $.ajax({  
             type: 'GET',  
             url: ajaxCallUrl,  
-            data: "pageNumber=" + page++ + "&sortBy=" + sortBy,  
+            data: "pageNumber=" + page++ + "&sortBy=" + sortBy + "&pageSize=" + pageSize,  
             success: function (data, textstatus) { 
                 if (data.replace(/(\r\n|\n|\r)/gm, "") != '') {  
                     if (isPaging)
@@ -90,4 +112,6 @@ function loadBooks(ajaxCallUrl, isPaging) {
             }  
         });  
     }      
+
+    getPageCount();
 }  

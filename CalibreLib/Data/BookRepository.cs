@@ -7,6 +7,7 @@ namespace CalibreLib.Data
     {
         private bool disposedValue = false;
         private MetadataDBContext context;
+        public int PageSize { get; set; } = 30;
 
         public BookRepository(MetadataDBContext context)
         {
@@ -23,14 +24,20 @@ namespace CalibreLib.Data
             return await context.Books.ToListAsync();
         }
 
+        public async Task<int> GetPageCountAsync()
+        {
+            decimal dPageSize = Convert.ToDecimal(PageSize);
+            var count = await context.Books.CountAsync();
+            return Convert.ToInt32(Math.Ceiling( Convert.ToDecimal(count / dPageSize) ));
+        }
+
         public IEnumerable<Book> GetBooks(int? pageNumber, Func<Book, object> orderBy, bool ascending = true)
         {
-            const int pageSize = 30;
-            var numRecordsToSkip = pageNumber * pageSize;
+            var numRecordsToSkip = pageNumber * PageSize;
             if (ascending)
-                return context.Books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(pageSize).ToList();
+                return context.Books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
             else
-                return context.Books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(pageSize).ToList();
+                return context.Books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
         }
 
         public async Task<Book> GetByIDAsync(int id)

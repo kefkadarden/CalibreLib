@@ -2,6 +2,7 @@
 using CalibreLib.Models.Metadata;
 using CalibreLib.Models;
 using Microsoft.AspNetCore.Mvc;
+using CalibreLib.Services;
 
 namespace CalibreLib.Controllers
 {
@@ -9,24 +10,30 @@ namespace CalibreLib.Controllers
     {
 
         private BookRepository bookRepository;
+        private IWebHostEnvironment _env;
 
-        public CardGridController(BookRepository bookRepository)
+
+        public CardGridController(BookRepository bookRepository, IWebHostEnvironment env)
         {
             this.bookRepository = bookRepository;
+            _env = env;
         }
 
-        public List<BookCardModel> GetBookCardModels(IEnumerable<Book> books)
+        public async Task<List<BookCardModel>> GetBookCardModels(IEnumerable<Book> books)
         {
             List<BookCardModel> model = new List<BookCardModel>();
+            BookFileManager manager = new BookFileManager(_env,Request.Scheme + "://" + Request.Host);
             foreach (var book in books)
             {
+                
+                var cover = await manager.GetBookCoverAsync(book);
                 var bcModel = new BookCardModel()
                 {
                     id = book.Id,
                     title = book.Title,
                     Author = String.Join(", ", book.BookAuthors.Select(x => x.Author.Name)),
-                    //CoverPath = "cover.jpg", //TODO: Need to have backend file explorer that builds whether a book has a cover based on there being a cover.jpg in the book directory.
-                    rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
+                    CoverImage = cover,
+                    Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
                 };
                 model.Add(bcModel);
             }
@@ -34,7 +41,14 @@ namespace CalibreLib.Controllers
             return model;
         }
 
-        public IActionResult BookList(int? pageNumber, string? sortBy = "date")
+        [HttpGet]
+        public async Task<IActionResult> GetPageCount()
+        {
+            var count = await bookRepository.GetPageCountAsync();
+            return Json(new { pageCount = count });
+        }
+
+        public async Task<IActionResult> BookList(int? pageNumber, string? sortBy = "date", int? pageSize = 30)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -55,8 +69,11 @@ namespace CalibreLib.Controllers
                 }
             };
 
+            if (pageSize != null)
+                bookRepository.PageSize = (int)pageSize;
+
             var books = bookRepository.GetBooks(pageNumber, orderBy, ascending);
-            var model = GetBookCardModels(books);
+            var model = await GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }
     }

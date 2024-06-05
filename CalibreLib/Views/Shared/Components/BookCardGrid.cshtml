@@ -1,25 +1,28 @@
 ﻿@model IEnumerable<BookCardModel>
 <h2>Books</h2>
 <div class="btn-group mb-4" role="group">
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked onclick="updateSortBy('datedesc');">
-  <label class="btn btn-outline-primary" for="btnradio1">Date newest</label>
+  <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
+  <label class="btn btn-outline-primary" for="datedesc">Date newest</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="updateSortBy('date');">
-  <label class="btn btn-outline-primary" for="btnradio2">Date oldest</label>
+  <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
+  <label class="btn btn-outline-primary" for="date">Date oldest</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" onclick="updateSortBy('title');">
-  <label class="btn btn-outline-primary" for="btnradio3">Alphabetical</label>
+  <input type="radio" class="btn-check" name="btnradio" id="title" autocomplete="off" onclick="updateSortBy('title');">
+  <label class="btn btn-outline-primary" for="title">Alphabetical</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" onclick="updateSortBy('titledesc');">
-  <label class="btn btn-outline-primary" for="btnradio4">Alphabetical reversed</label>
+  <input type="radio" class="btn-check" name="btnradio" id="titledesc" autocomplete="off" onclick="updateSortBy('titledesc');">
+  <label class="btn btn-outline-primary" for="titledesc">Alphabetical reversed</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off" onclick="updateSortBy('author');">
-  <label class="btn btn-outline-primary" for="btnradio5">Author</label>
+  <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
+  <label class="btn btn-outline-primary" for="author">Author</label>
 
-  <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off" onclick="updateSortBy('authordesc');">
-  <label class="btn btn-outline-primary" for="btnradio6">Author reversed</label>
-  <input type="checkbox" class="ms-3" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; togglePagingEnabled(btnPage.checked); });" /> <!--Need to implement the pagination here with hide and show. -->
-  <label class="btn-group-vertical ms-1" for="btnPage">Toggle Pages</label>
+  <input type="radio" class="btn-check" name="btnradio" id="authordesc" autocomplete="off" onclick="updateSortBy('authordesc');">
+  <label class="btn btn-outline-primary" for="authordesc">Author reversed</label>
+  <label class="btn-group-vertical ms-3 me-1" for="btnPage">Toggle Pages</label>
+  <input type="checkbox" class="ms-1" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; togglePagingEnabled(btnPage.checked); });" /> <!--Need to implement the pagination here with hide and show. -->
+  
+  <label class="btn-group-vertical ms-3 ps-3 me-1 border-start border-dark" for="btnPage">Page Size</label>
+  <input type="text" autocomplete="false" inputmode="numeric" id="lblPageSize" class="fw-bold p-1 text-center" style="width:50px;" value="10" />
 </div>
 <div id="mainCardGrid">
     @{
@@ -40,23 +43,41 @@
         <img src='~/images/loading.gif' />  
     </div>  
 </div>
-<div id="paginationToolbar" class="visually-hidden">
+<div id="paginationToolbar" class="visually-hidden">    
     <button class="btn btn-outline-primary" for="btnPrev" onclick="pagingNavigation('Prev');">Prev</button>
     <input type="text" autocomplete="false" inputmode="numeric" id="lblPageNum" class="fw-bold p-1" style="width:50px;" value="1" />
     <button class="btn btn-outline-primary" for="btnNext" onclick="pagingNavigation('Next');">Next</button>
+    <label id="lblPageCount" class="fw-bold p-3"></label>
 </div>
 <script>
-    let lbl = document.getElementById('lblPageNum');
+    let lblPageNum = document.getElementById('lblPageNum');
 
-    lbl.addEventListener('keyup', (event) => {
+    lblPageNum.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') {
-            page = lbl.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
+            page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
             loadBooks(ajaxCallUrl, true);
-            lbl.value = page;
+            lblPageNum.value = page;
         }
     });
-    lbl.addEventListener('keypress', (event) => {
-        if (!Number.parseInt(event.key)) {
+    lblPageNum.addEventListener('keypress', (event) => {
+        if (!Number.parseInt(event.key) && event.key != '0') {
+            event.preventDefault();
+        }
+    });
+
+    let lblPageSize = document.getElementById('lblPageSize');
+
+    lblPageSize.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            localStorage.setItem('gridPageSize', lblPageSize.value);
+            pageSize = lblPageSize.value;
+            page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
+            loadBooks(ajaxCallUrl, true);
+            lblPageNum.value = page;
+        }
+    });
+    lblPageSize.addEventListener('keypress', (event) => {
+        if (!Number.parseInt(event.key) && event.key != '0') {
             event.preventDefault();
         }
     });
