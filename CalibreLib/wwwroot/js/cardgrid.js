@@ -3,7 +3,7 @@ var ajaxCallUrl = 'CardGrid/BookList',
     page = 0,  
     pagingEnabled = false,
     sortBy = localStorage.getItem('gridSortBy') ?? 'datedesc',
-    pageSize = localStorage.getItem('gridPageSize') ?? 10,
+    pageSize = localStorage.getItem('gridPageSize') ?? 30,
     inCallback = false,  
     isReachedScrollEnd = false;  
   
@@ -35,11 +35,19 @@ function togglePagingEnabled(enable) {
     const btnPage = $('#btnPage')[0];
     btnPage.checked = enable;
     $("#cardGridRow").empty();
-    loadBooks(ajaxCallUrl);
-    if (enable)
+    //loadBooks(ajaxCallUrl);
+    if (enable) {
         $('#paginationToolbar').removeClass('visually-hidden');
-    else
+        $('#divPageSize').removeClass('visually-hidden');
+        pageSize = localStorage.getItem('gridPageSize') ?? 10;
+    }
+    else {
         $('#paginationToolbar').addClass('visually-hidden');
+        $('#divPageSize').addClass('visually-hidden');
+        pageSize = 30;
+        
+    }
+    loadBooks(ajaxCallUrl);
 }
 
 function pagingNavigation(direction) {
