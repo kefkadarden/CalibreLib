@@ -10,6 +10,7 @@ using Microsoft.Identity.Web.UI;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("CalibreLibContextConnection") ?? throw new InvalidOperationException("Connection string 'CalibreLibContextConnection' not found.");
 var metaDataConnectionString = builder.Configuration.GetConnectionString("CalibreMetadataContextConnection") ?? throw new InvalidOperationException("Connection string 'CalibreMetadataContextConnection' not found.");
+var bookdirectory = builder.Configuration.GetValue<string>("BookDirectory");
 
 builder.Services.AddDbContext<CalibreLibContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddDbContext<MetadataDBContext>(options => options.UseLazyLoadingProxies().UseSqlite(metaDataConnectionString));
@@ -63,7 +64,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(@"C:\Users\gnome\source\repos\CalibreLib\calibre"),
+    FileProvider = new PhysicalFileProvider(bookdirectory),
     RequestPath = "/books"
 });
 
