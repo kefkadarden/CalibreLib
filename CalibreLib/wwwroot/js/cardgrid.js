@@ -35,7 +35,6 @@ function togglePagingEnabled(enable) {
     const btnPage = $('#btnPage')[0];
     btnPage.checked = enable;
     $("#cardGridRow").empty();
-    //loadBooks(ajaxCallUrl);
     if (enable) {
         $('#paginationToolbar').removeClass('visually-hidden');
         $('#divPageSize').removeClass('visually-hidden');

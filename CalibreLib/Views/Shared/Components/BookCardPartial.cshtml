@@ -27,6 +27,14 @@
     {
       color: #FFD700;
     }
+
+    .link-primary {
+        text-decoration: none !important;    
+    }
+
+    .link-primary:hover {
+        text-decoration: underline;
+    }
 </style>
 
 
@@ -34,10 +42,13 @@
     <img src="@Model.CoverImage" class="card-img-top" style="width:100%;height:225px;border:lightgray 1px solid;" alt="@Model.title">
     <div class="card-body">
         <p class="text-center card-title">
-            @Model.title
+            @{ ViewContext.Writer.WriteLine(@Model.BookString); }
         </p>
-        <p class="text-center card-subtitle fst-italic">
-            @Model.Author
+        <p class="text-center card-subtitle fst-italic flex-wrap">
+            @{ ViewContext.Writer.WriteLine(@Model.AuthorsString); }
+        </p>
+        <p class="text-center card-subtitle fst-italic flex-wrap">
+            @{ ViewContext.Writer.WriteLine(@Model.SeriesString); }
         </p>
         <fieldset class="rating">
             <form>

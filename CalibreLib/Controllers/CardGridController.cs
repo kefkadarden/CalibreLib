@@ -31,7 +31,8 @@ namespace CalibreLib.Controllers
                 {
                     id = book.Id,
                     title = book.Title,
-                    Author = String.Join(", ", book.BookAuthors.Select(x => x.Author.Name)),
+                    Authors = book.BookAuthors,
+                    Series = book.BookSeries,
                     CoverImage = cover,
                     Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
                 };
