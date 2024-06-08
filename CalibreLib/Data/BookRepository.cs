@@ -45,6 +45,11 @@ namespace CalibreLib.Data
             return await context.Books.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<List<Identifier>> GetIdentifiersAsync()
+        {
+            return await context.Identifiers.ToListAsync();
+        }
+
         public void Insert(Book item)
         {
             context.Books.Add(item);

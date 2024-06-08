@@ -23,6 +23,7 @@ namespace CalibreLib.Controllers
         {
             List<BookCardModel> model = new List<BookCardModel>();
             BookFileManager manager = new BookFileManager(_env,Request.Scheme + "://" + Request.Host);
+            List<Identifier> identifiers = await this.bookRepository.GetIdentifiersAsync();
             foreach (var book in books)
             {
                 
@@ -31,8 +32,11 @@ namespace CalibreLib.Controllers
                 {
                     id = book.Id,
                     title = book.Title,
+                    Book = book,
                     Authors = book.BookAuthors,
                     Series = book.BookSeries,
+                    Languages = book.BookLanguages,
+                    Tags = book.BookTags,
                     CoverImage = cover,
                     Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
                 };

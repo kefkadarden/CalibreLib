@@ -40,4 +40,6 @@ public partial class Book
     public virtual List<BooksRatingsLink> BookRatings { get; set; } = [];
     public virtual List<BooksSeriesLink> BookSeries { get; set; } = [];
     public virtual List<BooksTagsLink> BookTags { get; set; } = [];
+
+    public virtual List<Identifier> Identifiers { get; set; } = [];
 }

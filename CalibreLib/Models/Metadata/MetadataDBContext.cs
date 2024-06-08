@@ -141,6 +141,7 @@ public partial class MetadataDBContext : DbContext
                 .UseCollation("NOCASE")
                 .HasColumnName("title");
             entity.Property(e => e.Uuid).HasColumnName("uuid");
+
         });
 
         modelBuilder.Entity<BooksAuthorsLink>(entity =>
@@ -421,7 +422,7 @@ public partial class MetadataDBContext : DbContext
                 .UseCollation("NOCASE")
                 .HasColumnType("TEXT NON")
                 .HasColumnName("val");
-            entity.HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId);
+            entity.HasOne(e => e.Book).WithMany(x => x.Identifiers).HasForeignKey(e => e.BookId);
         });
 
         modelBuilder.Entity<Language>(entity =>

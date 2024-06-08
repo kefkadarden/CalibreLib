@@ -12,14 +12,20 @@ namespace CalibreLib.Models
 
         public List<BooksSeriesLink> Series { get; set; } = null!;
 
-        public string BookString
+        public List<BooksLanguagesLink> Languages { get; set; } = null!;
+
+        public List<BooksTagsLink> Tags { get; set; } = null!;
+
+        public Book Book { get; set; } = null!;
+
+        public string BookHTML
         {
             get
             {
                 return @"<a class=""link-dark"" href=""book/" + id + @""">" + title + @"</a>";
             }
         }
-        public string AuthorsString 
+        public string AuthorsHTML
         { 
             get
             {
@@ -27,7 +33,7 @@ namespace CalibreLib.Models
             } 
         }
 
-        public string SeriesString
+        public string SeriesHTML
         {
             get
             {
@@ -36,6 +42,53 @@ namespace CalibreLib.Models
         }
         
         public int? Rating { get; set; }
-       
+
+        public string PublishDateHTML 
+        { 
+            get 
+            {
+                
+                return (this.Book.Pubdate != DateTime.Parse("1/1/0101") && !string.IsNullOrEmpty(this.Book.Pubdate?.ToString())) ? "Published: " + ((DateTime)this.Book.Pubdate).ToShortDateString() : "";
+            } 
+        }
+
+        public string PublisherHTML 
+        { 
+            get 
+            {
+
+                return String.Join(" & ", this.Book.BookPublishers.Select(x => @"Publisher: " + @"<a class=""link-primary"" href=""publisher/" + x.Publisher.Id + @""">" + x.Publisher.Name + "</a>"));
+            } 
+        }
+
+        public string LanguageHTML
+        {
+            get
+            {
+                return (this.Languages != null && this.Languages.Count() > 0) ? @"<p class=""label"">Language: " + this.Languages.FirstOrDefault()?.Language?.LangCode + "</p>" : "";
+            }
+        }
+
+        public string TagsHTML 
+        {
+            get
+            {
+                string tags = "";
+                if (this.Tags != null && this.Tags.Count() > 0)
+                {
+                    tags = String.Join("", this.Tags.Select(x => @"<p class=""label label-blue mb-1 me-1""><a class=""link-light link-primary"" href=""categories/" + x.TagId.ToString() + @""">" + x.Tag.Name + "</a></p>"));
+                }
+                 
+                return tags;
+            }
+        }
+
+        public string IdentifiersHTML
+        {
+            get
+            {
+                return String.Join("", this.Book.Identifiers.Select(x => @"<p class=""label label-green mb-1 me-1""><a class=""link-light link-primary"" href=""identifier/" + x.Val + @""">" + x.Type + "</a></p>"));
+            }
+        }
     }
 }

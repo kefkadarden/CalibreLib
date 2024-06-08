@@ -1,32 +1,7 @@
 ﻿@model BookCardModel
 
 <style>
-    .rating {
-      border: none;
-      float: left;
-    }
-
-    .rating>form>input {
-      display: none;
-    }
-
-    .rating>form>label:before {
-      margin: 5px;
-      font-size: 1.25em;
-      font-family: FontAwesome;
-      display: inline-block;
-      content: "\f005";
-    }
-
-    .rating>form>label {
-      color: #ddd;
-      float: right;
-    }
-
-    .rating>form>input:checked~label
-    {
-      color: #FFD700;
-    }
+    
 
     .link-primary {
         text-decoration: none !important;    
@@ -37,27 +12,25 @@
     }
 </style>
 
-
+@{
+    var targetid = "#bookDetailModalCenter" + Model.id;
+}
 <div class="card" style="max-width:200px;min-width:200px;">
-    <img src="@Model.CoverImage" class="card-img-top" style="width:100%;height:225px;border:lightgray 1px solid;" alt="@Model.title">
+    <button type="button" class="border-0" data-bs-toggle="modal" data-bs-target="@targetid">
+        <img src="@Model.CoverImage" class="card-img-top" style="width:100%;height:225px;border:lightgray 1px solid;" alt="@Model.title">
+    </button>
     <div class="card-body">
         <p class="text-center card-title">
-            @{ ViewContext.Writer.WriteLine(@Model.BookString); }
+            @{ ViewContext.Writer.WriteLine(@Model.BookHTML); }
         </p>
         <p class="text-center card-subtitle fst-italic flex-wrap">
-            @{ ViewContext.Writer.WriteLine(@Model.AuthorsString); }
+            @{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }
         </p>
         <p class="text-center card-subtitle fst-italic flex-wrap">
-            @{ ViewContext.Writer.WriteLine(@Model.SeriesString); }
+            @{ ViewContext.Writer.WriteLine(@Model.SeriesHTML); }
         </p>
-        <fieldset class="rating">
-            <form>
-              <input type="radio" id="star5" value="5" asp-for="Rating" name="Rating" disabled /><label class="bi bi-star-fill" for="star5" title="5 stars"></label>
-              <input type="radio" id="star4" value="4" asp-for="Rating" name="Rating" disabled /><label class="bi bi-star-fill" for="star4" title="4 stars"></label>
-              <input type="radio" id="star3" value="3" asp-for="Rating" name="Rating" disabled /><label class="bi bi-star-fill" for="star3" title="3 stars"></label>
-              <input type="radio" id="star2" value="2" asp-for="Rating" name="Rating" disabled /><label class="bi bi-star-fill" for="star2" title="2 stars"></label>
-              <input type="radio" id="star1" value="1" asp-for="Rating" name="Rating" disabled /><label class="bi bi-star-fill" for="star1" title="1 star"></label>
-          </form>
-        </fieldset>
+        @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model)
     </div>
 </div>
+
+@await Html.PartialAsync("~/Views/Shared/Components/BookDetailPopup.cshtml",Model)
