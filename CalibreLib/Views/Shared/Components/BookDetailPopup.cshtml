@@ -69,12 +69,24 @@
                       <div class="d-block">
                         @{ ViewContext.Writer.WriteLine(@Model.PublishDateHTML); }
                       </div>
+                      <div class="row">
+                          <div class="col">
+                              @Html.CheckBoxFor(x => x.Read, new { @id = $"chkRead{Model.id}", @class="form-check-input", @onclick = "chkRead_Click(this);" })
+                          <label class="form-check-label" for="chkRead">
+                            Read
+                          </label>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col">
+                              @Html.CheckBoxFor(x => x.Archived, new { @id = $"chkArchived{Model.id}", @class="form-check-input", @onclick = "chkArchived_Click(this);" })
+                              <label class="form-check-label" for="chkArchived">
+                                Archived
+                              </label>
+                          </div>
+                      </div>                                              
                       <!--
-                          Languages 
-                          Tags
-                          Identifiers
-                          Publisher
-                          Published Date
+                          
                           Read Checkbox
                           Archive Checkbox
                           Description (scrollable)
@@ -91,3 +103,5 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript" src="js/bookdetailpopup.js" asp-append-version="true"></script>

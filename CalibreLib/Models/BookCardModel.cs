@@ -90,5 +90,8 @@ namespace CalibreLib.Models
                 return String.Join("", this.Book.Identifiers.Select(x => @"<p class=""label label-green mb-1 me-1""><a class=""link-light link-primary"" href=""identifier/" + x.Val + @""">" + x.Type + "</a></p>"));
             }
         }
+
+        public bool Read { get; set; } = false;
+        public bool Archived { get; set; } = false;
     }
 }

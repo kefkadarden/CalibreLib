@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CalibreLib.Areas.Identity.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
