@@ -7,34 +7,6 @@
     var titleid = "bookDetailModalLongTitle" + Model.id;
 }
 
-<style>
-    .label {
-      display: inline;
-      padding: .2em .6em .3em;
-      font-size: 75%;
-      font-weight: 700;
-      line-height: 1;
-      color: white;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: baseline;
-      border-radius: .25em;
-      background-color: dimgray;
-    }
-
-    .label:empty {
-        display:none;
-    }
-
-    .label-blue {
-        background-color: cornflowerblue;
-    }
-
-    .label-green {
-        background-color: green;
-    }
-</style>
-
 <!-- Modal -->
 <div class="modal fade" id="@id" tabindex="-1" aria-labelledby="@titleid" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -44,58 +16,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <div class="container-fluid">
-              <div class="row">
-                  <div class="col-sm-3 col-lg-3 col-xs-5">
-                      <img src="@Model.CoverImage" class="card-img-top container-fluid img" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border:lightgray 1px solid;height: auto;max-height: 100%;" alt="@Model.title">
-                  </div>
-                  <div class="col-sm-9 col-lg-9">
-                      <p class="h2">@Model.title</p>
-                      <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }</p>
-                      <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.SeriesHTML); }</p>
-                      @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model)
-                      <div class="d-block">
-                        @{ ViewContext.Writer.WriteLine(@Model.LanguageHTML); }
-                      </div>
-                      <div class="mt-2 d-flex flex-wrap align-content-start">
-                        @{ ViewContext.Writer.WriteLine(@Model.TagsHTML); }
-                      </div>
-                      <div class="d-block">
-                        @{ ViewContext.Writer.WriteLine(@Model.IdentifiersHTML); }
-                      </div>
-                      <div class="d-block">
-                        @{ ViewContext.Writer.WriteLine(@Model.PublisherHTML); }
-                      </div>
-                      <div class="d-block">
-                        @{ ViewContext.Writer.WriteLine(@Model.PublishDateHTML); }
-                      </div>
-                      <div class="row">
-                          <div class="col">
-                              @Html.CheckBoxFor(x => x.Read, new { @id = $"chkRead{Model.id}", @class="form-check-input", @onclick = "chkRead_Click(this);" })
-                          <label class="form-check-label" for="chkRead">
-                            Read
-                          </label>
-                          </div>
-                      </div>
-                      <div class="row">
-                          <div class="col">
-                              @Html.CheckBoxFor(x => x.Archived, new { @id = $"chkArchived{Model.id}", @class="form-check-input", @onclick = "chkArchived_Click(this);" })
-                              <label class="form-check-label" for="chkArchived">
-                                Archived
-                              </label>
-                          </div>
-                      </div>                                              
-                      <!--
-                          
-                          Read Checkbox
-                          Archive Checkbox
-                          Description (scrollable)
-                          Add to shelf button
-                          Edit metadata button
-                      -->
-                  </div>
-              </div>
-          </div>
+          @await Html.PartialAsync("/Views/Shared/Components/BookDetailPartial.cshtml", Model)
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -15,6 +15,6 @@ public class ApplicationUser : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
 
-    public List<ArchivedBook> ArchivedBooks { get; set; } = [];
-    public List<ReadBook> ReadBooks { get; set; } = [];
+    public virtual List<ArchivedBook> ArchivedBooks { get; set; } = [];
+    public virtual List<ReadBook> ReadBooks { get; set; } = [];
 }

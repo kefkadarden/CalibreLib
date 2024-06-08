@@ -93,5 +93,15 @@ namespace CalibreLib.Models
 
         public bool Read { get; set; } = false;
         public bool Archived { get; set; } = false;
+
+        public string Description { get; set; }
+
+        public string AddShelfButtonHTML
+        {
+            get
+            {
+                return "<button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">\r\n    Add to Shelf\r\n  </button>\r\n  <ul class=\"dropdown-menu\">\r\n    <li><a class=\"dropdown-item\" href=\"#\">Action</a></li>\r\n    <li><a class=\"dropdown-item\" href=\"#\">Another action</a></li>\r\n    <li><a class=\"dropdown-item\" href=\"#\">Something else here</a></li>\r\n    <li><hr class=\"dropdown-divider\"></li>\r\n    <li><a class=\"dropdown-item\" href=\"#\">Separated link</a></li>\r\n  </ul>\r\n";
+            }
+        }
     }
 }

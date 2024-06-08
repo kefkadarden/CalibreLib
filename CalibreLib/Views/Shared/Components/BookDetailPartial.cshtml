@@ -1,0 +1,92 @@
+﻿@using CalibreLib.Models
+@model BookCardModel
+
+<style>
+    .label {
+      display: inline;
+      padding: .2em .6em .3em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      color: white;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: .25em;
+      background-color: dimgray;
+    }
+
+    .label:empty {
+        display:none;
+    }
+
+    .label-blue {
+        background-color: cornflowerblue;
+    }
+
+    .label-green {
+        background-color: green;
+    }
+</style>
+
+<div class="container-fluid">
+              <div class="row">
+                  <div class="col-sm-3 col-lg-3 col-xs-5">
+                      <img src="@Model.CoverImage" class="card-img-top container-fluid img" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border:lightgray 1px solid;height: auto;max-height: 100%;" alt="@Model.title">
+                  </div>
+                  <div class="col-sm-9 col-lg-9">
+                      <p class="h2">@Model.title</p>
+                      <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }</p>
+                      <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.SeriesHTML); }</p>
+                      @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model)
+                      <div class="d-block">
+                        @{ ViewContext.Writer.WriteLine(@Model.LanguageHTML); }
+                      </div>
+                      <div class="mt-2 d-flex flex-wrap align-content-start">
+                        @{ ViewContext.Writer.WriteLine(@Model.TagsHTML); }
+                      </div>
+                      <div class="d-block">
+                        @{ ViewContext.Writer.WriteLine(@Model.IdentifiersHTML); }
+                      </div>
+                      <div class="d-block">
+                        @{ ViewContext.Writer.WriteLine(@Model.PublisherHTML); }
+                      </div>
+                      <div class="d-block">
+                        @{ ViewContext.Writer.WriteLine(@Model.PublishDateHTML); }
+                      </div>
+                      <div class="row">
+                          <div class="col">
+                              @Html.CheckBoxFor(x => x.Read, new { @id = $"chkRead{Model.id}", @class="form-check-input", @onclick = "chkRead_Click(this);" })
+                          <label class="form-check-label" for="chkRead">
+                            Read
+                          </label>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col">
+                              @Html.CheckBoxFor(x => x.Archived, new { @id = $"chkArchived{Model.id}", @class="form-check-input", @onclick = "chkArchived_Click(this);" })
+                              <label class="form-check-label" for="chkArchived">
+                                Archived
+                              </label>
+                          </div>
+                      </div>
+                      <div class="d-block mt-2">
+                        @{
+                            if (!String.IsNullOrWhiteSpace(Model.Description))
+                            {   
+                                ViewContext.Writer.WriteLine(@"<p class=""h3"">Description</p>"); 
+                            }
+                        }
+                        <div class="overflow-auto" style="max-height:300px;">
+                            @{ ViewContext.Writer.WriteLine(@Model.Description); }
+                        </div>
+                      </div>
+                      <div class="d-inline-flex">
+                          <div class="btn-group mt-3">
+                              @{ ViewContext.Writer.WriteLine(Model.AddShelfButtonHTML); }
+                            <a class="btn btn-primary ms-1" href="/book/edit/@Model.id">Edit Metadata</a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>

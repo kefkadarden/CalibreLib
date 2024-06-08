@@ -43,4 +43,6 @@ public partial class Book
     public virtual List<BooksTagsLink> BookTags { get; set; } = [];
 
     public virtual List<Identifier> Identifiers { get; set; } = [];
+
+    public virtual Comment Comment { get; set; } = null!;
 }

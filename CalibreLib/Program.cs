@@ -14,7 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("CalibreLibCont
 var metaDataConnectionString = builder.Configuration.GetConnectionString("CalibreMetadataContextConnection") ?? throw new InvalidOperationException("Connection string 'CalibreMetadataContextConnection' not found.");
 
 
-builder.Services.AddDbContext<CalibreLibContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<CalibreLibContext>(options => options.UseLazyLoadingProxies().UseSqlite(connectionString));
 builder.Services.AddDbContext<MetadataDBContext>(options => options.UseLazyLoadingProxies().UseSqlite(metaDataConnectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CalibreLibContext>();

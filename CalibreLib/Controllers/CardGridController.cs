@@ -6,9 +6,11 @@ using CalibreLib.Services;
 using CalibreLib.Areas.Identity.Data;
 using Microsoft.Graph;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CalibreLib.Controllers
 {
+    [Authorize]
     public class CardGridController : Controller
     {
 
@@ -29,7 +31,7 @@ namespace CalibreLib.Controllers
             List<BookCardModel> model = new List<BookCardModel>();
             BookFileManager manager = new BookFileManager(_env,Request.Scheme + "://" + Request.Host);
             List<Identifier> identifiers = await this.bookRepository.GetIdentifiersAsync();
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await _userManager.GetUserAsync(HttpContext.User);       
             foreach (var book in books)
             {
                 
@@ -45,8 +47,9 @@ namespace CalibreLib.Controllers
                     Tags = book.BookTags,
                     CoverImage = cover,
                     Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
-                    Archived = (user != null) ? user.ArchivedBooks.Where(x => x.Id == book.Id).Any() : false,
-                    Read = (user != null) ? user.ReadBooks.Where(x => x.Id == book.Id).Any() : false,
+                    Archived = (user != null) ? user.ArchivedBooks.Where(x => x.BookId == book.Id && x.IsArchived).Any() : false,
+                    Read = (user != null) ? user.ReadBooks.Where(x => x.BookId == book.Id && x.ReadStatus == 1).Any() : false,
+                    Description = book.Comment?.Text ?? "",
             };
                 model.Add(bcModel);
             }

@@ -305,7 +305,7 @@ public partial class MetadataDBContext : DbContext
                 .UseCollation("NOCASE")
                 .HasColumnType("TEXT NON")
                 .HasColumnName("text");
-            entity.HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId);
+            entity.HasOne(e => e.Book).WithOne(x => x.Comment).HasForeignKey<Comment>(x => x.BookId);
         });
 
         modelBuilder.Entity<ConversionOption>(entity =>
