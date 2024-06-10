@@ -35,6 +35,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
+
 builder.Services.AddControllersWithViews();
 //options =>
 //{
@@ -86,6 +87,11 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "book",
+    pattern: "book/{id?}",
+    defaults: new { controller="Home", action = "Book" });
 
 app.MapRazorPages();
 

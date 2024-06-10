@@ -21,35 +21,38 @@ namespace CalibreLib.Services
     }
     public class BookFileManager
     {
-        private IWebHostEnvironment _env;
+        private readonly IWebHostEnvironment _env;
+        private readonly HttpRequest _httpRequest;
         private string? _pathBase = string.Empty;
 
-        public BookFileManager(IWebHostEnvironment env, string? pathBase) 
+        public BookFileManager(IWebHostEnvironment env, HttpRequest httpRequest) 
         {
             _env = env;
-            _pathBase = pathBase;
+            _httpRequest = httpRequest;
         }
         public async Task<string> GetBookCoverAsync(Book book)
         {
-            HttpClient client = new HttpClient();
-            var file = await File.ReadAllBytesAsync(_env.WebRootPath + "/images/nocover.gif");
-            string type = "image/gif";
-
-            if (book.Path != null)
+            using (var client = new HttpClient())
             {
-                try
-                {
-                    file = await client.GetByteArrayAsync(_pathBase + "/books/" + book.Path.Replace("\\", "/") + "/cover.jpg");
-                    type = "image/jpeg";
-                }
-                catch
-                {
+                var file = await File.ReadAllBytesAsync(_env.WebRootPath + "/images/nocover.gif");
+                string type = "image/gif";
 
+                if (book.Path != null)
+                {
+                    try
+                    {
+                        file = await client.GetByteArrayAsync(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/cover.jpg");
+                        type = "image/jpeg";
+                    }
+                    catch
+                    {
+
+                    }
                 }
+                var base64 = Convert.ToBase64String(file);
+                var imgSrc = $"data:{type};base64,{base64}";
+                return imgSrc;
             }
-            var base64 = Convert.ToBase64String(file);
-            var imgSrc = $"data:{type};base64,{base64}";
-            return imgSrc;
         }
     }
 }

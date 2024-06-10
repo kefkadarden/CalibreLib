@@ -19,11 +19,13 @@ namespace CalibreLib.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser>   _userManager;
+        private readonly BookRepository _bookRepository;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, BookRepository bookRepository )
         {
             _logger = logger;
             _userManager = userManager;
+            _bookRepository = bookRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -33,7 +35,16 @@ namespace CalibreLib.Controllers
             return View();
         }
 
-        
+        [Route("book/{id?}")]
+        public async Task<IActionResult> Book(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var _book = await _bookRepository.GetByIDAsync((int)id);
+            var _bc = await _bookRepository.GetBookCardModel(_book);
+            return View("BookDetailIndex", _bc);
+        }
 
         public IActionResult Privacy()
         {

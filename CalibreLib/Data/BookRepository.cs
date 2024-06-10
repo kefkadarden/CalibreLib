@@ -1,4 +1,9 @@
-﻿using CalibreLib.Models.Metadata;
+﻿using Azure.Core;
+using CalibreLib.Areas.Identity.Data;
+using CalibreLib.Models;
+using CalibreLib.Models.Metadata;
+using CalibreLib.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CalibreLib.Data
@@ -7,11 +12,18 @@ namespace CalibreLib.Data
     {
         private bool disposedValue = false;
         private MetadataDBContext context;
+        private readonly IWebHostEnvironment _env;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly UserManager<ApplicationUser> _userManager;
+
         public int PageSize { get; set; } = 30;
 
-        public BookRepository(MetadataDBContext context)
+        public BookRepository(MetadataDBContext context, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
         {
             this.context = context;
+            _env = env;
+            _userManager = userManager;
+            _contextAccessor = httpContextAccessor;
         }
 
         public void Delete(Book item)
@@ -49,6 +61,44 @@ namespace CalibreLib.Data
         {
             return await context.Identifiers.ToListAsync();
         }
+
+        public async Task<List<BookCardModel>> GetBookCardModels(IEnumerable<Book> books)
+        {
+            List<BookCardModel> model = new List<BookCardModel>();
+            foreach(Book book in books)
+            {
+                var bcModel = await GetBookCardModel(book);
+                model.Add(bcModel);
+            }
+
+            return model;
+        }
+
+        public async Task<BookCardModel> GetBookCardModel(Book book)
+        {
+            BookFileManager manager = new BookFileManager(_env, _contextAccessor.HttpContext.Request); 
+            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
+            List<Identifier> identifiers = await this.GetIdentifiersAsync();
+            var cover = await manager.GetBookCoverAsync(book);
+            var bcModel = new BookCardModel()
+            {
+                id = book.Id,
+                title = book.Title,
+                Book = book,
+                Authors = book.BookAuthors,
+                Series = book.BookSeries,
+                Languages = book.BookLanguages,
+                Tags = book.BookTags,
+                CoverImage = cover,
+                Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
+                Archived = (user != null) ? user.ArchivedBooks.Where(x => x.BookId == book.Id && x.IsArchived).Any() : false,
+                Read = (user != null) ? user.ReadBooks.Where(x => x.BookId == book.Id && x.ReadStatus == 1).Any() : false,
+                Description = book.Comment?.Text ?? "",
+            };
+
+            return bcModel;
+        }
+
 
         public void Insert(Book item)
         {

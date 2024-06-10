@@ -1,0 +1,8 @@
+﻿@using CalibreLib.Models
+@model BookCardModel
+
+@{
+    ViewData["Title"] = $"Book Details - {Model.title}";
+}
+
+@await Html.PartialAsync("/Views/Shared/Components/BookDetailPartial.cshtml", Model)

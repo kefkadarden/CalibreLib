@@ -26,37 +26,6 @@ namespace CalibreLib.Controllers
             _userManager = userManager;
         }
 
-        public async Task<List<BookCardModel>> GetBookCardModels(IEnumerable<Book> books)
-        {
-            List<BookCardModel> model = new List<BookCardModel>();
-            BookFileManager manager = new BookFileManager(_env,Request.Scheme + "://" + Request.Host);
-            List<Identifier> identifiers = await this.bookRepository.GetIdentifiersAsync();
-            var user = await _userManager.GetUserAsync(HttpContext.User);       
-            foreach (var book in books)
-            {
-                
-                var cover = await manager.GetBookCoverAsync(book);
-                var bcModel = new BookCardModel()
-                {
-                    id = book.Id,
-                    title = book.Title,
-                    Book = book,
-                    Authors = book.BookAuthors,
-                    Series = book.BookSeries,
-                    Languages = book.BookLanguages,
-                    Tags = book.BookTags,
-                    CoverImage = cover,
-                    Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
-                    Archived = (user != null) ? user.ArchivedBooks.Where(x => x.BookId == book.Id && x.IsArchived).Any() : false,
-                    Read = (user != null) ? user.ReadBooks.Where(x => x.BookId == book.Id && x.ReadStatus == 1).Any() : false,
-                    Description = book.Comment?.Text ?? "",
-            };
-                model.Add(bcModel);
-            }
-
-            return model;
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetPageCount()
         {
@@ -89,7 +58,7 @@ namespace CalibreLib.Controllers
                 bookRepository.PageSize = (int)pageSize;
 
             var books = bookRepository.GetBooks(pageNumber, orderBy, ascending);
-            var model = await GetBookCardModels(books);
+            var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }
 
