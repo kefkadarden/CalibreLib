@@ -56,6 +56,48 @@ namespace CalibreLib.Data
         {
             return await context.Books.FirstOrDefaultAsync(x => x.Id == id);
         }
+        
+        public async Task<List<Book>> GetByQueryAsync(string query)
+        {
+            return await context.Books.Where(x => x.Title.Contains(query) || 
+                                                  x.Isbn.Contains(query) ||
+                                                  x.Lccn.Contains(query) ||
+                                                  x.BookTags.Any(x => x.Tag.Name.Contains(query)) ||
+                                                  x.BookPublishers.Any(x => x.Publisher.Name.Contains(query)) ||
+                                                  x.BookAuthors.Any(x => x.Author.Name.Contains(query)) ||
+                                                  x.BookSeries.Any(x => x.Series.Name.Contains(query))
+            ).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetByAuthorAsync(int id)
+        {
+            return await context.Books.Where(x => x.BookAuthors.Where(y => y.Id == id).Any()).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBySeriesAsync(int id)
+        {
+            return await context.Books.Where(x => x.BookSeries.Where(y => y.Id == id).Any()).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetByPublisherAsync(int id)
+        {
+            return await context.Books.Where(x => x.BookPublishers.Where(y => y.Id == id).Any()).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetByTagAsync(int id)
+        {
+            return await context.Books.Where(x => x.BookTags.Where(y => y.Id == id).Any()).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetByRatingAsync(int id)
+        {
+            return await context.Books.Where(x => x.BookRatings.Where(y => y.Id == id).Any()).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetByLanguageAsync(int id)
+        {
+            return await context.Books.Where(x => x.BookLanguages.Where(y => y.Id == id).Any()).ToListAsync();
+        }
 
         public async Task<List<Identifier>> GetIdentifiersAsync()
         {

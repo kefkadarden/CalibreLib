@@ -46,6 +46,72 @@ namespace CalibreLib.Controllers
             return View("BookDetailIndex", _bc);
         }
 
+        //[Route("author/{id?}")]
+        //public async Task<IActionResult> Author(int? id)
+        //{
+        //    if (id == null)
+        //        return NotFound();
+
+        //    var _books = await _bookRepository.GetByAuthorAsync((int)id);
+        //    var _bc = await _bookRepository.GetBookCardModels(_books);
+        //    return View("AuthorBookGrid", _bc);
+        //}
+
+        //[Route("publisher/{id?}")]
+        //public async Task<IActionResult> Publisher(int? id)
+        //{
+        //    if (id == null)
+        //        return NotFound();
+
+        //    var _books = await _bookRepository.GetByPublisherAsync((int)id);
+        //    var _bc = await _bookRepository.GetBookCardModels(_books);
+        //    return View("PublisherBookGrid", _bc);
+        //}
+
+        //[Route("series/{id?}")]
+        //public async Task<IActionResult> Series(int? id)
+        //{
+        //    if (id == null)
+        //        return NotFound();
+
+        //    var _books = await _bookRepository.GetBySeriesAsync((int)id);
+        //    var _bc = await _bookRepository.GetBookCardModels(_books);
+        //    return View("SeriesBookGrid", _bc);
+        //}
+
+        //[Route("language/{id?}")]
+        //public async Task<IActionResult> Language(int? id)
+        //{
+        //    if (id == null)
+        //        return NotFound();
+
+        //    var _books = await _bookRepository.GetByLanguageAsync((int)id);
+        //    var _bc = await _bookRepository.GetBookCardModels(_books);
+        //    return View("LanguageBookGrid", _bc);
+        //}
+
+        //[Route("category/{id?}")]
+        //public async Task<IActionResult> Category(int? id)
+        //{
+        //    if (id == null)
+        //        return NotFound();
+
+        //    var _books = await _bookRepository.GetByTagAsync((int)id);
+        //    var _bc = await _bookRepository.GetBookCardModels(_books);
+        //    return View("CategoryBookGrid", _bc);
+        //}
+
+        //[Route("rating/{id?}")]
+        //public async Task<IActionResult> Rating(int? id)
+        //{
+        //    if (id == null)
+        //        return NotFound();
+
+        //    var _books = await _bookRepository.GetByRatingAsync((int)id);
+        //    var _bc = await _bookRepository.GetBookCardModels(_books);
+        //    return View("RatingBookGrid", _bc);
+        //}
+
         public IActionResult Privacy()
         {
             return View();

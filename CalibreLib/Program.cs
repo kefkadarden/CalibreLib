@@ -93,6 +93,36 @@ app.MapControllerRoute(
     pattern: "book/{id?}",
     defaults: new { controller="Home", action = "Book" });
 
+app.MapControllerRoute(
+    name: "author",
+    pattern: "author/{id?}",
+    defaults: new { controller = "Author", action = "Index" });
+
+app.MapControllerRoute(
+    name: "publisher",
+    pattern: "publisher/{id?}",
+    defaults: new { controller = "Publisher", action = "Index" });
+
+app.MapControllerRoute(
+    name: "language",
+    pattern: "language/{id?}",
+    defaults: new { controller = "Language", action = "Index" });
+
+app.MapControllerRoute(
+    name: "rating",
+    pattern: "rating/{id?}",
+    defaults: new { controller = "Rating", action = "Index" });
+
+app.MapControllerRoute(
+    name: "category",
+    pattern: "category/{id?}",
+    defaults: new { controller = "Category", action = "Index" });
+
+app.MapControllerRoute(
+    name: "series",
+    pattern: "series/{id?}",
+    defaults: new { controller = "Series", action = "Index" });
+
 app.MapRazorPages();
 
 app.Run();

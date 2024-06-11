@@ -18,23 +18,30 @@
 <div class="d-sm-inline-flex justify-content-between" id="navbarNav">
     <ul class="navbar-nav flex-grow-1">
         <li class="nav-item active">
-            <a class="nav-link text-dark" href="#">Books</a>
+            <a class="nav-link text-dark" href="/">Books</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" href="#">Categories</a>
+            <a class="nav-link text-dark" href="/category">Categories</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" href="#">Series</a>
+            <a class="nav-link text-dark" href="/series">Series</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" href="#">Authors</a>
+            <a class="nav-link text-dark" href="/author">Authors</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" href="#">Publishers</a>
+            <a class="nav-link text-dark" href="/publisher">Publishers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="/language">Languages</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="/rating">Ratings</a>
         </li>
     </ul>
 </div>
 <div class="mt-4 border-top">
     <h5 class="text-muted mt-2 mb-3">Shelves</h5>
+    @await Component.InvokeAsync("ShelfListComponent")
     <button class="btn btn-primary w-100"><a class="nav-link text-light" href="@Url.Action("Create","Shelf")">Create a shelf</a></button>
 </div>

@@ -1,0 +1,11 @@
+﻿@model IEnumerable<BookCardModel>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="container-fluid">
+     @{
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
+    }
+</div>
