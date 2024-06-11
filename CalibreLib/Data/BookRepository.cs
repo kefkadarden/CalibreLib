@@ -59,13 +59,13 @@ namespace CalibreLib.Data
         
         public async Task<List<Book>> GetByQueryAsync(string query)
         {
-            return await context.Books.Where(x => x.Title.Contains(query) || 
-                                                  x.Isbn.Contains(query) ||
-                                                  x.Lccn.Contains(query) ||
-                                                  x.BookTags.Any(x => x.Tag.Name.Contains(query)) ||
-                                                  x.BookPublishers.Any(x => x.Publisher.Name.Contains(query)) ||
-                                                  x.BookAuthors.Any(x => x.Author.Name.Contains(query)) ||
-                                                  x.BookSeries.Any(x => x.Series.Name.Contains(query))
+            return await context.Books.Where(x => x.Title.Contains(query,StringComparison.CurrentCultureIgnoreCase) || 
+                                                  x.Isbn.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
+                                                  x.Lccn.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
+                                                  x.BookTags.Any(x => x.Tag.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ||
+                                                  x.BookPublishers.Any(x => x.Publisher.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ||
+                                                  x.BookAuthors.Any(x => x.Author.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ||
+                                                  x.BookSeries.Any(x => x.Series.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase))
             ).ToListAsync();
         }
 
