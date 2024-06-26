@@ -33,7 +33,12 @@ namespace CalibreLib.Controllers
             return Json(new { pageCount = count });
         }
 
-        public async Task<IActionResult> BookList(int? pageNumber, string? sortBy = "date", int? pageSize = 30)
+        public IActionResult ViewEPub(string BookPath)
+        {
+            BookPath = "/books/" + BookPath + "";
+            return PartialView("~/Views/Shared/Components/EPubViewer.cshtml", BookPath);
+        }
+        public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -57,7 +62,7 @@ namespace CalibreLib.Controllers
             if (pageSize != null)
                 bookRepository.PageSize = (int)pageSize;
 
-            var books = bookRepository.GetBooks(pageNumber, orderBy, ascending);
+            var books = await bookRepository.GetBooks(pageNumber, orderBy, query, ascending);
             var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }

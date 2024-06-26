@@ -91,7 +91,7 @@ function loadBooks(ajaxCallUrl, isPaging) {
         $.ajax({  
             type: 'GET',  
             url: ajaxCallUrl,  
-            data: "pageNumber=" + page++ + "&sortBy=" + sortBy + "&pageSize=" + pageSize,  
+            data: "pageNumber=" + page++ + "&sortBy=" + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", ""),  
             success: function (data, textstatus) { 
                 if (data.replace(/(\r\n|\n|\r)/gm, "") != '') {  
                     if (isPaging)

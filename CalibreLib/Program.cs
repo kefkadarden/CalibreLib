@@ -69,7 +69,8 @@ app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(bookdirectory),
-    RequestPath = "/books"
+    RequestPath = "/books",
+    ServeUnknownFileTypes = true
 });
 app.UseStaticFiles(new StaticFileOptions
 {

@@ -1,0 +1,19 @@
+﻿@using System.Text.Json
+
+@model string
+@{
+    var path = JsonEncodedText.Encode(Model).ToString();
+}
+@section Head {
+    
+}
+<link rel="stylesheet" href="~/lib/epubjs/dist/css/main.css" />
+<script src="~/lib/epubjs/dist/js/libs/jszip.min.js"></script>
+<script src="~/lib/epubjs/dist/js/libs/epub.min.js"></script>
+<script src="~/lib/epubjs/dist/js/libs/md5.min.js"></script>
+<script src="~/lib/epubjs/dist/js/epubreader.min.js" type="module"></script>
+
+<script type="module">
+  import { Reader } from "/lib/epubjs/dist/js/epubreader.min.js"
+    window.onload = (e) => new Reader("@path");
+</script>

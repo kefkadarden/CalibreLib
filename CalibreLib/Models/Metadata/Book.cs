@@ -45,4 +45,6 @@ public partial class Book
     public virtual List<Identifier> Identifiers { get; set; } = [];
 
     public virtual Comment Comment { get; set; } = null!;
+
+    public virtual List<Datum> Data { get; set; } = [];
 }

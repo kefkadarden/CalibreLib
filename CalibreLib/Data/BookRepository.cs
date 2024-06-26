@@ -43,13 +43,19 @@ namespace CalibreLib.Data
             return Convert.ToInt32(Math.Ceiling( Convert.ToDecimal(count / dPageSize) ));
         }
 
-        public IEnumerable<Book> GetBooks(int? pageNumber, Func<Book, object> orderBy, bool ascending = true)
+        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string ? query, bool ascending = true)
         {
             var numRecordsToSkip = pageNumber * PageSize;
-            if (ascending)
-                return context.Books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+            IEnumerable<Book> books = new List<Book>();
+            if (query != null)
+                books = await GetByQueryAsync(query);
             else
-                return context.Books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+                books = context.Books;
+             
+            if (ascending)
+                return books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+            else
+                return books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
         }
 
         public async Task<Book> GetByIDAsync(int id)
@@ -59,13 +65,16 @@ namespace CalibreLib.Data
         
         public async Task<List<Book>> GetByQueryAsync(string query)
         {
-            return await context.Books.Where(x => x.Title.Contains(query,StringComparison.CurrentCultureIgnoreCase) || 
-                                                  x.Isbn.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
-                                                  x.Lccn.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
-                                                  x.BookTags.Any(x => x.Tag.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ||
-                                                  x.BookPublishers.Any(x => x.Publisher.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ||
-                                                  x.BookAuthors.Any(x => x.Author.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ||
-                                                  x.BookSeries.Any(x => x.Series.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+            //Contains() Ignore Case causes Sqlite EF exception currently. Still need to investigate why. Using ToLower() currently for case insenstive comparsion.
+            //Potential lead: https://github.com/dotnet/efcore/issues/8033
+            query = query.ToLower();
+            return await context.Books.Where(x => x.Title.ToLower().Contains(query) || 
+                                                  x.Isbn.ToLower().Contains(query) ||
+                                                  x.Lccn.ToLower().Contains(query) ||
+                                                  x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
+                                                  x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
+                                                  x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||
+                                                  x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))
             ).ToListAsync();
         }
 

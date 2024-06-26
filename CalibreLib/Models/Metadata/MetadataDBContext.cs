@@ -385,7 +385,7 @@ public partial class MetadataDBContext : DbContext
             entity.Property(e => e.UncompressedSize)
                 .HasColumnType("INTEGER NON")
                 .HasColumnName("uncompressed_size");
-            entity.HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId);
+            entity.HasOne(e => e.Book).WithMany(e => e.Data).HasForeignKey(e => e.BookId);
         });
 
         modelBuilder.Entity<Feed>(entity =>
