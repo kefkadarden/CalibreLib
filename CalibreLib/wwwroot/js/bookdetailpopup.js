@@ -31,3 +31,17 @@ function chkArchived_Click(e) {
         }  
     });
 }
+
+function sendEPub(bookid) {
+    $.ajax({
+        type: 'POST',
+        url: 'CardGrid/SendEPubToReader',
+        data: "bookid=" + bookid,
+        success: function (data) {
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}

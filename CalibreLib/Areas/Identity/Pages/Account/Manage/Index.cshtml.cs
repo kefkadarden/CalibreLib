@@ -61,8 +61,12 @@ namespace CalibreLib.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
             [Display(Name = "Display Name")]
             public string DisplayName { get; set; }
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
+            [Display(Name = "E-Reader Email Address")]
+            public string EReaderEmail { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -72,6 +76,7 @@ namespace CalibreLib.Areas.Identity.Pages.Account.Manage
             var displayName = user.DisplayName;
             var firstName = user.FirstName;
             var lastName = user.LastName;
+            var ereaderemail = user.EReaderEmail;
 
             Username = userName;
 
@@ -80,7 +85,8 @@ namespace CalibreLib.Areas.Identity.Pages.Account.Manage
                 PhoneNumber = phoneNumber,
                 DisplayName = displayName,
                 FirstName = firstName,
-                LastName = lastName
+                LastName = lastName,
+                EReaderEmail = ereaderemail
             };
         }
 
@@ -132,6 +138,10 @@ namespace CalibreLib.Areas.Identity.Pages.Account.Manage
             if (Input.LastName != user.LastName)
             {
                 user.LastName = Input.LastName;
+            }
+            if (Input.EReaderEmail != user.EReaderEmail)
+            {
+                user.EReaderEmail = Input.EReaderEmail;
             }
             await _userManager.UpdateAsync(user);
 

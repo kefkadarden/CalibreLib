@@ -1,4 +1,6 @@
 ﻿using CalibreLib.Models.Metadata;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Policy;
 
@@ -54,5 +56,19 @@ namespace CalibreLib.Services
                 return imgSrc;
             }
         }
+
+        public async Task<byte[]>? DownloadBookAsync(Book book, string Format) 
+        {
+            // URL of the file to be downloaded
+            var fileUrl = new System.Uri(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format);
+
+            using (var httpClient = new HttpClient())
+            {
+                // Send a GET request to the specified Uri
+                using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead))
+                    return response.IsSuccessStatusCode ? await response.Content.ReadAsByteArrayAsync() : null;
+            }
+        }
+
     }
 }

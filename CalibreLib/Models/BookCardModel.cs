@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Models.Metadata;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using System.Drawing;
 
 namespace CalibreLib.Models
@@ -100,7 +101,31 @@ namespace CalibreLib.Models
         {
             get
             {
-                return "<button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">\r\n    Add to Shelf\r\n  </button>\r\n  <ul class=\"dropdown-menu\">\r\n    <li><a class=\"dropdown-item\" href=\"#\">Action</a></li>\r\n    <li><a class=\"dropdown-item\" href=\"#\">Another action</a></li>\r\n    <li><a class=\"dropdown-item\" href=\"#\">Something else here</a></li>\r\n    <li><hr class=\"dropdown-divider\"></li>\r\n    <li><a class=\"dropdown-item\" href=\"#\">Separated link</a></li>\r\n  </ul>\r\n";
+                return "<button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">\r\n    Add to Shelf\r\n  </button>\r\n  " +
+                    "<ul class=\"dropdown-menu\">\r\n    " +
+                    "<li><a class=\"dropdown-item\" href=\"#\">Action</a></li>\r\n    " +
+                    "<li><a class=\"dropdown-item\" href=\"#\">Another action</a></li>\r\n    " +
+                    "<li><a class=\"dropdown-item\" href=\"#\">Something else here</a></li>\r\n    " +
+                    "<li><hr class=\"dropdown-divider\"></li>\r\n    " +
+                    "<li><a class=\"dropdown-item\" href=\"#\">Separated link</a></li>\r\n  " +
+                    "</ul>\r\n";
+            }
+        }
+
+        public string AddDownloadButtonHTML
+        {
+            get
+            {
+                var html = "<button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">\r\n    Download\r\n  </button>\r\n  " +
+                    "<ul class=\"dropdown-menu\">\r\n    ";
+
+                foreach(var datum in this.Book.Data)
+                {
+                    html += $"<li><a class=\"dropdown-item\" href=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&Format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" +"</a></li>\r\n    ";
+                }
+                html += "</ul>\r\n";
+
+                return html;
             }
         }
     }

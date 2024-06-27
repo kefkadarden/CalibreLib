@@ -38,6 +38,34 @@ namespace CalibreLib.Controllers
             BookPath = "/books/" + BookPath + "";
             return PartialView("~/Views/Shared/Components/EPubViewer.cshtml", BookPath);
         }
+
+        public async Task<IActionResult> SendEPubToReader(int BookID)
+        {
+            var book = await bookRepository.GetByIDAsync(BookID);
+
+            /*send book to eReader
+                1. Get User's eReader email address.
+                2. Generate MailKit email with book ePub attachment.
+            */
+            return Ok();
+        }
+
+        public async Task<IActionResult> DownloadBook(int BookID, string Format)
+        {
+            var book = await bookRepository.GetByIDAsync(BookID);
+
+            var datum = book.Data.FirstOrDefault(x => x.Format == Format);
+
+            BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
+            var result = await fm.DownloadBookAsync(book, Format);
+
+            if (result != null)
+            {
+                return File(result, "application/octet-stream", book.Title + "." + Format);
+            }
+            return Ok();
+        }
+
         public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30)
         {
             bool ascending = true;

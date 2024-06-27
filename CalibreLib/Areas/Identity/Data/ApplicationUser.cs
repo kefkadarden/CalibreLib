@@ -15,6 +15,8 @@ public class ApplicationUser : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
 
+    public string? EReaderEmail { get; set; } = null!;
+
     public virtual List<ArchivedBook> ArchivedBooks { get; set; } = [];
     public virtual List<ReadBook> ReadBooks { get; set; } = [];
 }

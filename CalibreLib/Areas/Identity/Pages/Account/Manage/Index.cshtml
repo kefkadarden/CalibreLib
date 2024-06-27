@@ -35,6 +35,11 @@
                 <label asp-for="Input.LastName" class="form-label"></label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.EReaderEmail" class="form-control" placeholder="Please enter your e-reader email." />
+                <label asp-for="Input.EReaderEmail" class="form-label"></label>
+                <span asp-validation-for="Input.EReaderEmail" class="text-danger"></span>
+            </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
     </div>
