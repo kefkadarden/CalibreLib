@@ -19,4 +19,6 @@ public class ApplicationUser : IdentityUser
 
     public virtual List<ArchivedBook> ArchivedBooks { get; set; } = [];
     public virtual List<ReadBook> ReadBooks { get; set; } = [];
+
+    public virtual List<Shelf> Shelves { get; set; } = [];
 }

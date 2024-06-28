@@ -3,3 +3,6 @@
 *@
 @{
 }
+@using CalibreLib.Views.Shared.Components
+
+@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EPageToolbarType.Publishers })

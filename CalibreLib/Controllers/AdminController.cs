@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CalibreLib.Controllers
 {
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         public IActionResult Index()

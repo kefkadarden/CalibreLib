@@ -1,4 +1,6 @@
-﻿<div class="input-group" style="width:300px;">
+﻿@using CalibreLib.Views.Shared.Components
+
+<div class="input-group" style="width:300px;">
     <form method="get" asp-controller="Search" asp-action="Index">
         <input class="border-end-0 border rounded-3" type="text" placeholder="Search Libary" name="query" id="searchinput">
     <span class="input-group-append">
@@ -42,6 +44,6 @@
 </div>
 <div class="mt-4 border-top">
     <h5 class="text-muted mt-2 mb-3">Shelves</h5>
-    @await Component.InvokeAsync("ShelfListComponent")
+    @await Component.InvokeAsync(typeof(ShelfListComponent))
     <button class="btn btn-primary w-100"><a class="nav-link text-light" href="@Url.Action("Create","Shelf")">Create a shelf</a></button>
 </div>

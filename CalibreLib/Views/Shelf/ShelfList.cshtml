@@ -1,1 +1,14 @@
-﻿Test Shelf
+﻿@using CalibreLib.Areas.Identity.Data
+@model List<Shelf>
+
+@{
+    if (Model != null)
+    {
+        foreach(var shelf in Model)
+        {
+            <a class="btn btn-outline-secondary w-100 mb-1" href="/shelf/@shelf.Id"><i class="fa fa-list"></i>  @shelf.Name</a>
+        }
+    }
+    <br />
+    <br />
+}

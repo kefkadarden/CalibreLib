@@ -71,5 +71,29 @@ public class CalibreLibContext : IdentityDbContext<ApplicationUser>
                 .HasColumnName("times_started_reading");
             entity.HasOne(x => x.User).WithMany(x => x.ReadBooks).HasForeignKey(x => x.UserId).IsRequired();
         });
+
+        builder.Entity<Shelf>(entity =>
+        {
+            entity.ToTable("Shelf", (string)null);
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("id");
+            entity.Property(e => e.UUId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("uuid");
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id");
+            entity.Property(e => e.Name)
+                .HasColumnName("name");
+            entity.Property(e => e.Created)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("created");
+            entity.Property(e => e.LastModified)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasColumnName("last_modified");
+
+            entity.HasOne(x =>x.User).WithMany(x => x.Shelves).HasForeignKey(x => x.UserId).IsRequired();
+        });
     }
 }

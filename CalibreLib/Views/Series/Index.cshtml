@@ -1,8 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-    var path = "/books/A. N. Roquelaure/Beauty's Punishment (Sleeping Beaut (591)/test.epub";
-}
 
-@await Html.PartialAsync("~/Views/Shared/Components/EPubViewer.cshtml",path)
+@using CalibreLib.Views.Shared.Components
+
+@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EPageToolbarType.Series })

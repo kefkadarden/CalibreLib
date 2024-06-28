@@ -1,32 +1,8 @@
 ﻿@model IEnumerable<BookCardModel>
+@using CalibreLib.Views.Shared.Components
 
 <h2>Books</h2>
-<div class="btn-group mb-4" role="group">
-  <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
-  <label class="btn btn-outline-primary" for="datedesc">Date newest</label>
-
-  <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
-  <label class="btn btn-outline-primary" for="date">Date oldest</label>
-
-  <input type="radio" class="btn-check" name="btnradio" id="title" autocomplete="off" onclick="updateSortBy('title');">
-  <label class="btn btn-outline-primary" for="title">Alphabetical</label>
-
-  <input type="radio" class="btn-check" name="btnradio" id="titledesc" autocomplete="off" onclick="updateSortBy('titledesc');">
-  <label class="btn btn-outline-primary" for="titledesc">Alphabetical reversed</label>
-
-  <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
-  <label class="btn btn-outline-primary" for="author">Author</label>
-
-  <input type="radio" class="btn-check" name="btnradio" id="authordesc" autocomplete="off" onclick="updateSortBy('authordesc');">
-  <label class="btn btn-outline-primary" for="authordesc">Author reversed</label>
-  <label class="btn-group-vertical ms-3 me-1" for="btnPage">Toggle Pages</label>
-  <input type="checkbox" class="ms-1" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; togglePagingEnabled(btnPage.checked); });" /> <!--Need to implement the pagination here with hide and show. -->
-  
-  <div id="divPageSize">
-    <label class="btn-group-vertical ms-3 ps-3 me-1 border-start border-dark" for="btnPage">Page Size</label>
-    <input type="text" autocomplete="false" inputmode="numeric" id="lblPageSize" class="fw-bold p-1 text-center" style="width:50px;" value="10" />
-  </div>
-</div>
+@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EPageToolbarType.BookCardGrid })
 <div id="mainCardGrid">
     @{
 

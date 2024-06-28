@@ -2,6 +2,7 @@ using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
 using CalibreLib.Models.Metadata;
 using CalibreLib.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Identity.Web.UI;
@@ -17,7 +18,7 @@ var metaDataConnectionString = builder.Configuration.GetConnectionString("Calibr
 builder.Services.AddDbContext<CalibreLibContext>(options => options.UseLazyLoadingProxies().UseSqlite(connectionString));
 builder.Services.AddDbContext<MetadataDBContext>(options => options.UseLazyLoadingProxies().UseSqlite(metaDataConnectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CalibreLibContext>();
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<CalibreLibContext>();
 
 var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
 
@@ -123,6 +124,11 @@ app.MapControllerRoute(
     name: "series",
     pattern: "series/{id?}",
     defaults: new { controller = "Series", action = "Index" });
+
+app.MapControllerRoute(
+    name: "shelf",
+    pattern: "shelf/{id?}",
+    defaults: new { controller = "Shelf", action = "Index" });
 
 app.MapRazorPages();
 

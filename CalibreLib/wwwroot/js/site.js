@@ -17,3 +17,35 @@ function uploadFile() {
 
 }
 
+function loadShelf(id) {
+    $.ajax({  
+        type: 'GET',  
+        url: 'Shelf/Index',  
+        data: "id=" + id,  
+        success: function (data, textstatus) { 
+            if (data.replace(/(\r\n|\n|\r)/gm, "") != '') {  
+                if (isPaging)
+                    $("#cardGridRow").empty();
+
+                $("#cardGridRow").append(data);  
+                updatePageLabel();
+            }  
+            else {  
+                if (!isPaging) {
+                    page = -1;
+                    isReachedScrollEnd = true;
+                } else {
+                    page--;
+                    isReachedScrollEnd = true;
+                    updatePageLabel();
+                }                
+            }  
+  
+            inCallback = false;  
+            $("div#loading").hide();  
+        },  
+        error: function (XMLHttpRequest, textStatus, errorThrown) {  
+            alert(errorThrown);  
+        }  
+    });
+}
