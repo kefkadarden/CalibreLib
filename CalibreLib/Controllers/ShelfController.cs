@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph;
+using System;
 
 namespace CalibreLib.Controllers
 {
@@ -48,12 +49,15 @@ namespace CalibreLib.Controllers
         }
 
         [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> Create(Shelf? shelf = null)
         {
-            //If no model then assume new view to enter.
-            if (shelf?.Name == null)
-                return View();
+            if (shelf == null)
+                return BadRequest();
 
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
@@ -73,10 +77,50 @@ namespace CalibreLib.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+                return BadRequest();
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (user == null)
+                return Unauthorized();
+
+            Shelf? shelf;
+            if ((shelf = user.Shelves.FirstOrDefault(shelf => shelf.Id == id)) == null)
+                return NotFound();
+
+            return View(shelf);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, Shelf? shelf = null)
+        {
+            if (shelf == null)
+                return BadRequest();
+
+            if (shelf?.Id != id)
+                return BadRequest();
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (user == null)
+                return Unauthorized();
+
+            var foundShelf = user.Shelves.Find(shelf => shelf.Id == id);
+
+            if (foundShelf == null)
+                return NotFound();
+
+            foundShelf.LastModified = DateTime.Now;
+            foundShelf.Name = shelf?.Name;
+
+            await _userManager.UpdateAsync(user);
+            ViewBag.SuccessMessage = "Shelf edited successfully.";
+
+            return View(foundShelf);
         }
 
         [HttpPost]
