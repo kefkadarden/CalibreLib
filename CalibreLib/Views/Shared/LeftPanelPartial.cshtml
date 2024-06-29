@@ -45,5 +45,5 @@
 <div class="mt-4 border-top">
     <h5 class="text-muted mt-2 mb-3">Shelves</h5>
     @await Component.InvokeAsync(typeof(ShelfListComponent))
-    <button class="btn btn-primary w-100"><a class="nav-link text-light" href="@Url.Action("Create","Shelf")">Create a shelf</a></button>
+    <button class="btn btn-primary w-100"><a class="nav-link text-light" href="@Url.Action("Create","Shelf", null)">Create a shelf</a></button>
 </div>

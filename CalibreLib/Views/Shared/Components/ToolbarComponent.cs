@@ -14,7 +14,8 @@ namespace CalibreLib.Views.Shared.Components
         Languages = 5,
         Ratings = 6,
         FileFormats = 7,
-        Archived = 8
+        Archived = 8,
+        Shelf = 9
     }
     public class ToolbarComponent : ViewComponent
     {
@@ -41,6 +42,9 @@ namespace CalibreLib.Views.Shared.Components
                     break;
                 case EPageToolbarType.Archived:
                     content = ArchivedBooksToolbar;
+                    break;
+                case EPageToolbarType.Shelf:
+                    content = MultiSortToolbar;
                     break;
             }
                 

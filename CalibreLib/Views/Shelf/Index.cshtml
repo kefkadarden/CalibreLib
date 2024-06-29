@@ -4,6 +4,17 @@
 @{
 }
 @using CalibreLib.Areas.Identity.Data
+@using CalibreLib.Views.Shared.Components
 @model Shelf
 
-@Model.Name
+<h2>Shelf: @Model.Name</h2>
+<div id="headerToolbar">
+    
+</div>
+
+<div class="container-fluid">
+     @{
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model.BookCards)
+    }
+</div>
+

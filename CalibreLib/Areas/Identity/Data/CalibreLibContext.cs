@@ -95,5 +95,25 @@ public class CalibreLibContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(x =>x.User).WithMany(x => x.Shelves).HasForeignKey(x => x.UserId).IsRequired();
         });
+
+        builder.Entity<BooksShelvesLink>(entity =>
+        {
+            entity.ToTable("BooksShelvesLink", (string)null);
+
+            entity.Property(e => e.Id)
+            .ValueGeneratedOnAdd()
+            .HasColumnName("id");
+            entity.Property(e => e.BookId)
+            .HasColumnName("book_id");
+            entity.Property(e => e.Order)
+            .HasColumnName("order");
+            entity.Property(e => e.ShelfId)
+            .HasColumnName("shelf");
+            entity.Property(e => e.DateAdded)
+            .ValueGeneratedOnAdd()
+            .HasColumnName("date_added");
+
+            entity.HasOne(e => e.Shelf).WithMany(e => e.BookShelves).HasForeignKey(e => e.ShelfId);
+        });
     }
 }

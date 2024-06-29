@@ -47,4 +47,5 @@ public partial class Book
     public virtual Comment Comment { get; set; } = null!;
 
     public virtual List<Datum> Data { get; set; } = [];
+    public virtual List<BooksShelvesLink> BookShelves { get; set; } = [];
 }

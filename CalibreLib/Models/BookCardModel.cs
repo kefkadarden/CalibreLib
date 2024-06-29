@@ -23,7 +23,7 @@ namespace CalibreLib.Models
         {
             get
             {
-                return @"<a class=""link-dark"" href=""book/" + id + @""">" + title + @"</a>";
+                return @"<a class=""link-dark"" href=""/book/" + id + @""">" + title + @"</a>";
             }
         }
         public string AuthorsHTML
