@@ -93,10 +93,53 @@ namespace CalibreLib.Controllers
                 }
             };
 
+            int id;
+            EFilterType type = EFilterType.BookCardGrid;
+            if (shelf != "null" && shelf != null)
+            {
+                Int32.TryParse(shelf, out id);
+                type = EFilterType.Shelf;
+            }
+            else if (category != "null" && category != null)
+            {
+                Int32.TryParse(category, out id);
+                type = EFilterType.Categories;
+            }
+            else if (author != "null" && author != null)
+            {
+                Int32.TryParse(author, out id);
+                type = EFilterType.Authors;
+            }
+            else if (publisher != "null" && publisher != null)
+            {
+                Int32.TryParse(publisher, out id);
+                type = EFilterType.Publishers;
+            }
+            else if (language != "null" && language != null)
+            {
+                Int32.TryParse(language, out id);
+                type = EFilterType.Languages;
+            }
+            else if (rating != "null" && rating != null)
+            {
+                Int32.TryParse(rating, out id);
+                type = EFilterType.Ratings;
+            }
+            else if (series != "null" && series != null)
+            {
+                Int32.TryParse(series, out id);
+                type = EFilterType.Series;
+            }
+            else
+            {
+                id = -1;
+                type = EFilterType.BookCardGrid;
+            }
+
             if (pageSize != null)
                 bookRepository.PageSize = (int)pageSize;
 
-            var books = await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, shelf, category, author, publisher, language, rating, series);
+            var books = await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id);
             var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }

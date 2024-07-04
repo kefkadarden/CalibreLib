@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Data;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,12 @@ namespace CalibreLib.Controllers
     public class CategoryController : Controller
     {
         private readonly BookRepository _bookRepository;
-        public CategoryController(BookRepository bookRepository)
+        private readonly MetadataDBContext _metadataDBContext;
+
+        public CategoryController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
         {
             _bookRepository = bookRepository;
+            _metadataDBContext = metadataDBContext;
         }
 
 
@@ -22,7 +26,8 @@ namespace CalibreLib.Controllers
 
             var _books = await _bookRepository.GetByTagAsync((int)id);
             var _bc = await _bookRepository.GetBookCardModels(_books);
-            return View("Components/BookCardGrid", _bc);
+            var tag = _metadataDBContext.Tags.FirstOrDefault(x => x.Id == id);
+            return View(tag);
         }
     }
 }

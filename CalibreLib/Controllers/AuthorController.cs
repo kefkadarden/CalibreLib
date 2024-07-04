@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Data;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,11 @@ namespace CalibreLib.Controllers
     public class AuthorController : Controller
     {
         private readonly BookRepository _bookRepository;
-        public AuthorController(BookRepository bookRepository) 
+        private readonly MetadataDBContext _metadataDBContext;
+        public AuthorController(BookRepository bookRepository, MetadataDBContext metadataDBContext) 
         {
             _bookRepository = bookRepository;
+            _metadataDBContext = metadataDBContext;
         }
 
         [Route("author/{id?}")]
@@ -21,7 +24,12 @@ namespace CalibreLib.Controllers
 
             var _books = await _bookRepository.GetByAuthorAsync((int)id);
             var _bc = await _bookRepository.GetBookCardModels(_books);
-            return View("AuthorBookGrid", _bc);
+            var author = _metadataDBContext.Authors.FirstOrDefault(x => x.Id == id);
+            if (author == null)
+                return NotFound();
+
+            return View(author);
+
         }
     }
 }

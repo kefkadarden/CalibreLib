@@ -2,7 +2,7 @@
 @using CalibreLib.Views.Shared.Components
 
 <h2>Books</h2>
-@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EPageToolbarType.BookCardGrid })
+@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.BookCardGrid })
 <div id="mainCardGrid">
     @{
 

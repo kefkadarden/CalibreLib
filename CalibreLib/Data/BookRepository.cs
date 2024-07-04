@@ -43,7 +43,7 @@ namespace CalibreLib.Data
             return Convert.ToInt32(Math.Ceiling( Convert.ToDecimal(count / dPageSize) ));
         }
 
-        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, string? type = null, string? shelf = null)
+        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, EFilterType type = EFilterType.BookCardGrid, int? id = null)
         {
             var numRecordsToSkip = pageNumber * PageSize;
             IEnumerable<Book> books = new List<Book>();
@@ -52,27 +52,45 @@ namespace CalibreLib.Data
             else
                 books = context.Books;
 
-            int shelfid;
-            int? nullableShelfid = null;
-            if (Int32.TryParse(shelf, out shelfid)) { nullableShelfid = shelfid; }
+            //int shelfid;
+            //int? nullableShelfid = null;
+            //if (Int32.TryParse(shelf, out shelfid)) { nullableShelfid = shelfid; }
             var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-            var bookids = user?.Shelves.FirstOrDefault(x => x.Id == nullableShelfid)?.BookShelves.Select(x => x.BookId);
+            var bookids = user?.Shelves.FirstOrDefault(x => x.Id == id)?.BookShelves.Select(x => x.BookId);
+
+            IEnumerable<Book> booksList = new List<Book>();
+            switch(type)
+            {
+                case EFilterType.Authors:
+                    booksList = books.Where(x => x.BookAuthors.Where(y => y.AuthorId == id).Any()).ToList();
+                    break;
+                case EFilterType.Categories:
+                    booksList = books.Where(x => x.BookTags.Where(y => y.TagId == id).Any()).ToList();
+                    break;
+                case EFilterType.Shelf:
+                    booksList = books.Where(x => bookids.Contains(x.Id)).ToList();
+                    break;
+                case EFilterType.Series:
+                    booksList = books.Where(x => x.BookSeries.Where(y => y.SeriesId == id).Any()).ToList();
+                    break;
+                case EFilterType.Ratings:
+                    booksList = books.Where(x => x.BookRatings.Where(y => y.RatingId == id).Any()).ToList();
+                    break;
+                case EFilterType.Publishers:
+                    booksList = books.Where(x => x.BookPublishers.Where(y => y.PublisherId == id).Any()).ToList();
+                    break;
+                case EFilterType.Languages:
+                    booksList = books.Where(x => x.BookLanguages.Where(y => y.LanguageId == id).Any()).ToList();
+                    break;
+                default:
+                    booksList = books;
+                    break;
+            }
 
             if (ascending)
-            { 
-                if (bookids != null && nullableShelfid != null)
-                    return books.Where(x => bookids.Contains(x.Id)).OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
-                else
-                    return books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
-            }  
+                return booksList.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
             else
-            {
-                if (bookids != null && nullableShelfid != null)
-                    return books.Where(x => bookids.Contains(x.Id)).OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
-                else
-                    return books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
-            }
-                
+                return booksList.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
         }
 
         public async Task<Book> GetByIDAsync(int id)
@@ -104,32 +122,32 @@ namespace CalibreLib.Data
 
         public async Task<IEnumerable<Book>> GetByAuthorAsync(int id)
         {
-            return await context.Books.Where(x => x.BookAuthors.Where(y => y.Id == id).Any()).ToListAsync();
+            return await context.Books.Where(x => x.BookAuthors.Where(y => y.AuthorId == id).Any()).ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetBySeriesAsync(int id)
         {
-            return await context.Books.Where(x => x.BookSeries.Where(y => y.Id == id).Any()).ToListAsync();
+            return await context.Books.Where(x => x.BookSeries.Where(y => y.SeriesId == id).Any()).ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByPublisherAsync(int id)
         {
-            return await context.Books.Where(x => x.BookPublishers.Where(y => y.Id == id).Any()).ToListAsync();
+            return await context.Books.Where(x => x.BookPublishers.Where(y => y.PublisherId == id).Any()).ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByTagAsync(int id)
         {
-            return await context.Books.Where(x => x.BookTags.Where(y => y.Id == id).Any()).ToListAsync();
+            return await context.Books.Where(x => x.BookTags.Where(y => y.TagId == id).Any()).ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByRatingAsync(int id)
         {
-            return await context.Books.Where(x => x.BookRatings.Where(y => y.Id == id).Any()).ToListAsync();
+            return await context.Books.Where(x => x.BookRatings.Where(y => y.RatingId == id).Any()).ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByLanguageAsync(int id)
         {
-            return await context.Books.Where(x => x.BookLanguages.Where(y => y.Id == id).Any()).ToListAsync();
+            return await context.Books.Where(x => x.BookLanguages.Where(y => y.LanguageId == id).Any()).ToListAsync();
         }
 
         public async Task<List<Identifier>> GetIdentifiersAsync()

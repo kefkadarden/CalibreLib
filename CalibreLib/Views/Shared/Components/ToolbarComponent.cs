@@ -1,49 +1,50 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using CalibreLib.Models;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 
 namespace CalibreLib.Views.Shared.Components
 {
-    public enum EPageToolbarType
-    {
-        BookCardGrid = 0,
-        Categories = 1,
-        Series = 2,
-        Authors = 3,
-        Publishers = 4,
-        Languages = 5,
-        Ratings = 6,
-        FileFormats = 7,
-        Archived = 8,
-        Shelf = 9
-    }
+    //public enum EPageToolbarType
+    //{
+    //    BookCardGrid = 0,
+    //    Categories = 1,
+    //    Series = 2,
+    //    Authors = 3,
+    //    Publishers = 4,
+    //    Languages = 5,
+    //    Ratings = 6,
+    //    FileFormats = 7,
+    //    Archived = 8,
+    //    Shelf = 9
+    //}
     public class ToolbarComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(EPageToolbarType type)
+        public IViewComponentResult Invoke(EFilterType type)
         {
             string content = string.Empty;
             switch (type)
             {
-                case EPageToolbarType.BookCardGrid:
+                case EFilterType.BookCardGrid:
                     content = BookCardGridToolbar;
                     break;
-                case EPageToolbarType.Categories:
-                case EPageToolbarType.Series:
-                case EPageToolbarType.Languages:
-                case EPageToolbarType.Publishers:
+                case EFilterType.Categories:
+                case EFilterType.Series:
+                case EFilterType.Languages:
+                case EFilterType.Publishers:
                     content = AlphaNumericToolbar;
                     break;
-                case EPageToolbarType.Authors:
+                case EFilterType.Authors:
                     content = AuthorsToolbar;
                     break;
-                case EPageToolbarType.Ratings:
-                case EPageToolbarType.FileFormats:
+                case EFilterType.Ratings:
+                case EFilterType.FileFormats:
                     content = AlphaNumericSortToolbar;
                     break;
-                case EPageToolbarType.Archived:
+                case EFilterType.Archived:
                     content = ArchivedBooksToolbar;
                     break;
-                case EPageToolbarType.Shelf:
+                case EFilterType.Shelf:
                     content = MultiSortToolbar;
                     break;
             }
