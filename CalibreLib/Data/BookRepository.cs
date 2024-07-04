@@ -46,9 +46,12 @@ namespace CalibreLib.Data
         public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, EFilterType type = EFilterType.BookCardGrid, int? filterid = null)
         {
             var numRecordsToSkip = pageNumber * PageSize;
-            IEnumerable<Book> books = new List<Book>();
+            IQueryable<Book> books = Enumerable.Empty<Book>().AsQueryable();
             if (query != null)
-                books = await GetByQueryAsync(query);
+            {
+                var queryResult = await GetByQueryAsync(query);
+                books = queryResult.AsQueryable();
+            }
             else
                 books = context.Books;
 
@@ -59,28 +62,28 @@ namespace CalibreLib.Data
             switch(type)
             {
                 case EFilterType.Authors:
-                    booksList = books.Where(x => x.BookAuthors.Where(y => y.AuthorId == filterid).Any()).ToList();
+                    booksList = await books.Where(x => x.BookAuthors.Where(y => y.AuthorId == filterid).Any()).ToListAsync();
                     break;
                 case EFilterType.Categories:
-                    booksList = books.Where(x => x.BookTags.Where(y => y.TagId == filterid).Any()).ToList();
+                    booksList = await books.Where(x => x.BookTags.Where(y => y.TagId == filterid).Any()).ToListAsync();
                     break;
                 case EFilterType.Shelf:
-                    booksList = books.Where(x => bookids.Contains(x.Id)).ToList();
+                    booksList = await books.Where(x => bookids.Contains(x.Id)).ToListAsync();
                     break;
                 case EFilterType.Series:
-                    booksList = books.Where(x => x.BookSeries.Where(y => y.SeriesId == filterid).Any()).ToList();
+                    booksList = await books.Where(x => x.BookSeries.Where(y => y.SeriesId == filterid).Any()).ToListAsync();
                     break;
                 case EFilterType.Ratings:
-                    booksList = books.Where(x => x.BookRatings.Where(y => y.RatingId == filterid).Any()).ToList();
+                    booksList = await books.Where(x => x.BookRatings.Where(y => y.RatingId == filterid).Any()).ToListAsync();
                     break;
                 case EFilterType.Publishers:
-                    booksList = books.Where(x => x.BookPublishers.Where(y => y.PublisherId == filterid).Any()).ToList();
+                    booksList = await books.Where(x => x.BookPublishers.Where(y => y.PublisherId == filterid).Any()).ToListAsync();
                     break;
                 case EFilterType.Languages:
-                    booksList = books.Where(x => x.BookLanguages.Where(y => y.LanguageId == filterid).Any()).ToList();
+                    booksList = await books.Where(x => x.BookLanguages.Where(y => y.LanguageId == filterid).Any()).ToListAsync();
                     break;
                 default:
-                    booksList = books;
+                    booksList = await books.ToListAsync();
                     break;
             }
 
