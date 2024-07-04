@@ -103,7 +103,7 @@ namespace CalibreLib.Data
             return await context.Books.Where(x => bookids.Contains(x.Id)).ToListAsync();
         }
         
-        public async Task<List<Book>> GetByQueryAsync(string query)
+        public async Task<IEnumerable<Book>> GetByQueryAsync(string query)
         {
             //Contains() Ignore Case causes Sqlite EF exception currently. Still need to investigate why. Using ToLower() currently for case insenstive comparsion.
             //Potential lead: https://github.com/dotnet/efcore/issues/8033
