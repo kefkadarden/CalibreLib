@@ -79,6 +79,7 @@ function getPageCount() {
         $.ajax({
             type: 'GET',
             url: '/CardGrid/GetPageCount',
+            data: loadBooksQuery(false),
             success: function (data) {
                 $('#lblPageCount')[0].innerText = "Pages: " + data.pageCount;
             },
@@ -91,8 +92,13 @@ function getPageCount() {
     }
 }
 
-function loadBooksQuery() {
-    var url = 'pageNumber=' + page++ + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
+function loadBooksQuery(pageIncrement = true) {
+    
+
+    var url = 'pageNumber=' + page + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
+
+    if (pageIncrement)
+        page++;
 
     if (shelf != null)
         url += "&shelf=" + shelf;

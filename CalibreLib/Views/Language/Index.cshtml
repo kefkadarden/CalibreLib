@@ -1,8 +1,31 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using CalibreLib.Models.Metadata
 @using CalibreLib.Views.Shared.Components
+@model Language
 
-@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.Languages })
+@{
+    if (Model != null)
+    {
+       <script>
+            language = @Model.Id;
+        </script>
+
+        <h2>Language: @Model.LangCode</h2> 
+    }
+}
+@{
+    if (Model == null)
+    {
+        @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.Languages })
+    }
+}
+
+@{
+    if (Model != null)
+    {
+        <div class="container-fluid">
+             @{
+                @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
+            }
+        </div>
+    }
+}

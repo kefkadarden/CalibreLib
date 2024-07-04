@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Data;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,11 @@ namespace CalibreLib.Controllers
     public class RatingController : Controller
     {
         private readonly BookRepository _bookRepository;
-        public RatingController(BookRepository bookRepository)
+        private readonly MetadataDBContext _metadataDBContext;
+        public RatingController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
         {
             _bookRepository = bookRepository;
+            _metadataDBContext = metadataDBContext;
         }
 
         [Route("rating/{id?}")]
@@ -19,9 +22,12 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var _books = await _bookRepository.GetByRatingAsync((int)id);
-            var _bc = await _bookRepository.GetBookCardModels(_books);
-            return View("RatingBookGrid", _bc);
+            var rating = _metadataDBContext.Ratings.FirstOrDefault(x => x.Id == id);
+
+            if (rating == null)
+                return NotFound();
+
+            return View(rating);
         }
     }
 }

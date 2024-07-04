@@ -22,8 +22,6 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var _books = await _bookRepository.GetByAuthorAsync((int)id);
-            var _bc = await _bookRepository.GetBookCardModels(_books);
             var author = _metadataDBContext.Authors.FirstOrDefault(x => x.Id == id);
             if (author == null)
                 return NotFound();

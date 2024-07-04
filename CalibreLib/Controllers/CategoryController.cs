@@ -24,9 +24,11 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var _books = await _bookRepository.GetByTagAsync((int)id);
-            var _bc = await _bookRepository.GetBookCardModels(_books);
             var tag = _metadataDBContext.Tags.FirstOrDefault(x => x.Id == id);
+
+            if (tag == null)
+                return NotFound();
+
             return View(tag);
         }
     }

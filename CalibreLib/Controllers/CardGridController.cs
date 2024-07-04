@@ -7,6 +7,12 @@ using CalibreLib.Areas.Identity.Data;
 using Microsoft.Graph;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Drawing.Printing;
+using System.Globalization;
+using System.Security.Policy;
+using System;
 
 namespace CalibreLib.Controllers
 {
@@ -27,9 +33,16 @@ namespace CalibreLib.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPageCount()
+        public async Task<IActionResult> GetPageCount(string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
+                                                    , string? category = null
+                                                    , string? author = null
+                                                    , string? publisher = null
+                                                    , string? language = null
+                                                    , string? rating = null
+                                                    , string? series = null)
         {
-            var count = await bookRepository.GetPageCountAsync();
+            var books = await GetBookList(0, query, sortBy, null, shelf, category, author, publisher, language, rating, series);
+            var count = bookRepository.GetPageCount(books);
             return Json(new { pageCount = count });
         }
 
@@ -67,6 +80,19 @@ namespace CalibreLib.Controllers
         }
 
         public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
+                                                    , string? category = null
+                                                    , string? author = null
+                                                    , string? publisher = null
+                                                    , string? language = null
+                                                    , string? rating = null
+                                                    , string? series = null)
+        {
+            var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series);
+            var model = await bookRepository.GetBookCardModels(books);
+            return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
+        }
+
+        private async Task<List<Book>> GetBookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
                                                     , string? category = null
                                                     , string? author = null
                                                     , string? publisher = null
@@ -138,10 +164,14 @@ namespace CalibreLib.Controllers
 
             if (pageSize != null)
                 bookRepository.PageSize = (int)pageSize;
+            else
+            {
+                var booksAll = await bookRepository.GetAllAsync();
+                bookRepository.PageSize = booksAll.Count();
+            }
 
-            var books = await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id);
-            var model = await bookRepository.GetBookCardModels(books);
-            return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
+            var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id);
+            return books.ToList();
         }
 
         public async Task<IActionResult> UpdateArchivedStatus(int bookid = -1, bool isArchived = false)

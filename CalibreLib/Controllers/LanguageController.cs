@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Data;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,11 @@ namespace CalibreLib.Controllers
     public class LanguageController : Controller
     {
         private readonly BookRepository _bookRepository;
-        public LanguageController(BookRepository bookRepository)
+        private readonly MetadataDBContext _metadataDBContext;
+        public LanguageController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
         {
             _bookRepository = bookRepository;
+            _metadataDBContext = metadataDBContext; 
         }
 
 
@@ -20,9 +23,12 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var _books = await _bookRepository.GetByLanguageAsync((int)id);
-            var _bc = await _bookRepository.GetBookCardModels(_books);
-            return View("LanguageBookGrid", _bc);
+            var language = _metadataDBContext.Languages.FirstOrDefault(x => x.Id == id);
+
+            if (language == null)
+                return NotFound();
+
+            return View(language);
         }
     }
 }

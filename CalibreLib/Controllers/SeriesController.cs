@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Data;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,11 @@ namespace CalibreLib.Controllers
     public class SeriesController : Controller
     {
         private readonly BookRepository _bookRepository;
-        public SeriesController(BookRepository bookRepository)
+        private readonly MetadataDBContext _metadataDBContext;
+        public SeriesController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
         {
             _bookRepository = bookRepository;
+            _metadataDBContext = metadataDBContext;
         }
 
         [Route("series/{id?}")]
@@ -19,9 +22,12 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var _books = await _bookRepository.GetBySeriesAsync((int)id);
-            var _bc = await _bookRepository.GetBookCardModels(_books);
-            return View("SeriesBookGrid", _bc);
+            var series = _metadataDBContext.Series.FirstOrDefault(x => x.Id == id);
+
+            if (series == null)
+                return NotFound();
+
+            return View(series);
         }
     }
 }
