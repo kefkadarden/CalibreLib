@@ -123,8 +123,8 @@ namespace CalibreLib.Controllers
             return View(foundShelf);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int? id)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var shelf = user.Shelves.FirstOrDefault(x => x.Id == id);

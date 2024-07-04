@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookCardModel>
+﻿@* @model IEnumerable<BookCardModel> *@
 @using CalibreLib.Views.Shared.Components
 
 <h2>Books</h2>
@@ -10,7 +10,7 @@
             <div id=""cardGridRow"" class=""row"">";
         ViewContext.Writer.WriteLine(strHeader);
 
-        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml", Model);
+        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml");
 
         var strFooter = @"</div>
         </div>";
@@ -28,7 +28,7 @@
     <button class="btn btn-outline-primary" for="btnNext" onclick="pagingNavigation('Next');">Next</button>
     <label id="lblPageCount" class="fw-bold p-3"></label>
 </div>
-<script type="text/javascript" src="js/cardgrid.js" asp-append-version="true"></script>
+
 <script type="text/javascript">
     window.addEventListener('load', function () {
         $("div#loading").hide();

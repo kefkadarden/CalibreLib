@@ -4,5 +4,6 @@
 @{
 }
 @using CalibreLib.Views.Shared.Components
+@model List<BookCardModel>
 
 @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EPageToolbarType.Categories })

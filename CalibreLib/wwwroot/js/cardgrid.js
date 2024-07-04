@@ -1,11 +1,18 @@
 ﻿
-var ajaxCallUrl = 'CardGrid/BookList',  
-    page = 0,  
+var ajaxCallUrl = '/CardGrid/BookList',
+    page = 0,
     pagingEnabled = false,
     sortBy = localStorage.getItem('gridSortBy') ?? 'datedesc',
     pageSize = localStorage.getItem('gridPageSize') ?? 30,
-    inCallback = false,  
-    isReachedScrollEnd = false;  
+    inCallback = false,
+    isReachedScrollEnd = false,
+    shelf = null,
+    category = null,
+    author = null,
+    language = null,
+    publisher = null,
+    rating = null,
+    series = null;
   
 function updateSortBy(_sortBy) {
     localStorage.setItem('gridSortBy', _sortBy);
@@ -71,7 +78,7 @@ function getPageCount() {
     if (pagingEnabled) {
         $.ajax({
             type: 'GET',
-            url: 'CardGrid/GetPageCount',
+            url: '/CardGrid/GetPageCount',
             success: function (data) {
                 $('#lblPageCount')[0].innerText = "Pages: " + data.pageCount;
             },
@@ -84,6 +91,33 @@ function getPageCount() {
     }
 }
 
+function loadBooksQuery() {
+    var url = 'pageNumber=' + page++ + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
+
+    if (shelf != null)
+        url += "&shelf=" + shelf;
+
+    if (author != null)
+        url += "&author=" + author;
+
+    if (publisher != null)
+        url += "&publisher=" + publisher;
+
+    if (rating != null)
+        url += "&rating=" + rating;
+
+    if (category != null)
+        url += "&category=" + category;
+
+    if (series != null)
+        url += "&series=" + series;
+
+    if (language != null)
+        url += "&language=" + language;
+
+    return url;
+}
+
 function loadBooks(ajaxCallUrl, isPaging) {  
     if (page > -1 && !inCallback) {  
         inCallback = true;  
@@ -91,7 +125,7 @@ function loadBooks(ajaxCallUrl, isPaging) {
         $.ajax({  
             type: 'GET',  
             url: ajaxCallUrl,  
-            data: "pageNumber=" + page++ + "&sortBy=" + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", ""),  
+            data: loadBooksQuery(),  
             success: function (data, textstatus) { 
                 if (data.replace(/(\r\n|\n|\r)/gm, "") != '') {  
                     if (isPaging)
@@ -123,35 +157,36 @@ function loadBooks(ajaxCallUrl, isPaging) {
     getPageCount();
 }  
 
+window.onload = () => {
+    let lblPageNum = document.getElementById('lblPageNum');
 
-let lblPageNum = document.getElementById('lblPageNum');
+    lblPageNum.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
+            loadBooks(ajaxCallUrl, true);
+            lblPageNum.value = page;
+        }
+    });
+    lblPageNum.addEventListener('keypress', (event) => {
+        if (!Number.parseInt(event.key) && event.key != '0') {
+            event.preventDefault();
+        }
+    });
 
-lblPageNum.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') {
-        page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
-        loadBooks(ajaxCallUrl, true);
-        lblPageNum.value = page;
-    }
-});
-lblPageNum.addEventListener('keypress', (event) => {
-    if (!Number.parseInt(event.key) && event.key != '0') {
-        event.preventDefault();
-    }
-});
+    let lblPageSize = document.getElementById('lblPageSize');
 
-let lblPageSize = document.getElementById('lblPageSize');
-
-lblPageSize.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') {
-        localStorage.setItem('gridPageSize', lblPageSize.value);
-        pageSize = lblPageSize.value;
-        page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
-        loadBooks(ajaxCallUrl, true);
-        lblPageNum.value = page;
-    }
-});
-lblPageSize.addEventListener('keypress', (event) => {
-    if (!Number.parseInt(event.key) && event.key != '0') {
-        event.preventDefault();
-    }
-});
+    lblPageSize.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            localStorage.setItem('gridPageSize', lblPageSize.value);
+            pageSize = lblPageSize.value;
+            page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
+            loadBooks(ajaxCallUrl, true);
+            lblPageNum.value = page;
+        }
+    });
+    lblPageSize.addEventListener('keypress', (event) => {
+        if (!Number.parseInt(event.key) && event.key != '0') {
+            event.preventDefault();
+        }
+    });
+}

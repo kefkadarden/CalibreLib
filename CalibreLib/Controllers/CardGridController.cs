@@ -66,7 +66,13 @@ namespace CalibreLib.Controllers
             return Ok();
         }
 
-        public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30)
+        public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
+                                                    , string? category = null
+                                                    , string? author = null
+                                                    , string? publisher = null
+                                                    , string? language = null
+                                                    , string? rating = null
+                                                    , string? series = null)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -90,7 +96,7 @@ namespace CalibreLib.Controllers
             if (pageSize != null)
                 bookRepository.PageSize = (int)pageSize;
 
-            var books = await bookRepository.GetBooks(pageNumber, orderBy, query, ascending);
+            var books = await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, shelf, category, author, publisher, language, rating, series);
             var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }

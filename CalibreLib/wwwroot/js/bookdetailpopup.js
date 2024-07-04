@@ -21,7 +21,7 @@ function chkArchived_Click(e) {
     //update database 
     $.ajax({  
         type: 'POST',  
-        url: 'CardGrid/UpdateArchivedStatus',  
+        url: '/CardGrid/UpdateArchivedStatus',  
         data: "bookid=" + bookid + "&isArchived=" + e.checked,  
         success: function (data) { 
             
@@ -35,7 +35,7 @@ function chkArchived_Click(e) {
 function sendEPub(bookid) {
     $.ajax({
         type: 'POST',
-        url: 'CardGrid/SendEPubToReader',
+        url: '/CardGrid/SendEPubToReader',
         data: "bookid=" + bookid,
         success: function (data) {
 

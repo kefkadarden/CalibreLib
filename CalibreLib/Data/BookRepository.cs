@@ -43,7 +43,7 @@ namespace CalibreLib.Data
             return Convert.ToInt32(Math.Ceiling( Convert.ToDecimal(count / dPageSize) ));
         }
 
-        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string ? query, bool ascending = true)
+        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, string? type = null, string? shelf = null)
         {
             var numRecordsToSkip = pageNumber * PageSize;
             IEnumerable<Book> books = new List<Book>();
@@ -51,16 +51,38 @@ namespace CalibreLib.Data
                 books = await GetByQueryAsync(query);
             else
                 books = context.Books;
-             
+
+            int shelfid;
+            int? nullableShelfid = null;
+            if (Int32.TryParse(shelf, out shelfid)) { nullableShelfid = shelfid; }
+            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
+            var bookids = user?.Shelves.FirstOrDefault(x => x.Id == nullableShelfid)?.BookShelves.Select(x => x.BookId);
+
             if (ascending)
-                return books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+            { 
+                if (bookids != null && nullableShelfid != null)
+                    return books.Where(x => bookids.Contains(x.Id)).OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+                else
+                    return books.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+            }  
             else
-                return books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+            {
+                if (bookids != null && nullableShelfid != null)
+                    return books.Where(x => bookids.Contains(x.Id)).OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+                else
+                    return books.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+            }
+                
         }
 
         public async Task<Book> GetByIDAsync(int id)
         {
             return await context.Books.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<IEnumerable<Book>> GetByBookListAsync(IEnumerable<int> bookids)
+        {
+            return await context.Books.Where(x => bookids.Contains(x.Id)).ToListAsync();
         }
         
         public async Task<List<Book>> GetByQueryAsync(string query)
@@ -68,14 +90,16 @@ namespace CalibreLib.Data
             //Contains() Ignore Case causes Sqlite EF exception currently. Still need to investigate why. Using ToLower() currently for case insenstive comparsion.
             //Potential lead: https://github.com/dotnet/efcore/issues/8033
             query = query.ToLower();
-            return await context.Books.Where(x => x.Title.ToLower().Contains(query) || 
-                                                  x.Isbn.ToLower().Contains(query) ||
-                                                  x.Lccn.ToLower().Contains(query) ||
-                                                  x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
-                                                  x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
-                                                  x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||
-                                                  x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))
-            ).ToListAsync();
+
+            
+                return await context.Books.Where(x => x.Title.ToLower().Contains(query) ||
+                                                      x.Isbn.ToLower().Contains(query) ||
+                                                      x.Lccn.ToLower().Contains(query) ||
+                                                      x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
+                                                      x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
+                                                      x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||
+                                                      x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))).ToListAsync();
+            
         }
 
         public async Task<IEnumerable<Book>> GetByAuthorAsync(int id)

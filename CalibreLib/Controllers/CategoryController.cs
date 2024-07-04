@@ -22,7 +22,7 @@ namespace CalibreLib.Controllers
 
             var _books = await _bookRepository.GetByTagAsync((int)id);
             var _bc = await _bookRepository.GetBookCardModels(_books);
-            return View("CategoryBookGrid", _bc);
+            return View("Components/BookCardGrid", _bc);
         }
     }
 }
