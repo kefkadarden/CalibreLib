@@ -41,7 +41,7 @@ namespace CalibreLib.Controllers
                                                     , string? rating = null
                                                     , string? series = null)
         {
-            var books = await GetBookList(0, query, sortBy, null, shelf, category, author, publisher, language, rating, series);
+            var books = await GetBookList(0, query, sortBy, null, shelf, category, author, publisher, language, rating, series, true);
             var count = bookRepository.GetPageCount(books);
             return Json(new { pageCount = count });
         }
@@ -98,7 +98,8 @@ namespace CalibreLib.Controllers
                                                     , string? publisher = null
                                                     , string? language = null
                                                     , string? rating = null
-                                                    , string? series = null)
+                                                    , string? series = null
+                                                    , bool restorePageSize = false)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -162,15 +163,24 @@ namespace CalibreLib.Controllers
                 type = EFilterType.BookCardGrid;
             }
 
+            var savedPageSize = bookRepository.PageSize;
+
             if (pageSize != null)
+            {
                 bookRepository.PageSize = (int)pageSize;
+            }
             else
             {
                 var booksAll = await bookRepository.GetAllAsync();
                 bookRepository.PageSize = booksAll.Count();
             }
+            
 
             var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id);
+
+            if (restorePageSize)
+                bookRepository.PageSize = savedPageSize;
+
             return books.ToList();
         }
 

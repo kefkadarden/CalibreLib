@@ -3,29 +3,26 @@
 @model Tag
 
 @{
+    var filterType = EFilterType.Categories;
+}
+
+@{
     if (Model != null)
     {
-       <script>
+        <script>
             category = @Model.Id;
         </script>
 
         <h2>Category: @Model.Name</h2> 
-    }
-}
-@{
-    if (Model == null)
-    {
-        @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.Categories })
-    }
-}
-
-@{
-    if (Model != null)
-    {
         <div class="container-fluid">
-             @{
-                @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
-            }
+            @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-10">
+            @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = filterType })
+            @await Component.InvokeAsync(typeof(ListViewComponent), new { type = filterType })
         </div>
     }
 }

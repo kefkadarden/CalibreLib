@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CalibreLib.Models.Metadata;
 
@@ -9,6 +10,7 @@ public partial class Rating
 
     public int? Rating1 { get; set; }
 
+    [NotMapped]
     public int? RatingValue
     { 
         get 

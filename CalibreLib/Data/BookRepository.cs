@@ -150,6 +150,9 @@ namespace CalibreLib.Data
 
         public async Task<IEnumerable<Book>> GetByRatingAsync(int id)
         {
+            if (id == -1)
+                return await context.Books.Where(x => x.BookRatings.Count() == 0).ToListAsync();
+
             return await context.Books.Where(x => x.BookRatings.Where(y => y.RatingId == id).Any()).ToListAsync();
         }
 

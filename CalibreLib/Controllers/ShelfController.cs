@@ -1,5 +1,6 @@
 ﻿using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,60 @@ namespace CalibreLib.Controllers
             }
 
             
+        }
+
+        [HttpGet]
+        public IActionResult RefreshShelfSelection(int bookId)
+        {
+            return ViewComponent("ShelfSelectionComponent", new { bookId = bookId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(int shelfId, int bookId)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (user != null)
+            {
+                var shelf = user.Shelves.Find(x => x.Id.Equals(shelfId));
+
+                if (shelf != null)
+                {
+                    shelf.BookShelves.Add(new BooksShelvesLink()
+                    {
+                        BookId = bookId,
+                        DateAdded = DateTime.Now,
+                        ShelfId = shelfId,
+                        Order = shelf.BookShelves.Max(x => (int?)x.Order) ?? 0 + 1
+                    });
+                }
+
+                await _userManager.UpdateAsync(user);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Remove(int shelfId, int bookId)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (user != null)
+            {
+                var shelf = user.Shelves.Find(x => x.Id.Equals(shelfId));
+
+                if (shelf != null)
+                {
+                    var bookonshelf = shelf.BookShelves.Find(x => x.BookId == bookId);
+                    if (bookonshelf != null)
+                        shelf.BookShelves.Remove(bookonshelf);
+                }
+
+                await _userManager.UpdateAsync(user);
+            }
+
+            return Ok();
         }
 
         [HttpGet]

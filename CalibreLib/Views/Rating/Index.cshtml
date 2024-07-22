@@ -3,29 +3,26 @@
 @model Rating
 
 @{
+    var filterType = EFilterType.Ratings;
+}
+
+@{
     if (Model != null)
     {
-       <script>
+        <script>
             rating = @Model.Id;
         </script>
 
-        <h2>Rating: @Model.Rating1</h2> 
-    }
-}
-@{
-    if (Model == null)
-    {
-        @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.Ratings })
-    }
-}
-
-@{
-    if (Model != null)
-    {
+        <h2>Rating: @Model.RatingValue Stars</h2> 
         <div class="container-fluid">
-             @{
-                @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
-            }
+            @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-10">
+            @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = filterType })
+            @await Component.InvokeAsync(typeof(ListViewComponent), new { type = filterType })
         </div>
     }
 }

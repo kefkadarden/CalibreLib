@@ -45,3 +45,41 @@ function sendEPub(bookid) {
         }
     });
 }
+
+function addToShelf(shelfId, bookid) {
+    $.ajax({
+        type: 'POST',
+        url: '/Shelf/Add',
+        data: "shelfId="+shelfId+"&bookId=" + bookid,
+        success: function (data) {
+            refreshShelfSelection(bookid);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}
+
+function removeFromShelf(shelfId, bookid) {
+    $.ajax({
+        type: 'POST',
+        url: '/Shelf/Remove',
+        data: "shelfId="+shelfId+"&bookId=" + bookid,
+        success: function (data) {
+            refreshShelfSelection(bookid);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}
+
+function refreshShelfSelection(bookid) {
+    $.ajax({
+        type: 'GET',
+        url: '/Shelf/RefreshShelfSelection?BookId='+bookid,
+        success: function (data) {
+            $('#shelfSelection' + bookid).html(data);
+        },
+    });
+}

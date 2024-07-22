@@ -22,7 +22,13 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
+
             var rating = _metadataDBContext.Ratings.FirstOrDefault(x => x.Id == id);
+
+            if (id == -1)
+            {
+                return View(new Rating() { Id = -1, Rating1 = 0 });
+            }
 
             if (rating == null)
                 return NotFound();

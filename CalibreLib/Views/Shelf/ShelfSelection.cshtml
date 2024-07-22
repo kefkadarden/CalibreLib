@@ -1,0 +1,27 @@
+﻿@using CalibreLib.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@model ShelfSelectionModel
+<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Add to Shelf</button>
+<ul class="dropdown-menu">
+@{
+    var shelvesContainingBook = Model.UserShelves.Where(x => x.BookShelves.Find(y => y.BookId == Model.BookId) != null);
+    var shelvesNotContainingBook = Model.UserShelves.Where(x => x.BookShelves.Find(y => y.BookId == Model.BookId) == null);
+    if (shelvesNotContainingBook != null && shelvesNotContainingBook.Count() > 0)
+    {
+        foreach (var shelf in shelvesNotContainingBook)
+        {
+            <li><a class="dropdown-item user-select-none" onclick="addToShelf(@shelf.Id,@Model.BookId);">@shelf.Name</a></li>
+        }
+    }
+    if (shelvesContainingBook != null && shelvesContainingBook.Count() > 0)
+    {
+        <span class="text-sm-start pt-4 ps-2 fw-bold user-select-none">On Shelf</span>
+        <hr class="dropdown-divider">
+                                
+        foreach (var shelf in shelvesContainingBook)
+        {
+            <li><a class="dropdown-item user-select-none" onclick="removeFromShelf(@shelf.Id,@Model.BookId);">@shelf.Name</a></li>
+        }
+    }
+}
+</ul>

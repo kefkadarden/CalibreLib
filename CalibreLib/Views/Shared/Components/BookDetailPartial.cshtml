@@ -1,5 +1,10 @@
 ﻿@using CalibreLib.Models
+@using Microsoft.AspNetCore.Identity
+@using CalibreLib.Areas.Identity.Data
+@using CalibreLib.Views.Shared.Components
+
 @model BookCardModel
+@inject UserManager<ApplicationUser> _userManager
 
 <style>
     .label {
@@ -96,7 +101,7 @@
                       </div>
                       <div class="d-inline-flex">
                           <div class="btn-group mt-3">
-                              @{ ViewContext.Writer.WriteLine(Model.AddShelfButtonHTML); }
+                              <div id="shelfSelection@{@Model.Book.Id}">@await Component.InvokeAsync(typeof(ShelfSelectionComponent), new {bookId = Model.Book.Id })</div>
                             <a class="btn btn-primary ms-1" href="/book/edit/@Model.id">Edit Metadata</a>
                           </div>
                       </div>

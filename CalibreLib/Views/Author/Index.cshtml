@@ -3,29 +3,27 @@
 @model Author
 
 @{
+    var filterType = EFilterType.Authors;
+}
+
+@{
     if (Model != null)
     {
-       <script>
+        <script>
             author = @Model.Id;
         </script>
 
-        <h2>Author: @Model.Name</h2> 
-    }
-}
-@{
-    if (Model == null)
-    {
-        @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.Authors })
-    }
-}
-
-@{
-    if (Model != null)
-    {
+        <h2>Author: @Model.Name</h2>
         <div class="container-fluid">
-             @{
-                @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
-            }
+            @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-10">
+            @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = filterType })
+            @await Component.InvokeAsync(typeof(ListViewComponent), new { type = filterType })
         </div>
     }
 }
+

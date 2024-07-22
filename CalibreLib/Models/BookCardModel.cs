@@ -30,7 +30,7 @@ namespace CalibreLib.Models
         { 
             get
             {
-                return String.Join(" & ",this.Authors.Select(x => @"<a class=""link-primary"" href=""author/" + x.Author.Id + @""">" + x.Author.Name + @"</a>"));
+                return String.Join(" & ",this.Authors.Select(x => @"<a class=""link-primary"" href=""/author/" + x.Author.Id + @""">" + x.Author.Name + @"</a>"));
             } 
         }
 
@@ -38,7 +38,7 @@ namespace CalibreLib.Models
         {
             get
             {
-                return String.Join(" & ", this.Series.Select(x => @"<a class=""link-primary"" href=""series/" + x.Series.Id + @""">" + x.Series.Name +"</a>" + @" (" + x.Book.SeriesIndex + ")"));
+                return String.Join(" & ", this.Series.Select(x => @"<a class=""link-primary"" href=""/series/" + x.Series.Id + @""">" + x.Series.Name +"</a>" + @" (" + x.Book.SeriesIndex + ")"));
             }
         }
         
@@ -58,7 +58,7 @@ namespace CalibreLib.Models
             get 
             {
 
-                return String.Join(" & ", this.Book.BookPublishers.Select(x => @"Publisher: " + @"<a class=""link-primary"" href=""publisher/" + x.Publisher.Id + @""">" + x.Publisher.Name + "</a>"));
+                return String.Join(" & ", this.Book.BookPublishers.Select(x => @"Publisher: " + @"<a class=""link-primary"" href=""/publisher/" + x.Publisher.Id + @""">" + x.Publisher.Name + "</a>"));
             } 
         }
 
@@ -77,7 +77,7 @@ namespace CalibreLib.Models
                 string tags = "";
                 if (this.Tags != null && this.Tags.Count() > 0)
                 {
-                    tags = String.Join("", this.Tags.Select(x => @"<p class=""label label-blue mb-1 me-1""><a class=""link-light link-primary"" href=""categories/" + x.TagId.ToString() + @""">" + x.Tag.Name + "</a></p>"));
+                    tags = String.Join("", this.Tags.Select(x => @"<p class=""label label-blue mb-1 me-1""><a class=""link-light link-primary"" href=""/category/" + x.TagId.ToString() + @""">" + x.Tag.Name + "</a></p>"));
                 }
                  
                 return tags;
@@ -88,7 +88,7 @@ namespace CalibreLib.Models
         {
             get
             {
-                return String.Join("", this.Book.Identifiers.Select(x => @"<p class=""label label-green mb-1 me-1""><a class=""link-light link-primary"" href=""identifier/" + x.Val + @""">" + x.Type + "</a></p>"));
+                return String.Join("", this.Book.Identifiers.Select(x => @"<p class=""label label-green mb-1 me-1""><a class=""link-light link-primary"" href=""/identifier/" + x.Val + @""">" + x.Type + "</a></p>"));
             }
         }
 
@@ -96,21 +96,6 @@ namespace CalibreLib.Models
         public bool Archived { get; set; } = false;
 
         public string Description { get; set; }
-
-        public string AddShelfButtonHTML
-        {
-            get
-            {
-                return "<button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">\r\n    Add to Shelf\r\n  </button>\r\n  " +
-                    "<ul class=\"dropdown-menu\">\r\n    " +
-                    "<li><a class=\"dropdown-item\" href=\"#\">Action</a></li>\r\n    " +
-                    "<li><a class=\"dropdown-item\" href=\"#\">Another action</a></li>\r\n    " +
-                    "<li><a class=\"dropdown-item\" href=\"#\">Something else here</a></li>\r\n    " +
-                    "<li><hr class=\"dropdown-divider\"></li>\r\n    " +
-                    "<li><a class=\"dropdown-item\" href=\"#\">Separated link</a></li>\r\n  " +
-                    "</ul>\r\n";
-            }
-        }
 
         public string AddDownloadButtonHTML
         {
