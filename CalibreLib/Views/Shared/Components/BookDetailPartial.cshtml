@@ -46,8 +46,9 @@
                               if (Model.Book.Data.Count() > 0) {
                                   ViewContext.Writer.WriteLine(Model.AddDownloadButtonHTML);
                               }
+                              ViewContext.Writer.WriteLine(Model.SendToEReaderHTML);
                               if (Model.Book.Data.FirstOrDefault(e => e.Format?.ToUpper() == "EPUB") != null) {
-                                  <button class="btn btn-primary ms-1" onclick="sendEPub(@Model.id);">Send Epub to eReader</button>
+                                  // <button class="btn btn-primary ms-1" onclick="sendEPub(@Model.id);">Send Epub to eReader</button>
                                   //@Html.ActionLink("Send Epub to eReader","SendEPubToReader","CardGrid", new { BookID = Model.id }, new {@class="btn btn-primary ms-1" })
                                   @Html.ActionLink("Read in Browser - epub","ViewEPub","CardGrid", new { BookPath = Model.Book.Path + "/" + Model.Book.Data.FirstOrDefault(e => e.Format?.ToUpper() == "EPUB").Name + ".epub" }, new {@target = "_blank", @class="btn btn-primary ms-1" })
                               }

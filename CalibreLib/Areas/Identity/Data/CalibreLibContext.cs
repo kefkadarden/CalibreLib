@@ -1,4 +1,5 @@
 ﻿using CalibreLib.Areas.Identity.Data;
+using CalibreLib.Models.MailService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ namespace CalibreLib.Data;
 public class CalibreLibContext : IdentityDbContext<ApplicationUser>
 {
     public virtual DbSet<ArchivedBook> ArchivedBooks { get; set; }
+    public virtual DbSet<MailSettings> MailSettings { get; set; }
 
     public CalibreLibContext(DbContextOptions<CalibreLibContext> options)
         : base(options)
@@ -114,6 +116,29 @@ public class CalibreLibContext : IdentityDbContext<ApplicationUser>
             .HasColumnName("date_added");
 
             entity.HasOne(e => e.Shelf).WithMany(e => e.BookShelves).HasForeignKey(e => e.ShelfId);
+        });
+
+        builder.Entity<MailSettings>(entity =>
+        {
+            entity.ToTable("Settings", (string)null);
+
+            entity.Property(e => e.Id)
+            .ValueGeneratedOnAdd()
+            .HasColumnName("id");
+            entity.Property(e => e.SMTP_HostName)
+            .HasColumnName("smtp_hostname");
+            entity.Property(e => e.SMTP_Port)
+            .HasColumnName("smtp_port");
+            entity.Property(e => e.SMTP_Encryption)
+            .HasColumnName("smtp_encryption");
+            entity.Property(e => e.SMTP_UserName)
+            .HasColumnName("smtp_username");
+            entity.Property(e => e.SMTP_Password)
+            .HasColumnName("smtp_password");
+            entity.Property(e => e.FromEmail)
+            .HasColumnName("from_email");
+            entity.Property(e => e.SMTP_AttachmentSize)
+            .HasColumnName("smtp_attachmentsize");
         });
     }
 }

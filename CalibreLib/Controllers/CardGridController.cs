@@ -13,6 +13,7 @@ using System.Drawing.Printing;
 using System.Globalization;
 using System.Security.Policy;
 using System;
+using CalibreLib.Models.MailService;
 
 namespace CalibreLib.Controllers
 {
@@ -23,13 +24,15 @@ namespace CalibreLib.Controllers
         private BookRepository bookRepository;
         private UserManager<ApplicationUser> _userManager;
         private IWebHostEnvironment _env;
+        private readonly IMailService _mailService;
 
 
-        public CardGridController(BookRepository bookRepository, IWebHostEnvironment env, UserManager<ApplicationUser> userManager)
+        public CardGridController(BookRepository bookRepository, IWebHostEnvironment env, UserManager<ApplicationUser> userManager, IMailService mailService)
         {
             this.bookRepository = bookRepository;
             _env = env;
             _userManager = userManager;
+            _mailService = mailService;
         }
 
         [HttpGet]
@@ -52,15 +55,32 @@ namespace CalibreLib.Controllers
             return PartialView("~/Views/Shared/Components/EPubViewer.cshtml", BookPath);
         }
 
-        public async Task<IActionResult> SendEPubToReader(int BookID)
+        public async Task<IActionResult> SendToReader(int BookID, string Format)
         {
             var book = await bookRepository.GetByIDAsync(BookID);
 
-            /*send book to eReader
-                1. Get User's eReader email address.
-                2. Generate MailKit email with book ePub attachment.
-            */
-            return Ok();
+            var _user = await _userManager.GetUserAsync(User);
+
+            if (_user == null)
+                return Unauthorized();
+
+            var emailAddress = _user.EReaderEmail;
+
+            BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
+            var response = await fm.DownloadBookAsync(book, Format.ToLower());
+            Stream attachment = new MemoryStream(response);
+
+            await _mailService.SendMailAsync(new MailData()
+            {
+                EmailAddress = emailAddress,
+                Body = "",
+                Subject = book.Title,
+                Attachment = attachment,
+                AttachmentName = book.Title + $".{Format.ToLower()}",
+                IsBodyHtml = false
+            });
+
+            return Ok($"Success! Book queued for sending to {emailAddress}");
         }
 
         public async Task<IActionResult> DownloadBook(int BookID, string Format)

@@ -5,6 +5,8 @@
 @{
     var id = "bookDetailModalCenter" + Model.id;
     var titleid = "bookDetailModalLongTitle" + Model.id;
+    var successDiv = "SuccessDiv" + Model.id;
+    var errorDiv = "ErrorDiv" + Model.id;
 }
 
 <!-- Modal -->
@@ -16,6 +18,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+          <div id="@successDiv" class="bg-success text-wrap visually-hidden p-3 mb-2 text-white" style="--bs-bg-opacity: .5;"></div>
+          <div id="@errorDiv" class="bg-danger text-wrap visually-hidden p-3 mb-2 text-white" style="--bs-bg-opacity: .5;"></div>
           @await Html.PartialAsync("/Views/Shared/Components/BookDetailPartial.cshtml", Model)
       </div>
       <div class="modal-footer">
@@ -24,3 +28,10 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+    $('#@id').on('hide.bs.modal', function (e) {
+        $('#@successDiv').addClass('visually-hidden');
+        $('#@errorDiv').addClass('visually-hidden');
+    })    
+</script>

@@ -1,5 +1,6 @@
 using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
+using CalibreLib.Models.MailService;
 using CalibreLib.Models.Metadata;
 using CalibreLib.Services;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,11 @@ builder.Services.AddDbContext<CalibreLibContext>(options => options.UseLazyLoadi
 builder.Services.AddDbContext<MetadataDBContext>(options => options.UseLazyLoadingProxies().UseSqlite(metaDataConnectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<CalibreLibContext>();
+builder.Services.AddTransient<IMailService, MailService>();
+//builder.Services.AddTransient<Func<MailSettings, IMailService>>((provider) =>
+//{
+//    return new Func<MailSettings, IMailService>((mailSettings) => new MailService(mailSettings));
+//});
 
 var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
 

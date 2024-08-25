@@ -121,6 +121,7 @@ namespace CalibreLib.Data
                 return await context.Books.Where(x => x.Title.ToLower().Contains(query) ||
                                                       x.Isbn.ToLower().Contains(query) ||
                                                       x.Lccn.ToLower().Contains(query) ||
+                                                      x.Identifiers.Any(x => x.Val.ToLower().Contains(query)) || 
                                                       x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
                                                       x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
                                                       x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||

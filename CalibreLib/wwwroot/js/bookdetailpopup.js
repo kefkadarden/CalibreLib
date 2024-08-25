@@ -10,7 +10,7 @@
             
         },  
         error: function (XMLHttpRequest, textStatus, errorThrown) {  
-            alert(errorThrown);  
+            alert(XMLHttpRequest.responseJSON.detail);  
         }  
     });
 }
@@ -27,21 +27,25 @@ function chkArchived_Click(e) {
             
         },  
         error: function (XMLHttpRequest, textStatus, errorThrown) {  
-            alert(errorThrown);  
+            alert(XMLHttpRequest.responseJSON.detail);  
         }  
     });
 }
 
-function sendEPub(bookid) {
+function sendToReader(bookid, format) {
     $.ajax({
         type: 'POST',
-        url: '/CardGrid/SendEPubToReader',
-        data: "bookid=" + bookid,
+        url: '/CardGrid/SendToReader',
+        data: "bookid=" + bookid + "&format=" + format,
         success: function (data) {
-
+            $("#SuccessDiv" + bookid).removeClass("visually-hidden");
+            $("#SuccessDiv" + bookid).html(data);
+            console.log(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            var error = XMLHttpRequest.responseJSON.title;
+            $("#ErrorDiv" + bookid).html(error);
+            $("#ErrorDiv" + bookid).removeClass("visually-hidden");
         }
     });
 }
@@ -55,7 +59,7 @@ function addToShelf(shelfId, bookid) {
             refreshShelfSelection(bookid);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            alert(XMLHttpRequest.responseJSON.detail);
         }
     });
 }
@@ -69,7 +73,7 @@ function removeFromShelf(shelfId, bookid) {
             refreshShelfSelection(bookid);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            alert(XMLHttpRequest.responseJSON.detail);
         }
     });
 }
