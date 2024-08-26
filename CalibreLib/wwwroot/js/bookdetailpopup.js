@@ -40,7 +40,6 @@ function sendToReader(bookid, format) {
         success: function (data) {
             $("#SuccessDiv" + bookid).removeClass("visually-hidden");
             $("#SuccessDiv" + bookid).html(data);
-            console.log(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             var error = XMLHttpRequest.responseJSON.title;

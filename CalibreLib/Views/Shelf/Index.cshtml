@@ -16,7 +16,16 @@
 </script>
 <h2>Shelf: @Model.Name</h2>
 <div class="btn-group" role="group" aria-label="Shelf toolbar group">
-    <a href="#" class="btn btn-primary">Download</a>
+    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
+        <ul class="dropdown-menu">
+            @foreach(var datum in Model.BookCards.SelectMany(x => x.Book.Data).DistinctBy(d => d.Format))
+            {
+                var format = datum.Format;
+                var count = Model.BookCards.SelectMany(x => x.Book.Data).Where(x => x.Format == format).Count();
+                
+                <li><a class="dropdown-item" href="/CardGrid/DownloadShelf/?ShelfID=@Model.Id&Format=@format">@format (@count books)</a></li>
+            }
+        </ul>
     <a class="btn btn-danger" onclick="openDeleteModal(@Model.Id);">Delete this Shelf</a>
     <a class="btn btn-primary" asp-action="Edit" asp-controller="Shelf" asp-route-id="@Model.Id">Edit Shelf</a>
 </div>

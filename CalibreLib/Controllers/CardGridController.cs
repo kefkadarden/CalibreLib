@@ -14,6 +14,8 @@ using System.Globalization;
 using System.Security.Policy;
 using System;
 using CalibreLib.Models.MailService;
+using System.IO.Compression;
+using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
 
 namespace CalibreLib.Controllers
 {
@@ -97,6 +99,47 @@ namespace CalibreLib.Controllers
                 return File(result, "application/octet-stream", book.Title + "." + Format);
             }
             return Ok();
+        }
+
+        public async Task<IActionResult> DownloadShelf(int ShelfID, string format)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var zipName = $"Books_{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss")}.zip";
+            if (user == null)
+                return Unauthorized();
+
+            var shelf = user.Shelves.Find(x => x.Id.Equals(ShelfID));
+
+            if (shelf == null)
+                return BadRequest();
+            var bookIds = shelf.BookShelves.Select(x => x.BookId).ToList();
+            var books = await bookRepository.GetByBookListAsync(bookIds);
+            var booksFiltered = books.SelectMany(x => x.Data).Where(x => x.Format.ToLower() == format.ToLower()).ToList();
+
+            if (booksFiltered.Count() == 0) 
+                return NotFound();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                {
+                    booksFiltered.ForEach(book =>
+                    {
+                        var entry = zip.CreateEntry(book.Book.Title + "." + format);
+                        BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
+                        var result = fm.DownloadBookAsync(book.Book, format).Result;
+                        using (var fileStream = new MemoryStream(result))
+                        {
+                            using (var entryStream = entry.Open())
+                            {
+                                fileStream.CopyTo(entryStream);
+                            }
+                        }
+                    });
+                }
+
+                return File(ms.ToArray(), "application/zip", zipName);
+            }
         }
 
         public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
