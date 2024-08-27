@@ -46,7 +46,7 @@ namespace CalibreLib.Services
             }
             message.Body = bodyBuilder.ToMessageBody();
 
-            using (var client = new SmtpClient(new ProtocolLogger("smtp.log")))
+            using (var client = new SmtpClient(new ProtocolLogger("./Logs/smtp.log")))
             {
                 await client.ConnectAsync(_mailsettings.SMTP_HostName, _mailsettings.SMTP_Port, _mailsettings.SMTP_Encryption);
                 await client.AuthenticateAsync(_mailsettings.SMTP_UserName, _mailsettings.SMTP_Password);

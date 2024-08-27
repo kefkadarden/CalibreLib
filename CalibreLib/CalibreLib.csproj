@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="Models\Metadata\" />
+    <Folder Include="Logs\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
