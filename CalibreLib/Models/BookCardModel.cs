@@ -23,14 +23,14 @@ namespace CalibreLib.Models
         {
             get
             {
-                return @"<a class=""link-dark"" href=""/book/" + id + @""">" + title + @"</a>";
+                return @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/book/" + id + @""">" + title + @"</a>";
             }
         }
         public string AuthorsHTML
         { 
             get
             {
-                return String.Join(" & ",this.Authors.Select(x => @"<a class=""link-primary"" href=""/author/" + x.Author.Id + @""">" + x.Author.Name + @"</a>"));
+                return String.Join(" & ",this.Authors.Select(x => @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/author/" + x.Author.Id + @""">" + x.Author.Name + @"</a>"));
             } 
         }
 
@@ -38,7 +38,7 @@ namespace CalibreLib.Models
         {
             get
             {
-                return String.Join(" & ", this.Series.Select(x => @"<a class=""link-primary"" href=""/series/" + x.Series.Id + @""">" + x.Series.Name +"</a>" + @" (" + x.Book.SeriesIndex + ")"));
+                return String.Join(" & ", this.Series.Select(x => @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/series/" + x.Series.Id + @""">" + x.Series.Name +"</a>" + @" (" + x.Book.SeriesIndex + ")"));
             }
         }
         

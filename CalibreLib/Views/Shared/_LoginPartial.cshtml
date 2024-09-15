@@ -24,24 +24,16 @@
                 <img class="sign-out-image" src="~/images/sign-out.svg" />
                 <div class="sign-out-container">
                     <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <button type="submit" class="nav-link btn btn-link text-dark sign-out-button">Sign Out</button>
+                        <button type="submit" class="nav-link btn btn-link text sign-out-button">Sign Out</button>
                     </form>
                 </div>
     </li>
-        @* <a class="nav-link text-dark" asp-area="Identity" asp-controller="Account" asp-action="Manage">Hello @user.DisplayName</a>@* @User.Identity?.Name!</span> 
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Sign out</button>
-            </form>
-    </li>*@
 }
 else
 {
         <li class="dropdown-item">
-            @* <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Sign in</a> *@
-            @* <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Sign in</a> *@
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Login">
-                <button type="submit" class="nav-link btn btn-link text-dark">Sign In</button>
+                <button type="submit" class="nav-link btn btn-link text">Sign In</button>
             </form>
         </li>
 }

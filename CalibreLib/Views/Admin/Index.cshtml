@@ -2,6 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "Admin";
 }
 
 @*
@@ -11,5 +12,44 @@
     Theme change?
 
 *@
-<div>Graph API result</div>
-<div>@ViewData["GraphApiResult"]</div>
+<table id="example" class="table table-striped" style="width:100%" data-toggle="table">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Email</th>
+                <th>EReaderEmail</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>UserName</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Email</th>
+                <th>EReaderEmail</th>
+            </tr>
+        </tfoot>
+    </table>
+<script>
+    window.onload = (event) => {
+       $('#example').DataTable({
+           "ajax": {
+               "url": "admin/getusers",
+               "type": "POST",
+               "datatype": "json"
+           },
+           "processing": true,
+           "serverSide": true,
+           "filter": true,
+           "columns": [
+               { "data": "userName", "name": "UserName", "autoWidth": true, defaultContent: '<i>N/A</i>' },
+               { "data": "firstName", "name": "FirstName", "autoWidth": true, defaultContent: '' },
+                { "data": "lastName", "name": "LastName", "autoWidth": true, defaultContent: '' },
+                { "data": "email", "name": "Email", "autoWidth": true, defaultContent: '' },
+                { "data": "eReaderEmail", "name": "EReaderEmail", "autoWidth": true, defaultContent: '' }
+           ]
+       });
+    };
+</script>

@@ -166,6 +166,8 @@ function loadBooks(ajaxCallUrl, isPaging) {
 window.onload = () => {
     let lblPageNum = document.getElementById('lblPageNum');
 
+    if (!lblPageNum)
+        return;
     lblPageNum.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') {
             page = lblPageNum.value - 1; //loadBooks increments so need to set page to prior number so it increments to the number entered.
