@@ -42,6 +42,9 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
+// Add services to the container.
+builder.Services.Configure<BlobStorageOptions>(builder.Configuration.GetSection("AzureBlobStorage"));
+builder.Services.AddSingleton<BlobStorageService>();
 
 builder.Services.AddControllersWithViews();
 //options =>
@@ -69,10 +72,14 @@ else
     app.UseExceptionHandler(_ => { });
 }
 
+var blobStorageService = app.Services.GetRequiredService<BlobStorageService>();
+var blobContainerClient = blobStorageService.GetBlobContainerClient();
+var blobFileProvider = new AzureBlobFileProvider(blobContainerClient);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+#if DEBUG
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(bookdirectory),
@@ -84,7 +91,19 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(bookdirectory),
     RequestPath = "/db"
 });
-
+#else
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = blobFileProvider,
+    RequestPath = "/books",
+    ServeUnknownFileTypes = true
+});
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = blobFileProvider,
+    RequestPath = "/db"
+});
+#endif
 app.UseRouting();
 
 app.UseAuthorization();

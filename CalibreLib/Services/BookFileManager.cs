@@ -60,7 +60,7 @@ namespace CalibreLib.Services
         public async Task<byte[]?> DownloadBookAsync(Book book, string Format) 
         {
             // URL of the file to be downloaded
-            var fileUrl = new System.Uri(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format);
+            var fileUrl = new System.Uri(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format.ToLower());
 
             using (var httpClient = new HttpClient())
             {
