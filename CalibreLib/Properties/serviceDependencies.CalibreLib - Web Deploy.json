@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "storage1": {
+      "ignored": "true",
+      "type": "storage"
+    },
+    "sqlite1": {
+      "ignored": "True",
+      "type": "sqlite"
+    },
+    "identityapp1": {
+      "connectionInfo": "App registration: Calibre-Lib, Tenant: Default Directory (gnomeforesthotmail.onmicrosoft.com - Microsoft Entra ID)",
+      "secretStore": "AzureAppSettings",
+      "type": "identityapp.secretStore",
+      "connectionId": "AzureAD:ClientSecret"
+    }
+  }
+}

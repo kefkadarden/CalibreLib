@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Identity.Web.UI;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Identity.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,7 +39,16 @@ builder.Services.AddAuthentication()
     {
         builder.Configuration.Bind("AzureAd", options);
         options.Scope.Add("User.Read");
-    });
+    })
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+        .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+            .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
+            .AddInMemoryTokenCaches();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 builder.Logging.ClearProviders();
 builder.Logging.AddEventLog(x => { x.SourceName = "CalibreLib"; x.LogName = "Application"; });
@@ -42,11 +56,15 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
-// Add services to the container.
-builder.Services.Configure<BlobStorageOptions>(builder.Configuration.GetSection("AzureBlobStorage"));
+#if !DEBUG
+//Add Azure Blob Storage support
+builder.Services.Configure<BlobStorageOptions>(builder.Configuration.GetSection("BlobStorage"));
 builder.Services.AddSingleton<BlobStorageService>();
+#endif
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme);
 //options =>
 //{
 //    var policy = new AuthorizationPolicyBuilder()
@@ -72,9 +90,13 @@ else
     app.UseExceptionHandler(_ => { });
 }
 
+#if !DEBUG
+//Add blob storage support.
 var blobStorageService = app.Services.GetRequiredService<BlobStorageService>();
 var blobContainerClient = blobStorageService.GetBlobContainerClient();
 var blobFileProvider = new AzureBlobFileProvider(blobContainerClient);
+#endif
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -92,6 +114,9 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/db"
 });
 #else
+//Get metadata database file from azure blob storage
+await blobStorageService.DownloadDatabaseAsync(builder.Configuration.GetSection("BlobStorage")["ContainerName"], "metadata.db", $"{builder.Environment.ContentRootPath}/metadata.db");
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = blobFileProvider,
@@ -105,6 +130,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 #endif
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
@@ -156,5 +183,6 @@ app.MapControllerRoute(
     defaults: new { controller = "Shelf", action = "Index" });
 
 app.MapRazorPages();
+app.MapControllers();
 
 app.Run();

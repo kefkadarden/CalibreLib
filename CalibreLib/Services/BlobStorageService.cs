@@ -18,6 +18,21 @@ namespace CalibreLib.Services
         {
             return _blobServiceClient.GetBlobContainerClient(_containerName);
         }
+
+        public async Task UploadDatabaseAsync(string containerName, string blobName, string filePath)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            await containerClient.CreateIfNotExistsAsync();
+            var blobClient = containerClient.GetBlobClient(blobName);
+            await blobClient.UploadAsync(filePath, true);
+        }
+
+        public async Task DownloadDatabaseAsync(string containerName, string blobName, string downloadPath)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
+            await blobClient.DownloadToAsync(downloadPath);
+        }
     }
 
     public class BlobStorageOptions
