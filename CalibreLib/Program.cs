@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,8 @@ builder.Services.AddDbContext<MetadataDBContext>(options => options.UseLazyLoadi
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<CalibreLibContext>();
 builder.Services.AddTransient<IMailService, MailService>();
+builder.Services.AddTransient<IEmailSender, MailService>();
+
 //builder.Services.AddTransient<Func<MailSettings, IMailService>>((provider) =>
 //{
 //    return new Func<MailSettings, IMailService>((mailSettings) => new MailService(mailSettings));
@@ -39,16 +42,8 @@ builder.Services.AddAuthentication()
     {
         builder.Configuration.Bind("AzureAd", options);
         options.Scope.Add("User.Read");
-    })
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-        .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-            .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-            .AddInMemoryTokenCaches();
+    });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
 
 builder.Logging.ClearProviders();
 builder.Logging.AddEventLog(x => { x.SourceName = "CalibreLib"; x.LogName = "Application"; });
@@ -64,7 +59,6 @@ builder.Services.AddSingleton<BlobStorageService>();
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme);
 //options =>
 //{
 //    var policy = new AuthorizationPolicyBuilder()

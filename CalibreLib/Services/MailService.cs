@@ -3,16 +3,23 @@ using MailKit.Net.Smtp;
 using CalibreLib.Models.MailService;
 using MailKit;
 using CalibreLib.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace CalibreLib.Services
 {
-    public class MailService : Models.MailService.IMailService
+    public class MailService : Models.MailService.IMailService, IEmailSender
     {
         private readonly MailSettings _mailsettings;
 
         public MailService(CalibreLibContext context)
         {
             _mailsettings = context.MailSettings.FirstOrDefault();
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            await SendMailAsync(new MailData() { EmailAddress = email, Subject = subject, Body = htmlMessage, IsBodyHtml = true });
         }
 
         public async Task SendMailAsync(MailData mailData)
