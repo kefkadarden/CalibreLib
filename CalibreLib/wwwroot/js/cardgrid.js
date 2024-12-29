@@ -71,24 +71,27 @@ function pagingNavigation(direction) {
 }
 
 function updatePageLabel() {
-    $('#lblPageNum')[0].innerText = page;
+    if ($('#lblPageCount').length > 0)
+        $('#lblPageNum')[0].innerText = page;
 }
 
 function getPageCount() {
-    if (pagingEnabled) {
-        $.ajax({
-            type: 'GET',
-            url: '/CardGrid/GetPageCount',
-            data: loadBooksQuery(false),
-            success: function (data) {
-                $('#lblPageCount')[0].innerText = "Pages: " + data.pageCount;
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(errorThrown);
-            }
-        });
-    } else {
-        $('#lblPageCount')[0].innerText = 'Pages: N/A';
+    if ($('#lblPageCount').length > 0) {
+        if (pagingEnabled) {
+            $.ajax({
+                type: 'GET',
+                url: '/CardGrid/GetPageCount',
+                data: loadBooksQuery(false),
+                success: function (data) {
+                    $('#lblPageCount')[0].innerText = "Pages: " + data.pageCount;
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+        } else {
+            $('#lblPageCount')[0].innerText = 'Pages: N/A';
+        }
     }
 }
 
