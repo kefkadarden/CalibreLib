@@ -130,7 +130,7 @@ function loadBooksQuery(pageIncrement = true) {
 function loadBooks(ajaxCallUrl, isPaging) {  
     if (page > -1 && !inCallback) {  
         inCallback = true;  
-        $("div#loading").show();  
+        showLoading();
         $.ajax({  
             type: 'GET',  
             url: ajaxCallUrl,  
@@ -157,9 +157,10 @@ function loadBooks(ajaxCallUrl, isPaging) {
                 }  
   
                 inCallback = false;  
-                $("div#loading").hide();  
+                hideLoading(); 
             },  
             error: function (XMLHttpRequest, textStatus, errorThrown) {  
+                hideLoading();
                 alert(errorThrown);  
             }  
         });  

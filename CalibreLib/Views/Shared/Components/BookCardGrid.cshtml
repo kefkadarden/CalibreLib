@@ -17,11 +17,8 @@
         ViewContext.Writer.WriteLine(strFooter);
     }
 </div>
-<div class="row">  
-    <div id="loading" style="text-align:center; padding:0 0 0 0">  
-        <img src='~/images/loading.gif' />  
-    </div>  
-</div>
+
+
 <div id="paginationToolbar" class="visually-hidden">    
     <button class="btn btn-outline-primary" for="btnPrev" onclick="pagingNavigation('Prev');">Prev</button>
     <input type="text" autocomplete="false" inputmode="numeric" id="lblPageNum" class="fw-bold p-1" style="width:50px;" value="1" />
@@ -32,7 +29,7 @@
 <script type="text/javascript">
     var $grid;
     window.addEventListener('load', function () {
-        $("div#loading").hide();
+        document.getElementById('loading').style.display = 'none';
         const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
         togglePagingEnabled(storedPagingEnabledValue);
         const storedSortBy = localStorage.getItem('gridSortBy');
@@ -43,5 +40,15 @@
         $(window).scroll(scrollHandler);
 
     });
+
+    function showLoading() {
+        document.getElementById('loading').style.display = 'flex';
+        document.getElementById('main-container').classList.add('loading-blur');
+    }
+
+    function hideLoading() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('main-container').classList.remove('loading-blur');
+    }
 </script>
 
