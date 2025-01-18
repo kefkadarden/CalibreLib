@@ -7,7 +7,7 @@
     @{
 
         var strHeader = @"<div class=""container-fluid row display-flex"">
-            <div id=""cardGridRow"" class=""row"">";
+            <div id=""cardGridRow"" class=""grid h-100 w-100"">";
         ViewContext.Writer.WriteLine(strHeader);
 
         await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml");
@@ -30,15 +30,18 @@
 </div>
 
 <script type="text/javascript">
+    var $grid;
     window.addEventListener('load', function () {
         $("div#loading").hide();
         const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
         togglePagingEnabled(storedPagingEnabledValue);
         const storedSortBy = localStorage.getItem('gridSortBy');
-        $('#' + storedSortBy)[0].checked = true;
+        if (storedSortBy)
+            $('#' + storedSortBy)[0].checked = true;
         $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
         loadBooks(ajaxCallUrl);
         $(window).scroll(scrollHandler);
+
     });
 </script>
 

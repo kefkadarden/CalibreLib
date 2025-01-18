@@ -116,3 +116,10 @@ body {
         text-align: left;
         width: 100%;
     }
+
+.grid-item {
+    width: 200px;
+    height: 450px;
+    float: left;
+    margin: 10px;
+}
