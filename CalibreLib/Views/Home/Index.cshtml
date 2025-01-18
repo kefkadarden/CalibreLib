@@ -5,8 +5,25 @@
     ViewData["Title"] = "Home Page";
 }
 
+@section Scripts {
+    <script>
+    var $grid = $('.grid').isotope({
+            itemSelector: '.grid-item',
+            layoutMode: 'masonry',
+            masonry: {
+                horizontalOrder: true
+            },
+            getSortData: {
+                title: '.card-title',
+            }
+        });
+    </script>
+}
+
 <div class="container-fluid">
-     @{
+    @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
     }
 </div>
+
+

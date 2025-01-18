@@ -5,7 +5,7 @@
     {
         foreach (var book in Model)
         {
-            ViewContext.Writer.WriteLine($@"<div class=""col mb-4"">");
+            ViewContext.Writer.WriteLine($@"<div class=""grid-item mb-4"">");
             await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardPartial.cshtml", book);
             ViewContext.Writer.WriteLine("</div>");
         }

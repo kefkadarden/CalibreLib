@@ -140,7 +140,9 @@ function loadBooks(ajaxCallUrl, isPaging) {
                     if (isPaging)
                         $("#cardGridRow").empty();
 
-                    $("#cardGridRow").append(data);  
+                    $("#cardGridRow").append(data);
+                    var $items = $(data);
+                    $grid.isotope('appended', $items);
                     updatePageLabel();
                 }  
                 else {  
