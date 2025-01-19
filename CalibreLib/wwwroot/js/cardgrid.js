@@ -24,20 +24,21 @@ function updateSortBy(_sortBy) {
         left: 0,
         behavior: "smooth",
     });
-    $("#cardGridRow").empty();
-    loadBooks(ajaxCallUrl);
+
+    loadBooks(ajaxCallUrl,true);
 }  
-var scrollHandler = function () {  
-    if (isReachedScrollEnd == false && pagingEnabled == false &&  
-        ($(document).scrollTop() <= $(document).height() - $(window).height())) {  
-        loadBooks(ajaxCallUrl);  
-    }  
-}  
+//var scrollHandler = function () {  
+//    if (isReachedScrollEnd == false && pagingEnabled == false &&  
+//        ($(document).scrollTop() <= $(document).height() - $(window).height())) {  
+//        loadBooks(ajaxCallUrl);  
+//    }  
+//}  
 
 function togglePagingEnabled(enable) {
     page = 0;
     isReachedScrollEnd = false;
     pagingEnabled = enable;
+    toggleScroll();
     localStorage.setItem('gridPagingEnabled', enable);
     const btnPage = $('#btnPage')[0];
     btnPage.checked = enable;
@@ -51,7 +52,6 @@ function togglePagingEnabled(enable) {
         $('#paginationToolbar').addClass('visually-hidden');
         $('#divPageSize').addClass('visually-hidden');
         pageSize = 30;
-        
     }
     loadBooks(ajaxCallUrl);
 }
@@ -141,6 +141,7 @@ function loadBooks(ajaxCallUrl, isPaging) {
                         $("#cardGridRow").empty();
 
                     $("#cardGridRow").append(data);
+
                     var $items = $(data);
                     $grid.isotope('appended', $items);
                     updatePageLabel();

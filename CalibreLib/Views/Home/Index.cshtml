@@ -17,6 +17,32 @@
                 title: '.card-title',
             }
         });
+
+    var $scroll;
+    function toggleScroll(){
+        if (pagingEnabled){
+            $('#cardGridRow').infiniteScroll('destroy');
+        }else{
+            $scroll = $('#cardGridRow').infiniteScroll({
+            path: function(){
+                page = this.pageIndex + 1;
+                    return ajaxCallUrl + "?" + loadBooksQuery();
+            },
+            append: '.grid-item',
+            history: false,
+        });
+        }
+    }
+
+    toggleScroll();
+    
+    $scroll.on('request.infiniteScroll', function (event, path) {
+        showLoading();
+    });
+
+    $scroll.on('load.infiniteScroll', function (event, response, path) {
+        hideLoading();
+    });
     </script>
 }
 

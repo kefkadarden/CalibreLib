@@ -37,7 +37,7 @@
             $('#' + storedSortBy)[0].checked = true;
         $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
         loadBooks(ajaxCallUrl);
-        $(window).scroll(scrollHandler);
+        //$(window).scroll(scrollHandler);
 
     });
 

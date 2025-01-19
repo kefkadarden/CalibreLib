@@ -116,7 +116,7 @@ namespace CalibreLib.Controllers
             var books = await bookRepository.GetByBookListAsync(bookIds);
             var booksFiltered = books.SelectMany(x => x.Data).Where(x => x.Format.ToLower() == format.ToLower()).ToList();
 
-            if (booksFiltered.Count() == 0) 
+            if (booksFiltered.Count() == 0)
                 return NotFound();
 
             using (MemoryStream ms = new MemoryStream())
@@ -141,6 +141,7 @@ namespace CalibreLib.Controllers
                 return File(ms.ToArray(), "application/zip", zipName);
             }
         }
+
 
         public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
                                                     , string? category = null
