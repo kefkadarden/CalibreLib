@@ -40,6 +40,10 @@ bld/
 
 #Do not include calibre book library testing folder
 calibre/
+.config/
+
+metadata.db
+CalibreLib.db*
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
