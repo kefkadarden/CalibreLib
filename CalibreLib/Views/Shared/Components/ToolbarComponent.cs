@@ -58,10 +58,10 @@ namespace CalibreLib.Views.Shared.Components
             {
                 return $"""
                         <input type="radio" class="btn-check" name="btnradio" id="title" autocomplete="off" onclick="updateSortBy('title');">
-                          <label class="btn btn-outline-primary" for="title">Alphabetical</label>
+                          <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
 
                           <input type="radio" class="btn-check" name="btnradio" id="titledesc" autocomplete="off" onclick="updateSortBy('titledesc');">
-                          <label class="btn btn-outline-primary" for="titledesc">Alphabetical reversed</label>
+                          <label class="btn btn-outline-primary" for="titledesc"><i class="fa-solid fa-arrow-down-z-a"></i></label>
                     """;
             }
         }
@@ -73,13 +73,13 @@ namespace CalibreLib.Views.Shared.Components
                 string numbers = string.Empty;
                 string letters = string.Empty;
                 string All = $"""
-                                <input type="radio" class="btn-check" name="btnradio" id="allSort" autocomplete="off" onclick="updateSortBy('allSort');">
+                                <input type="radio" class="btn-check" name="btnradio" id="allSort" checked autocomplete="off" onclick="updateFilterBy('All');">
                                 <label class="btn btn-outline-primary" for="allSort">All</label>
                               """;
                 for(int i = 0; i <= 9; i++)
                 {
                     numbers += $"""
-                                    <input type="radio" class="btn-check" name="btnradio" id="numberSort{i}" autocomplete="off" onclick="updateSortBy('numberSort{i}');">
+                                    <input type="radio" class="btn-check" name="btnradio" id="numberSort{i}" autocomplete="off" onclick="updateFilterBy('{i}');">
                                     <label class="btn btn-outline-primary" for="numberSort{i}">{i}</label>
                                 """;
                 }
@@ -87,7 +87,7 @@ namespace CalibreLib.Views.Shared.Components
                 for (char c = 'A'; c <= 'Z'; c++) 
                 {
                     letters += $"""
-                                    <input type="radio" class="btn-check" name="btnradio" id="letterSort{c}" autocomplete="off" onclick="updateSortBy('letterSort{c}');">
+                                    <input type="radio" class="btn-check" name="btnradio" id="letterSort{c}" autocomplete="off" onclick="updateFilterBy('{c}');">
                                     <label class="btn btn-outline-primary" for="letterSort{c}">{c}</label>
                                 """;
                 }
@@ -119,18 +119,18 @@ namespace CalibreLib.Views.Shared.Components
             {
                 return $$"""
                         <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
-                          <label class="btn btn-outline-primary" for="datedesc">Date newest</label>
+                          <label class="btn btn-outline-primary" for="datedesc"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-down-long"></i></label>
 
                           <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
-                          <label class="btn btn-outline-primary" for="date">Date oldest</label>
+                          <label class="btn btn-outline-primary" for="date"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-up-long"></i></label>
 
                           {{AlphaNumericSortToolbar}}
 
                           <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
-                          <label class="btn btn-outline-primary" for="author">Author</label>
+                          <label class="btn btn-outline-primary" for="author"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-down-long"></i></label>
 
                           <input type="radio" class="btn-check" name="btnradio" id="authordesc" autocomplete="off" onclick="updateSortBy('authordesc');">
-                          <label class="btn btn-outline-primary" for="authordesc">Author reversed</label>
+                          <label class="btn btn-outline-primary" for="authordesc"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-up-long"></i></label>
                         """;
             }
         }

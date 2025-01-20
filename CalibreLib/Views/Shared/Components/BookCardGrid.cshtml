@@ -27,17 +27,30 @@
 </div>
 
 <script type="text/javascript">
-    var $grid;
     window.addEventListener('load', function () {
+
+        console.log('page',page);
         document.getElementById('loading').style.display = 'none';
         const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
         togglePagingEnabled(storedPagingEnabledValue);
+
         const storedSortBy = localStorage.getItem('gridSortBy');
-        if (storedSortBy)
+        if (storedSortBy && $('#' + storedSortBy).length > 0)
             $('#' + storedSortBy)[0].checked = true;
+
+
+        $scroll.on('request.infiniteScroll', function (event, path) {
+            showLoading();
+        });
+
+        $scroll.on('load.infiniteScroll', function (event, response, path) {
+            hideLoading();
+        });
+        console.log('page',page);
         $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
-        loadBooks(ajaxCallUrl);
-        //$(window).scroll(scrollHandler);
+        $('#cardGridRow').infiniteScroll('loadNextPage');
+        //loadBooks(ajaxCallUrl);
+        
 
     });
 
@@ -52,3 +65,29 @@
     }
 </script>
 
+@section Scripts{
+    <script>
+        var $grid = $('.grid').isotope({
+                itemSelector: '.grid-item',
+                layoutMode: 'masonry',
+                masonry: {
+                    horizontalOrder: true
+                },
+                getSortData: {
+                    title: '.card-title',
+                }
+            });
+
+        // var $scroll;
+        // $scroll = $('#cardGridRow').infiniteScroll({
+        //         path: function(){
+        //             page = this.pageIndex + 1;
+        //                 return ajaxCallUrl + "?" + loadBooksQuery();
+        //         },
+        //         append: '.grid-item',
+        //         history: false,
+        //     });
+
+        
+    </script>
+}

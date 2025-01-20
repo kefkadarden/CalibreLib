@@ -30,7 +30,7 @@
     <a class="btn btn-primary" asp-action="Edit" asp-controller="Shelf" asp-route-id="@Model.Id">Edit Shelf</a>
 </div>
 
-<div class="container-fluid">
+<div id="main-container" class="container-fluid">
      @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
     }

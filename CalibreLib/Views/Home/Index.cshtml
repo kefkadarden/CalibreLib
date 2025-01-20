@@ -5,59 +5,10 @@
     ViewData["Title"] = "Home Page";
 }
 
-@section Scripts {
-    <script>
-    var $grid = $('.grid').isotope({
-            itemSelector: '.grid-item',
-            layoutMode: 'masonry',
-            masonry: {
-                horizontalOrder: true
-            },
-            getSortData: {
-                title: '.card-title',
-            }
-        });
-
-    var $scroll;
-    function toggleScroll(){
-        if (pagingEnabled){
-            $('#cardGridRow').infiniteScroll('destroy');
-        }else{
-            $scroll = $('#cardGridRow').infiniteScroll({
-            path: function(){
-                page = this.pageIndex + 1;
-                    return ajaxCallUrl + "?" + loadBooksQuery();
-            },
-            append: '.grid-item',
-            history: false,
-        });
-        }
-    }
-
-    toggleScroll();
-    
-    $scroll.on('request.infiniteScroll', function (event, path) {
-        showLoading();
-    });
-
-    $scroll.on('load.infiniteScroll', function (event, response, path) {
-        hideLoading();
-    });
-    </script>
-}
 
 <div id="main-container" class="container-fluid">
     @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
     }
-    
-</div>
-<div id="loading" class="loading-container">
-    <div class="loading-content">
-        <svg class="svgLoading" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle class="loadingCircle" cx="50" cy="50" r="45" />
-        </svg>
-        <span class="loading-text">Loading...</span>
-    </div>
 </div>
 

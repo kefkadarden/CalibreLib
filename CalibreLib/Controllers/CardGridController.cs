@@ -313,10 +313,16 @@ namespace CalibreLib.Controllers
                 readBook.ReadStatus = (readStatus) ? 1 : 0;
                 readBook.LastModified = DateTime.Now;
             }
-            
+
             await _userManager.UpdateAsync(user);
 
             return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult LoadListViewComponent(EFilterType type, string filter = "All")
+        {
+            return ViewComponent("List", new { type, filter });
         }
     }
 }

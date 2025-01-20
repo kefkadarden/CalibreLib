@@ -12,13 +12,14 @@ namespace CalibreLib.Views.Shared.Components
         {
             _metadataDBContext = metadataDBContext;
         }
-        public IViewComponentResult Invoke(EFilterType type)
+        public IViewComponentResult Invoke(EFilterType type, string filter = "All")
         {
             List<ListViewModel> list = new List<ListViewModel>();
             switch (type)
             {
                 case EFilterType.Authors:
-                    foreach (var author in _metadataDBContext.Authors)
+                    foreach (var author in _metadataDBContext.Authors.AsEnumerable().Where(x => filter == "All" 
+                        || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
                         m.Title = author.Name;
@@ -43,7 +44,8 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Categories:
-                    foreach (var tag in _metadataDBContext.Tags)
+                    foreach (var tag in _metadataDBContext.Tags.AsEnumerable().Where(x => filter == "All" 
+                        || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
                         m.Title = tag.Name;
@@ -55,7 +57,8 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Series:
-                    foreach (var series in _metadataDBContext.Series)
+                    foreach (var series in _metadataDBContext.Series.AsEnumerable().Where(x => filter == "All"
+                        || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
                         m.Title = series.Name;
@@ -67,7 +70,8 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Languages:
-                    foreach (var lang in _metadataDBContext.Languages)
+                    foreach (var lang in _metadataDBContext.Languages.AsEnumerable().Where(x => filter == "All"
+                        || x.LangCode.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
                         m.Title = lang.LangCode;
@@ -79,7 +83,8 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Publishers:
-                    foreach (var publisher in _metadataDBContext.Publishers)
+                    foreach (var publisher in _metadataDBContext.Publishers.AsEnumerable().Where(x => filter == "All" 
+                        || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
                         m.Title = publisher.Name;

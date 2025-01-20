@@ -4,7 +4,7 @@
     ViewData["Title"] = "Search";
 }
 
-<div class="container-fluid">
+<div id="main-container" class="container-fluid">
      @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
     }

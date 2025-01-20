@@ -12,8 +12,31 @@ var ajaxCallUrl = '/CardGrid/BookList',
     language = null,
     publisher = null,
     rating = null,
-    series = null;
-  
+    series = null,
+    pageCount = 0,
+    currentPageType = '',
+    $scroll;
+
+function toggleScroll() {
+    if (pagingEnabled) {
+        $('#cardGridRow').infiniteScroll('destroy');
+    } else {
+        $scroll = $('#cardGridRow').infiniteScroll({
+            path: function () {
+                console.log('ts page before', page);
+                console.log('ts pageIndex before', this.loadCount);
+                page = this.loadCount;
+                console.log('ts page after', page);
+                console.log('ts pageIndex after', this.loadCount);
+                console.log(ajaxCallUrl + "?" + loadBooksQuery(false));
+
+                return ajaxCallUrl + "?" + loadBooksQuery(false);
+            },
+            append: '.grid-item',
+            history: false,
+        });
+    }
+}
 function updateSortBy(_sortBy) {
     localStorage.setItem('gridSortBy', _sortBy);
     sortBy = _sortBy;
@@ -25,8 +48,26 @@ function updateSortBy(_sortBy) {
         behavior: "smooth",
     });
 
-    loadBooks(ajaxCallUrl,true);
+    loadBooks(ajaxCallUrl, true);
 }  
+
+function updateFilterBy( _filterBy) {
+    loadListViewComponent(currentPageType, _filterBy);
+}
+
+function loadListViewComponent(type, filter) {
+    $.ajax({
+        url: '/CardGrid/LoadListViewComponent',
+        type: 'GET',
+        data: { type: type, filter: filter },
+        success: function (result) {
+            $('#listViewComponent').html(result);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading component:', error);
+        }
+    });
+}
 //var scrollHandler = function () {  
 //    if (isReachedScrollEnd == false && pagingEnabled == false &&  
 //        ($(document).scrollTop() <= $(document).height() - $(window).height())) {  
@@ -38,6 +79,7 @@ function togglePagingEnabled(enable) {
     page = 0;
     isReachedScrollEnd = false;
     pagingEnabled = enable;
+
     toggleScroll();
     localStorage.setItem('gridPagingEnabled', enable);
     const btnPage = $('#btnPage')[0];
@@ -53,7 +95,7 @@ function togglePagingEnabled(enable) {
         $('#divPageSize').addClass('visually-hidden');
         pageSize = 30;
     }
-    loadBooks(ajaxCallUrl);
+    //loadBooks(ajaxCallUrl);
 }
 
 function pagingNavigation(direction) {
@@ -75,7 +117,7 @@ function updatePageLabel() {
         $('#lblPageNum')[0].innerText = page;
 }
 
-function getPageCount() {
+function setPageCount() {
     if ($('#lblPageCount').length > 0) {
         if (pagingEnabled) {
             $.ajax({
@@ -95,9 +137,22 @@ function getPageCount() {
     }
 }
 
-function loadBooksQuery(pageIncrement = true) {
-    
+async function getPageCount() {
+        $.ajax({
+            type: 'GET',
+            url: '/CardGrid/GetPageCount',
+            data: loadBooksQuery(false),
+            success: function (data) {
+                pageCount = data.pageCount;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+}
 
+function loadBooksQuery(pageIncrement = false) {
+    
     var url = 'pageNumber=' + page + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
 
     if (pageIncrement)
@@ -131,19 +186,20 @@ function loadBooks(ajaxCallUrl, isPaging) {
     if (page > -1 && !inCallback) {  
         inCallback = true;  
         showLoading();
+        console.log('start load',page,loadBooksQuery(false));
         $.ajax({  
             type: 'GET',  
             url: ajaxCallUrl,  
-            data: loadBooksQuery(),  
+            data: loadBooksQuery(false),  
             success: function (data, textstatus) { 
                 if (data.replace(/(\r\n|\n|\r)/gm, "") != '') {  
                     if (isPaging)
                         $("#cardGridRow").empty();
-
+                    console.log('append data');
                     $("#cardGridRow").append(data);
 
-                    var $items = $(data);
-                    $grid.isotope('appended', $items);
+                    //var $items = $(data);
+                    //$grid.isotope('appended', $items);
                     updatePageLabel();
                 }  
                 else {  
@@ -166,11 +222,11 @@ function loadBooks(ajaxCallUrl, isPaging) {
             }  
         });  
     }      
-
-    getPageCount();
+    setPageCount();
 }  
 
 window.onload = () => {
+
     let lblPageNum = document.getElementById('lblPageNum');
 
     if (!lblPageNum)

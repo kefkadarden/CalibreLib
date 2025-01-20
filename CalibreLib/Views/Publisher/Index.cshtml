@@ -13,16 +13,21 @@
             publisher = @Model.Id;
         </script>
 
-        <h2>Publisher: @Model.Name</h2> 
-        <div class="container-fluid">
+        <h2>Publisher: @Model.Name</h2>
+        <div id="main-container" class="container-fluid">
             @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml",new List<BookCardModel>())
         </div>
     }
     else
     {
+        <script>
+            currentPageType = 'Publishers';
+        </script>
         <div class="col-sm-10">
             @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = filterType })
-            @await Component.InvokeAsync(typeof(ListViewComponent), new { type = filterType })
+            <div id="listViewComponent">
+                @await Component.InvokeAsync(typeof(ListViewComponent), new { type = filterType })
+            </div>
         </div>
     }
 }
