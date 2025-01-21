@@ -20,10 +20,14 @@
                 <th>LastName</th>
                 <th>Email</th>
                 <th>Send to EReader Email</th>
+                <th></th>
             </tr>
         </thead>
     </table>
 </div>
+
+<input type="button" class="btn btn-primary mb-3" onclick="getUser()" value="New User" />
+<hr />
 <div id="userForm">
 </div>
 <script>
@@ -45,6 +49,12 @@
                 { "data": "lastName", "name": "LastName", "autoWidth": true, defaultContent: '' },
                 { "data": "email", "name": "Email", "autoWidth": true, defaultContent: '' },
                 { "data": "eReaderEmail", "name": "EReaderEmail", "autoWidth": true, defaultContent: '' },
+                { "data": "message",
+                  "sortable": false,
+                  "render": function(data, type, row){
+                    return '<a class="fa-solid fa-trash" onclick="deleteUser(\'' + row.id + '\')"></a>';
+                  }
+                },
                { "data": "id", "name": "Id", visible: false },
            ]
        });
@@ -79,6 +89,9 @@
     };
 
     function getUser(id) {
+        if (!id){
+            id = null;
+        }
         $.ajax({
                 url: "admin/getuser",
                 type: "GET",
@@ -92,6 +105,26 @@
                 }
             });
     }
+
+    function deleteUser(id) {
+    if (confirm("Are you sure you want to delete this user?")) {
+        $.ajax({
+            url: "admin/deleteuser",
+            type: "DELETE",
+            datatype: "json",
+            data: { id: id },
+            success: function(response) {
+                showAlert('User deleted successfully', 'success');
+                $('#userDataGrid').DataTable().ajax.reload();
+                $('#userForm').empty();
+            },
+            error: function(xhr, status, error) {
+                const errMsg = (error) ? error : xhr.responseText;
+                showAlert(errMsg, 'error');
+            }
+        });
+    }
+}
 
     function saveUser(){
         const frm = $('#userEditForm');

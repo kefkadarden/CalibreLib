@@ -1,11 +1,17 @@
 ﻿using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
+using CalibreLib.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Graph;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace CalibreLib.Controllers
 {
@@ -14,11 +20,20 @@ namespace CalibreLib.Controllers
     {
         private readonly CalibreLibContext _calibreLibContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IUserEmailStore<ApplicationUser> _emailStore;
+        private readonly IEmailSender _emailSender;
 
-        public AdminController(CalibreLibContext calibreLibContext, UserManager<ApplicationUser> userManager)
+        public AdminController(CalibreLibContext calibreLibContext, 
+            UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore,
+            IEmailSender emailSender)
         {
             _calibreLibContext = calibreLibContext;
             _userManager = userManager;
+            _userStore = userStore;
+            _emailStore = GetEmailStore();
+            _emailSender = emailSender;
         }
     
         public IActionResult Index()
@@ -29,9 +44,6 @@ namespace CalibreLib.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUser(string? id)
         {
-            if (id == null)
-                return NotFound();
-
             UserViewModel model = new UserViewModel();
             var appUser = _calibreLibContext.Users.FirstOrDefault(x => x.Id == id);
 
@@ -47,16 +59,117 @@ namespace CalibreLib.Controllers
             return PartialView("EditUserPartial", model);
         }
 
+        private ApplicationUser CreateUser()
+        {
+            try
+            {
+                return Activator.CreateInstance<ApplicationUser>();
+            }
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                    $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
+        }
+
+        private IUserEmailStore<ApplicationUser> GetEmailStore()
+        {
+            if (!_userManager.SupportsUserEmail)
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(string? id)
+        {
+            if (id == null)
+                return BadRequest("Missing Id");
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return BadRequest("Cannot find user");
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                var errorsCreate = string.Empty;
+                ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
+                return BadRequest(errorsCreate);
+            }
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveUser(UserViewModel model)
         {
             if (model == null)
                 return BadRequest();
 
+            if (model.SetPassword && !string.IsNullOrEmpty(model.Password))
+            {
+                if (!String.Equals(model.Password, model.ConfirmPassword))
+                    return BadRequest("Password and Confirm Password must match.");
+            }
+
             var user = await _userManager.FindByIdAsync(model.Id);
 
             if (user == null)
-                return BadRequest("Cannot locate user to update");
+            {
+                if (ModelState.IsValid)
+                {
+                    user = CreateUser();
+
+                    await _userStore.SetUserNameAsync(user, model.UserName, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, model.Email, CancellationToken.None);
+                    var resultCreate = await _userManager.CreateAsync(user, model.Password);
+
+                    if (resultCreate.Succeeded)
+                    {
+                        var userId = await _userManager.GetUserIdAsync(user);
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        var callbackUrl = Url.Page(
+                            "/Account/ConfirmEmail",
+                            pageHandler: null,
+                            values: new { area = "Identity", userId = userId, code = code, returnUrl = Url.Content("~/") },
+                            protocol: Request.Scheme);
+
+                        try
+                        {
+                            await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        }catch
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        foreach (var error in resultCreate.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        var errorsCreate = string.Empty;
+                        ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
+                        return BadRequest(errorsCreate);
+                    }
+                }
+                else
+                {
+                    var errorsCreate2 = string.Empty;
+                    ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate2 += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
+                    return BadRequest(errorsCreate2);
+                } 
+            }
 
             user.UserName = model.UserName;
             user.FirstName = model.FirstName;
@@ -66,12 +179,9 @@ namespace CalibreLib.Controllers
             
             if (model.SetPassword && !string.IsNullOrEmpty(model.Password))
             {
-                if (!String.Equals(model.Password, model.ConfirmPassword))
-                    return BadRequest("Password and Confirm Password must match.");
-
                 var removePasswordResult = await _userManager.RemovePasswordAsync(user);
-                if (!removePasswordResult.Succeeded)
-                    return BadRequest("Failed to remove existing password");
+                //if (!removePasswordResult.Succeeded)
+                //  return BadRequest("Failed to remove existing password");
 
                 var addPasswordResult = await _userManager.AddPasswordAsync(user, model.Password);
                 if (!addPasswordResult.Succeeded)
@@ -143,7 +253,7 @@ namespace CalibreLib.Controllers
 
     public class UserViewModel()
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [Required]
         public string UserName { get; set; }
         [Required]
@@ -154,8 +264,9 @@ namespace CalibreLib.Controllers
         public string LastName { get; set; }
         [EmailAddress]
         [DisplayName("Send to EReader Email")]
-        public string EReaderEmail { get; set; }
+        public string? EReaderEmail { get; set; }
         [EmailAddress]
+        [Required]
         public string Email { get; set; }
         public bool SetPassword { get; set; } = false;
         public string? Password { get; set; }
