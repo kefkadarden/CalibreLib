@@ -1,7 +1,11 @@
 ﻿using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace CalibreLib.Controllers
 {
@@ -9,15 +13,75 @@ namespace CalibreLib.Controllers
     public class AdminController : Controller
     {
         private readonly CalibreLibContext _calibreLibContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminController(CalibreLibContext calibreLibContext)
+        public AdminController(CalibreLibContext calibreLibContext, UserManager<ApplicationUser> userManager)
         {
             _calibreLibContext = calibreLibContext;
+            _userManager = userManager;
         }
     
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            UserViewModel model = new UserViewModel();
+            var appUser = _calibreLibContext.Users.FirstOrDefault(x => x.Id == id);
+
+            if (appUser != null)
+            {
+                model.Id = appUser.Id;
+                model.UserName = appUser.UserName;
+                model.EReaderEmail = appUser.EReaderEmail;
+                model.Email = appUser.Email;
+                model.FirstName = appUser.FirstName;
+                model.LastName = appUser.LastName;
+            }
+            return PartialView("EditUserPartial", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveUser(UserViewModel model)
+        {
+            if (model == null)
+                return BadRequest();
+
+            var user = await _userManager.FindByIdAsync(model.Id);
+
+            if (user == null)
+                return BadRequest("Cannot locate user to update");
+
+            user.UserName = model.UserName;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.EReaderEmail = model.EReaderEmail;
+            
+            if (model.SetPassword && !string.IsNullOrEmpty(model.Password))
+            {
+                if (!String.Equals(model.Password, model.ConfirmPassword))
+                    return BadRequest("Password and Confirm Password must match.");
+
+                var removePasswordResult = await _userManager.RemovePasswordAsync(user);
+                if (!removePasswordResult.Succeeded)
+                    return BadRequest("Failed to remove existing password");
+
+                var addPasswordResult = await _userManager.AddPasswordAsync(user, model.Password);
+                if (!addPasswordResult.Succeeded)
+                    return BadRequest(String.Join(' ', addPasswordResult.Errors.Select(x => x.Description)));
+            }
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest("Failed to update user");
+
+            return Ok(model.Id);
         }
 
         [HttpPost]
@@ -38,6 +102,7 @@ namespace CalibreLib.Controllers
             {
                 System.Linq.Expressions.Expression<Func<ApplicationUser, string>> sortBy = sortColumn switch
                 {
+                    nameof(ApplicationUser.Id) => user => user.Id,
                     nameof(ApplicationUser.UserName) => user => user.UserName,
                     nameof(ApplicationUser.FirstName) => user => user.FirstName,
                     nameof(ApplicationUser.LastName) => user => user.LastName,
@@ -63,6 +128,7 @@ namespace CalibreLib.Controllers
             data.ForEach(user => {
                 apUsers.Add(new UserViewModel()
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -77,10 +143,23 @@ namespace CalibreLib.Controllers
 
     public class UserViewModel()
     {
+        public string Id { get; set; }
+        [Required]
         public string UserName { get; set; }
+        [Required]
+        [DisplayName("First Name")]
         public string FirstName { get; set; }
+        [Required]
+        [DisplayName("Last Name")]
         public string LastName { get; set; }
+        [EmailAddress]
+        [DisplayName("Send to EReader Email")]
         public string EReaderEmail { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
+        public bool SetPassword { get; set; } = false;
+        public string? Password { get; set; }
+        [DisplayName("Confirm Password")]
+        public string? ConfirmPassword { get; set; }
     }
 }

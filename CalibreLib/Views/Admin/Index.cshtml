@@ -1,6 +1,5 @@
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model CalibreLib.Areas.Identity.Data.ApplicationUser
+
 @{
     ViewData["Title"] = "Admin";
 }
@@ -10,31 +9,28 @@
     User approval
     Email Server setting edit
     Theme change?
-
 *@
-<table id="example" class="table table-striped" style="width:100%" data-toggle="table">
+<div id="alert-container"></div>
+<div>
+    <table id="userDataGrid" class="table table-striped" style="width:100%" data-toggle="table">
         <thead>
             <tr>
                 <th>UserName</th>
                 <th>FirstName</th>
                 <th>LastName</th>
                 <th>Email</th>
-                <th>EReaderEmail</th>
+                <th>Send to EReader Email</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <th>UserName</th>
-                <th>FirstName</th>
-                <th>LastName</th>
-                <th>Email</th>
-                <th>EReaderEmail</th>
-            </tr>
-        </tfoot>
     </table>
+</div>
+<div id="userForm">
+</div>
 <script>
     window.onload = (event) => {
-       $('#example').DataTable({
+        
+
+       var userGrid = $('#userDataGrid').DataTable({
            "ajax": {
                "url": "admin/getusers",
                "type": "POST",
@@ -48,8 +44,81 @@
                { "data": "firstName", "name": "FirstName", "autoWidth": true, defaultContent: '' },
                 { "data": "lastName", "name": "LastName", "autoWidth": true, defaultContent: '' },
                 { "data": "email", "name": "Email", "autoWidth": true, defaultContent: '' },
-                { "data": "eReaderEmail", "name": "EReaderEmail", "autoWidth": true, defaultContent: '' }
+                { "data": "eReaderEmail", "name": "EReaderEmail", "autoWidth": true, defaultContent: '' },
+               { "data": "id", "name": "Id", visible: false },
            ]
        });
+
+       
+
+       $('#userDataGrid').on('click', 'tbody tr', function () {
+            // Remove highlight from previously selected row
+            $('#userDataGrid tbody tr').removeClass('selected');
+            // Add highlight to the clicked row
+            $(this).addClass('selected');
+            const id = userGrid.row(this).data().id;
+
+            if (id === null)
+                return;
+
+            getUser(id);
+        });
+
+       $.validator.setDefaults({
+        errorClass: 'text-danger',
+        validClass: 'is-valid',
+        errorElement: 'span',
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass(errorClass).removeClass(validClass);
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass(errorClass).addClass(validClass);
+        }
+    });
+
     };
+
+    function getUser(id) {
+        $.ajax({
+                url: "admin/getuser",
+                type: "GET",
+                datatype: "json",
+                data: {id: id },
+                success: function(response) {
+                    $('#userForm').html(response);
+                },
+                error: function(xhr, status, error) {
+                    alert(error);
+                }
+            });
+    }
+
+    function saveUser(){
+        const frm = $('#userEditForm');
+
+        if (frm.valid()){
+            $.ajax({
+                    url: "admin/saveuser",
+                    type: "POST",
+                    datatype: "json",
+                    data: frm.serialize(),
+                    success: function(response) {
+                        showAlert('User saved successfully', 'success');
+                        $('#userDataGrid').DataTable().ajax.reload();
+                        getUser(response);
+                    },
+                    error: function(xhr, status, error) {
+                        const errMsg = (error) ? error : xhr.responseText;
+                        showAlert(errMsg, 'error');
+                    }
+                });
+        } else {
+            showAlert('Please correct the errors in the form.', 'warning');
+        }
+    }
 </script>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

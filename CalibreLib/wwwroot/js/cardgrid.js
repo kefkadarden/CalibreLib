@@ -48,6 +48,7 @@ function updateSortBy(_sortBy) {
         behavior: "smooth",
     });
 
+
     loadBooks(ajaxCallUrl, true);
 }  
 
