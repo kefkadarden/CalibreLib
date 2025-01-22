@@ -12,11 +12,24 @@ namespace CalibreLib.Views.Shared.Components
         {
             _metadataDBContext = metadataDBContext;
         }
-        public IViewComponentResult Invoke(EFilterType type, string filter = "All")
+        public IViewComponentResult Invoke(EFilterType type, string filter = "All", string sortBy = "")
         {
             List<ListViewModel> list = new List<ListViewModel>();
             switch (type)
             {
+                case EFilterType.AuthorsReversed:
+                    foreach (var author in _metadataDBContext.Authors.AsEnumerable().Where(x => filter == "All"
+                        || x.Sort.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var m = new ListViewModel();
+                        m.Title = author.Sort;
+                        m.Id = author.Id;
+                        m.Count = author.BookAuthors.Count;
+                        m.Url = $"/author/{author.Id}";
+                        m.FilterType = type;
+                        list.Add(m);
+                    }
+                    break;
                 case EFilterType.Authors:
                     foreach (var author in _metadataDBContext.Authors.AsEnumerable().Where(x => filter == "All" 
                         || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
@@ -96,6 +109,13 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
             }
+            if (sortBy == "title")
+                list = list.OrderBy(x => x.Title).ToList();
+            else if (sortBy == "titledesc")
+                list = (List<ListViewModel>)list.OrderByDescending(x => x.Title).ToList();
+            else
+                list = list.OrderBy(x => x.Title).ToList();
+
             return View("~/Views/Shared/Components/ListViewPartial.cshtml", list);
         }
 

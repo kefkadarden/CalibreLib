@@ -195,7 +195,7 @@ namespace CalibreLib.Data
                 Languages = book.BookLanguages,
                 Tags = book.BookTags,
                 CoverImage = cover,
-                Rating = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
+                RatingValue = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
                 Archived = (user != null) ? user.ArchivedBooks.Where(x => x.BookId == book.Id && x.IsArchived).Any() : false,
                 Read = (user != null) ? user.ReadBooks.Where(x => x.BookId == book.Id && x.ReadStatus == 1).Any() : false,
                 Description = book.Comment?.Text ?? "",

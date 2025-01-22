@@ -1,4 +1,5 @@
 ﻿@model BookCardModel
+@using CalibreLib.Views.Shared.Components;
 
 @{
     var targetid = "#bookDetailModalCenter" + Model.id;
@@ -15,9 +16,13 @@
             @{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }
         </p>
         <p class="text-center card-subtitle fst-italic flex-wrap">
-            @{ ViewContext.Writer.WriteLine(@Model.SeriesHTML); }
+            @{
+                ViewContext.Writer.WriteLine(@Model.SeriesHTML);
+            }
         </p>
-        @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model)
+
+        @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue })
+        @* @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model) *@
     </div>
 </div>
 

@@ -15,6 +15,7 @@ var ajaxCallUrl = '/CardGrid/BookList',
     series = null,
     pageCount = 0,
     currentPageType = '',
+    filterBy,
     $scroll;
 
 function toggleScroll() {
@@ -52,15 +53,33 @@ function updateSortBy(_sortBy) {
     loadBooks(ajaxCallUrl, true);
 }  
 
-function updateFilterBy( _filterBy) {
+function updateListSortBy(_sortBy) {
+    loadListViewComponent(currentPageType, filterBy, _sortBy);
+}
+
+function updateFilterBy(_filterBy) {
+    filterBy = _filterBy;
     loadListViewComponent(currentPageType, _filterBy);
 }
 
-function loadListViewComponent(type, filter) {
+function reverseAuthor() {
+    if (currentPageType === 'AuthorsReversed') {
+        currentPageType = 'Authors';
+    } else {
+        currentPageType = 'AuthorsReversed';
+    }
+
+    if (!filterBy)
+        filterBy = 'All';
+
+    loadListViewComponent(currentPageType, filterBy);
+}
+
+function loadListViewComponent(type, filter, sortBy) {
     $.ajax({
         url: '/CardGrid/LoadListViewComponent',
         type: 'GET',
-        data: { type: type, filter: filter },
+        data: { type: type, filter: filter, sortBy: sortBy },
         success: function (result) {
             $('#listViewComponent').html(result);
         },

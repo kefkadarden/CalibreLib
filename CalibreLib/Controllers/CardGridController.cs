@@ -320,9 +320,9 @@ namespace CalibreLib.Controllers
         }
 
         [HttpGet]
-        public IActionResult LoadListViewComponent(EFilterType type, string filter = "All")
+        public IActionResult LoadListViewComponent(EFilterType type, string filter = "All", string sortBy = "")
         {
-            return ViewComponent("List", new { type, filter });
+            return ViewComponent("List", new { type, filter, sortBy });
         }
     }
 }

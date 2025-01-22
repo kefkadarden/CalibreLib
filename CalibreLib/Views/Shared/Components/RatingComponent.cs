@@ -16,7 +16,7 @@ namespace CalibreLib.Views.Shared.Components
         {
             BookCardModel bookCardModel = new BookCardModel()
             {
-                Rating = RatingValue
+                RatingValue = RatingValue
             };
             return View("~/Views/Shared/Components/RatingPartial.cshtml", bookCardModel);
         }

@@ -2,41 +2,43 @@
 
 <style>
     .rating {
-      border: none;
-      float: left;
+    border: none;
+    float: left;
     }
 
     .rating>form>input {
-      display: none;
+    display: none;
     }
 
     .rating>form>label:before {
-      margin: 5px;
-      font-size: 1.25em;
-      font-family: FontAwesome;
-      display: inline-block;
-      content: "\f005";
+    margin: 5px;
+    font-size: 1.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005";
     }
 
     .rating>form>label {
-      color: #ddd;
-      float: right;
+    color: #ddd;
+    float: right;
     }
 
     .rating>form>input:checked~label
     {
-      color: #FFD700;
+    color: #FFD700;
     }
 </style>
-
+@{
+    Console.WriteLine(Model.RatingValue);
+}
 <div class="d-inline-flex">
     <fieldset class="rating w-100">
         <form>
-            <input type="radio" id="star5" value="5" asp-for="Rating" name="Rating" disabled /><label for="star5" title="5 stars"></label>
-            <input type="radio" id="star4" value="4" asp-for="Rating" name="Rating" disabled /><label for="star4" title="4 stars"></label>
-            <input type="radio" id="star3" value="3" asp-for="Rating" name="Rating" disabled /><label for="star3" title="3 stars"></label>
-            <input type="radio" id="star2" value="2" asp-for="Rating" name="Rating" disabled /><label for="star2" title="2 stars"></label>
-            <input type="radio" id="star1" value="1" asp-for="Rating" name="Rating" disabled /><label for="star1" title="1 star"></label>
+            <input type="radio" id="star5" value="5" asp-for="RatingValue" name="Rating" disabled /><label for="star5" title="5 stars"></label>
+            <input type="radio" id="star4" value="4" asp-for="RatingValue" name="Rating" disabled /><label for="star4" title="4 stars"></label>
+            <input type="radio" id="star3" value="3" asp-for="RatingValue" name="Rating" disabled /><label for="star3" title="3 stars"></label>
+            <input type="radio" id="star2" value="2" asp-for="RatingValue" name="Rating" disabled /><label for="star2" title="2 stars"></label>
+            <input type="radio" id="star1" value="1" asp-for="RatingValue" name="Rating" disabled /><label for="star1" title="1 star"></label>
         </form>
     </fieldset>
 </div>

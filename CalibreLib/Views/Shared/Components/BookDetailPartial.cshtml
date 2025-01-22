@@ -63,7 +63,8 @@
                       <p class="h2">@Model.title</p>
                       <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }</p>
                       <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.SeriesHTML); }</p>
-                      @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model)
+                      @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue })
+
                       <div class="d-block">
                         @{ ViewContext.Writer.WriteLine(@Model.LanguageHTML); }
                       </div>

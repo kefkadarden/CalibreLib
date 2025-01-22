@@ -42,7 +42,7 @@ namespace CalibreLib.Models
             }
         }
         
-        public int? Rating { get; set; }
+        public int RatingValue { get; set; }
 
         public string PublishDateHTML 
         { 

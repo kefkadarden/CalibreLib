@@ -11,6 +11,7 @@
         Ratings = 6,
         FileFormats = 7,
         Archived = 8,
-        Shelf = 9
+        Shelf = 9,
+        AuthorsReversed = 10
     }
 }

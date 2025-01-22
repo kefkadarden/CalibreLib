@@ -37,10 +37,10 @@ namespace CalibreLib.Views.Shared.Components
                 case EFilterType.Authors:
                     content = AuthorsToolbar;
                     break;
-                case EFilterType.Ratings:
-                case EFilterType.FileFormats:
-                    content = AlphaNumericSortToolbar;
-                    break;
+                //case EFilterType.Ratings:
+                //case EFilterType.FileFormats:
+                  //  content = AlphaNumericSortToolbar;
+                    //break;
                 case EFilterType.Archived:
                     content = ArchivedBooksToolbar;
                     break;
@@ -57,10 +57,10 @@ namespace CalibreLib.Views.Shared.Components
             get
             {
                 return $"""
-                        <input type="radio" class="btn-check" name="btnradio" id="title" autocomplete="off" onclick="updateSortBy('title');">
+                        <input type="radio" class="btn-check" name="btnradioSort" id="title" autocomplete="off" onclick="updateListSortBy('title');">
                           <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
 
-                          <input type="radio" class="btn-check" name="btnradio" id="titledesc" autocomplete="off" onclick="updateSortBy('titledesc');">
+                          <input type="radio" class="btn-check" name="btnradioSort" id="titledesc" autocomplete="off" onclick="updateListSortBy('titledesc');">
                           <label class="btn btn-outline-primary" for="titledesc"><i class="fa-solid fa-arrow-down-z-a"></i></label>
                     """;
             }
@@ -106,7 +106,7 @@ namespace CalibreLib.Views.Shared.Components
             get
             {
                 string flipSort = $"""
-                                        <input type="radio" class="btn-check" name="btnradio" id="flipSort" autocomplete="off" onclick="updateSortBy('flipSort');">
+                                        <input type="radio" class="btn-check" name="btnradioReverse" id="flipSort" autocomplete="off" onclick="reverseAuthor();">
                                         <label class="btn btn-outline-primary" for="flipSort">B,A <-> A,B</label>
                                     """;
                 return flipSort + AlphaNumericToolbar;
