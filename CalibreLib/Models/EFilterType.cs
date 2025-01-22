@@ -12,6 +12,7 @@
         FileFormats = 7,
         Archived = 8,
         Shelf = 9,
-        AuthorsReversed = 10
+        AuthorsReversed = 10,
+        SearchList = 10
     }
 }

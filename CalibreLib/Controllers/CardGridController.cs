@@ -238,7 +238,6 @@ namespace CalibreLib.Controllers
                 var booksAll = await bookRepository.GetAllAsync();
                 bookRepository.PageSize = booksAll.Count();
             }
-            
 
             var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id);
 

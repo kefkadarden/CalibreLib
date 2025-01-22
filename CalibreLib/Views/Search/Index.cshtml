@@ -4,6 +4,9 @@
     ViewData["Title"] = "Search";
 }
 
+<script>
+    disableJS = true;
+</script>
 <div id="main-container" class="container-fluid">
      @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)

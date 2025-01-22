@@ -1,4 +1,4 @@
-﻿@* @model IEnumerable<BookCardModel> *@
+﻿@model IEnumerable<BookCardModel>
 @using CalibreLib.Views.Shared.Components
 
 <h2>Books</h2>
@@ -10,7 +10,7 @@
             <div id=""cardGridRow"" class=""grid h-100 w-100"">";
         ViewContext.Writer.WriteLine(strHeader);
 
-        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml");
+        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml", Model);
 
         var strFooter = @"</div>
         </div>";
@@ -29,27 +29,29 @@
 <script type="text/javascript">
     window.addEventListener('load', function () {
 
-        console.log('page',page);
-        document.getElementById('loading').style.display = 'none';
-        const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
-        togglePagingEnabled(storedPagingEnabledValue);
+        if (!disableJS) {
+            console.log('page',page);
+            document.getElementById('loading').style.display = 'none';
+            const storedPagingEnabledValue = (localStorage.getItem('gridPagingEnabled') === 'true');
+            togglePagingEnabled(storedPagingEnabledValue);
 
-        const storedSortBy = localStorage.getItem('gridSortBy');
-        if (storedSortBy && $('#' + storedSortBy).length > 0)
-            $('#' + storedSortBy)[0].checked = true;
+            const storedSortBy = localStorage.getItem('gridSortBy');
+            if (storedSortBy && $('#' + storedSortBy).length > 0)
+                $('#' + storedSortBy)[0].checked = true;
 
 
-        $scroll.on('request.infiniteScroll', function (event, path) {
-            showLoading();
-        });
+            $scroll.on('request.infiniteScroll', function (event, path) {
+                showLoading();
+            });
 
-        $scroll.on('load.infiniteScroll', function (event, response, path) {
-            hideLoading();
-        });
-        console.log('page',page);
-        $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
-        $('#cardGridRow').infiniteScroll('loadNextPage');
-        //loadBooks(ajaxCallUrl);
+            $scroll.on('load.infiniteScroll', function (event, response, path) {
+                hideLoading();
+            });
+            console.log('page',page);
+            $('#lblPageSize')[0].value = localStorage.getItem('gridPageSize') ?? 10;
+            $('#cardGridRow').infiniteScroll('loadNextPage');
+            //loadBooks(ajaxCallUrl);
+        }
         
 
     });

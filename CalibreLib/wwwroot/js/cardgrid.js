@@ -14,12 +14,13 @@ var ajaxCallUrl = '/CardGrid/BookList',
     rating = null,
     series = null,
     pageCount = 0,
+    disableJS = false,
     currentPageType = '',
     filterBy,
     $scroll;
 
 function toggleScroll() {
-    if (pagingEnabled) {
+    if (pagingEnabled || disableJS) {
         $('#cardGridRow').infiniteScroll('destroy');
     } else {
         $scroll = $('#cardGridRow').infiniteScroll({
@@ -172,7 +173,7 @@ async function getPageCount() {
 }
 
 function loadBooksQuery(pageIncrement = false) {
-    
+    console.log(window.location.search);
     var url = 'pageNumber=' + page + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
 
     if (pageIncrement)

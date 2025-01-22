@@ -25,32 +25,34 @@ namespace CalibreLib.Data
             _contextAccessor = httpContextAccessor;
         }
 
-        void IRepositoryBase<Shelf>.Delete(Shelf item)
+        public void Delete(Shelf item)
         {
             throw new NotImplementedException();
         }
 
-        Task<IEnumerable<Shelf>> IRepositoryBase<Shelf>.GetAllAsync()
+        public async Task<IEnumerable<Shelf>> GetAllAsync()
+        {
+            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
+            return user?.Shelves;
+        }
+
+        public async Task<Shelf> GetByIDAsync(int id)
+        {
+            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
+            return user?.Shelves.FirstOrDefault(x => x.Id == id);
+        }
+
+        public void Insert(Shelf item)
         {
             throw new NotImplementedException();
         }
 
-        Task<Shelf> IRepositoryBase<Shelf>.GetByIDAsync(int id)
+        public void SaveAsync()
         {
             throw new NotImplementedException();
         }
 
-        void IRepositoryBase<Shelf>.Insert(Shelf item)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IRepositoryBase<Shelf>.SaveAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IRepositoryBase<Shelf>.Update(Shelf item)
+        public void Update(Shelf item)
         {
             throw new NotImplementedException();
         }
