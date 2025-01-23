@@ -66,7 +66,7 @@ namespace CalibreLib.Services
             }
             catch (Exception ex)
             {
-                const string msg = "An exception has occurred while serializing error to JSON";
+                const string msg = "An exception has occurred while serializing error to JSON.";
                 logger.LogError(ex, msg);
             }
 
