@@ -189,14 +189,27 @@ namespace CalibreLib.Data
                 query = query.Where(x => x.BookLanguages.Any(y => model.Languages.Contains(y.LanguageId)));
             }
 
-            if (model.RatingAbove.HasValue)
+            if (model.ExcludeTags.Any())
             {
-                query = query.Where(x => x.BookRatings.Any(y => y.Rating.RatingValue >= model.RatingAbove.Value));
+                query = query.Where(x => x.BookTags.Any(y => !model.ExcludeTags.Contains(y.TagId)));
             }
 
-            if (model.RatingBelow.HasValue)
+            if (model.ExcludeSeries.Any())
             {
-                query = query.Where(x => x.BookRatings.Any(y => y.Rating.RatingValue <= model.RatingBelow.Value));
+                query = query.Where(x => x.BookSeries.Any(y => !model.ExcludeSeries.Contains(y.SeriesId)));
+            }
+
+            if (model.ExcludeShelves.Any())
+            {
+                var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
+                var bookIds = user?.Shelves.Where(s => !model.ExcludeShelves.Contains(s.Id))
+                                           .SelectMany(s => s.BookShelves.Select(bs => bs.BookId));
+                query = query.Where(x => bookIds.Contains(x.Id));
+            }
+
+            if (model.ExcludeLanguages.Any())
+            {
+                query = query.Where(x => x.BookLanguages.Any(y => !model.ExcludeLanguages.Contains(y.LanguageId)));
             }
 
             if (!string.IsNullOrEmpty(model.Description))
@@ -204,7 +217,19 @@ namespace CalibreLib.Data
                 query = query.Where(x => x.Comment != null && x.Comment.Text.Contains(model.Description, StringComparison.OrdinalIgnoreCase));
             }
 
-            return await query.ToListAsync();
+            var books = await query.ToListAsync();
+
+
+            if (model.RatingAbove.HasValue)
+            {
+                books = books.Where(x => x.BookRatings.Any(y => y.Rating.RatingValue >= model.RatingAbove.Value && y.Rating.RatingValue <= model.RatingBelow.Value)).ToList();
+            }
+            if (model.RatingBelow.HasValue)
+            {
+                books = books.Where(x => x.BookRatings.Any(y => y.Rating.RatingValue <= model.RatingBelow.Value)).ToList();
+            }
+
+            return books;
         }
 
         public async Task<IEnumerable<Book>> GetByAuthorAsync(int id)

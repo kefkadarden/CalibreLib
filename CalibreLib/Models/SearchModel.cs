@@ -16,6 +16,10 @@ namespace CalibreLib.Models
         public List<int> Series { get; set; } = new List<int>();
         public List<int> Shelves { get; set; } = new List<int>();
         public List<int> Languages { get; set; } = new List<int>();
+        public List<int> ExcludeTags { get; set; } = new List<int>();
+        public List<int> ExcludeSeries { get; set; } = new List<int>();
+        public List<int> ExcludeShelves { get; set; } = new List<int>();
+        public List<int> ExcludeLanguages { get; set; } = new List<int>();
         public int? RatingAbove { get; set; }
         public int? RatingBelow { get; set; }
         public string Description { get; set; }

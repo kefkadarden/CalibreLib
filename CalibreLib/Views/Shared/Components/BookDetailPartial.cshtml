@@ -63,7 +63,7 @@
                       <p class="h2">@Model.title</p>
                       <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }</p>
                       <p class="card-subtitle">@{ ViewContext.Writer.WriteLine(@Model.SeriesHTML); }</p>
-                      @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue })
+                      @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue, Model.id, prefix = "detail" })
 
                       <div class="d-block">
                         @{ ViewContext.Writer.WriteLine(@Model.LanguageHTML); }

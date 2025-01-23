@@ -1,490 +1,156 @@
 ﻿@model CalibreLib.Models.SearchModel
+@using CalibreLib.Views.Shared.Components;
 @inject CalibreLib.Data.ShelfRepository _shelfRepository
 @inject CalibreLib.Models.Metadata.MetadataDBContext _metadataDBContext
 
 <h3>Advanced Search</h3>
-
-<form method="post" class="w-50">
-    <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" name="Title" class="form-control" asp-for="Title"  />
+<hr class="w-50"/>
+<form method="post" class="w-100 mt-4">
+    <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+            <label for="title" class="fw-bold">Title</label>
+            <input type="text" id="title" name="Title" class="form-control" asp-for="Title" />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="author">Author</label>
-        <select id="author" name="Authors" class="form-control" asp-for="Authors" multiple>
-            @foreach (var author in _metadataDBContext.Authors.ToList())
-            {
-                <option value="@author.Id">@author.Name</option>
-            }
-        </select>
+    <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+            <label for="author" class="fw-bold">Authors</label>
+            @Html.DropDownListFor(m => m.Authors, new MultiSelectList(_metadataDBContext.Authors.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_authors", id = "select_authors", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="publisher">Publisher</label>
-        <select id="publisher" name="Publishers" class="form-control" asp-for="Publishers" multiple>
-            @foreach (var publisher in _metadataDBContext.Publishers.ToList())
-            {
-                <option value="@publisher.Id">@publisher.Name</option>
-            }
-        </select>
+    <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+            <label for="publisher" class="fw-bold">Publisher</label>
+            @Html.DropDownListFor(m => m.Publishers, new MultiSelectList(_metadataDBContext.Publishers.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_publishers", id = "select_publishers", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="publishedDateFrom">Published Date From</label>
-        <input type="date" id="publishedDateFrom" name="PublishedDateFrom" class="form-control" asp-for="PublishedDateFrom" />
+    <div class="row mb-3">
+        <div class="col-md-8 col-lg-6 d-inline-flex justify-content-between">
+        <div class="col-md-6 col-lg-4">
+            <label for="publishedDateFrom" class="fw-bold">Published Date From</label>
+            <input type="date" id="publishedDateFrom" name="PublishedDateFrom" class="form-control" asp-for="PublishedDateFrom" />
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <label for="publishedDateTo" class="fw-bold">Published Date To</label>
+            <input type="date" id="publishedDateTo" name="PublishedDateTo" class="form-control" asp-for="PublishedDateTo" />
+        </div>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="publishedDateTo">Published Date To</label>
-        <input type="date" id="publishedDateTo" name="PublishedDateTo" class="form-control" asp-for="PublishedDateTo" />
+    <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+            <label for="readStatus" class="fw-bold">Read Status</label>
+            <select id="readStatus" name="ReadStatus" asp-for="ReadStatus" class="form-control form-select">
+                <option value="">Select Status</option>
+                <option value="1">Read</option>
+                <option value="0">Unread</option>
+            </select>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="readStatus">Read Status</label>
-        <select id="readStatus" name="ReadStatus" asp-for="ReadStatus" class="form-control">
-            <option value="">Select Status</option>
-            <option value="1">Read</option>
-            <option value="0">Unread</option>
-        </select>
+    <div class="row mb-3 w-100">
+        <div class="col-md-6 col-lg-6 col-xl-4">
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="tags" class="fw-bold">Tags</label>
+                    @Html.DropDownListFor(m => m.Tags, new MultiSelectList(_metadataDBContext.Tags.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_tags", id = "select_tags", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="series" class="fw-bold">Series</label>
+                    @Html.DropDownListFor(m => m.Series, new MultiSelectList(_metadataDBContext.Series.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_series", id = "select_series", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="shelves" class="fw-bold">Shelves</label>
+                    @Html.DropDownListFor(m => m.Shelves, new MultiSelectList(await _shelfRepository.GetAllAsync(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_shelves", id = "select_shelves", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="languages" class="fw-bold">Languages</label>
+                    @Html.DropDownListFor(m => m.Languages, new MultiSelectList(_metadataDBContext.Languages.ToList(), "Id", "LangCode"), new { @class = "selectpicker form-control", name = "select_langs", id = "select_langs", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-4">
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="tags" class="fw-bold">Exclude Tags</label>
+                    @Html.DropDownListFor(m => m.ExcludeTags, new MultiSelectList(_metadataDBContext.Tags.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_excludetags", id = "select_excludetags", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-danger" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="series" class="fw-bold">Exclude Series</label>
+                    @Html.DropDownListFor(m => m.ExcludeSeries, new MultiSelectList(_metadataDBContext.Series.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_excludeseries", id = "select_excludeseries", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-danger" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="shelves" class="fw-bold">Exclude Shelves</label>
+                    @Html.DropDownListFor(m => m.ExcludeShelves, new MultiSelectList(await _shelfRepository.GetAllAsync(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_excludeshelves", id = "select_excludeshelves", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-danger" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="languages" class="fw-bold">Exclude Languages</label>
+                    @Html.DropDownListFor(m => m.ExcludeLanguages, new MultiSelectList(_metadataDBContext.Languages.ToList(), "Id", "LangCode"), new { @class = "selectpicker form-control", name = "select_excludelangs", id = "select_excludelangs", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-danger" })
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="dropdown bootstrap-select show-tick bs3">
-        <select class="selectpicker" name="include_tag" id="include_tag" data-live-search="true" data-style="btn-primary" data-dropup-auto="false" multiple="" tabindex="-98">
-
-            <option class="tags_click" value="138" >"D&amp;D; Supplement; Dungeons And Dragons; d20; 3.0 Edition"</option>
-
-            <option class="tags_click" value="140" >"D&amp;D; Supplement; Dungeons And Dragons; d20; 3.5 Edition"</option>
-
-            <option class="tags_click" value="187" >9781572246904</option>
-
-            <option class="tags_click" value="158" >Accessory - TSR11647</option>
-
-            <option class="tags_click" value="4" >Action &amp; Adventure</option>
-
-            <option class="tags_click" value="149" >AD&amp;D Compendium #2105</option>
-
-            <option class="tags_click" value="143" >Advanced Dungeons &amp; Dragons Al-Qadim Campaign #9449</option>
-
-            <option class="tags_click" value="3" >Adventure</option>
-
-            <option class="tags_click" value="92" >Adventure and adventurers</option>
-
-            <option class="tags_click" value="34" >Adventure Fiction</option>
-
-            <option class="tags_click" value="130" >Adventure Stories</option>
-
-            <option class="tags_click" value="110" >Aeronautics &amp; Astronautics</option>
-
-            <option class="tags_click" value="127" >Alliances</option>
-
-            <option class="tags_click" value="171" >American</option>
-
-            <option class="tags_click" value="118" >Angels</option>
-
-            <option class="tags_click" value="75" >Animals</option>
-
-            <option class="tags_click" value="154" >arcane</option>
-
-            <option class="tags_click" value="25" >Assassins</option>
-
-            <option class="tags_click" value="95" >Astrology</option>
-
-            <option class="tags_click" value="131" >Azeroth (Imaginary Place)</option>
-
-            <option class="tags_click" value="81" >Badgers</option>
-
-            <option class="tags_click" value="97" >Battles</option>
-
-            <option class="tags_click" value="94" >Body; Mind &amp; Spirit</option>
-
-            <option class="tags_click" value="79" >Boys &amp; Men</option>
-
-            <option class="tags_click" value="129" >Cartoons and Comics</option>
-
-            <option class="tags_click" value="172" >Children's stories</option>
-
-            <option class="tags_click" value="176" >Classics</option>
-
-            <option class="tags_click" value="111" >Comic</option>
-
-            <option class="tags_click" value="28" >Comic Books; Strips; Etc</option>
-
-            <option class="tags_click" value="179" >Comics</option>
-
-            <option class="tags_click" value="29" >Comics &amp; Graphic Novels</option>
-
-            <option class="tags_click" value="144" >Converted by Mordenkainen (Dream City Member)</option>
-
-            <option class="tags_click" value="147" >Converted by Mordenkainen (Thanks to Patricia for the scans)</option>
-
-            <option class="tags_click" value="156" >D&amp;D</option>
-
-            <option class="tags_click" value="145" >D&amp;D Core Rulebook v3.5</option>
-
-            <option class="tags_click" value="146" >D&amp;D Supplement</option>
-
-            <option class="tags_click" value="166" >D&amp;D3.5</option>
-
-            <option class="tags_click" value="139" >D&amp;D; Supplement; Dungeons And Dragons; d20; 3.5 Edition</option>
-
-            <option class="tags_click" value="151" >d20</option>
-
-            <option class="tags_click" value="169" >d20 Forgotten Realms</option>
-
-            <option class="tags_click" value="119" >Demonology</option>
-
-            <option class="tags_click" value="21" >Demons</option>
-
-            <option class="tags_click" value="116" >Diablo (Computer File)</option>
-
-            <option class="tags_click" value="114" >Diablo (Game)</option>
-
-            <option class="tags_click" value="164" >DnD Dungeons Dragons D20 3e 3.5e WOTC Wizards of the Coast</option>
-
-            <option class="tags_click" value="80" >Dogs</option>
-
-            <option class="tags_click" value="51" >Domestic Fiction</option>
-
-            <option class="tags_click" value="121" >Dragons</option>
-
-            <option class="tags_click" value="178" >Dragons &amp; Mythical Creatures</option>
-
-            <option class="tags_click" value="23" >Drizzt Do'Urden (Fictitious Character)</option>
-
-            <option class="tags_click" value="162" >drow elf adnd rpg</option>
-
-            <option class="tags_click" value="159" >Dungeons And Dragon</option>
-
-            <option class="tags_click" value="137" >Dungeons And Dragons</option>
-
-            <option class="tags_click" value="168" >east</option>
-
-            <option class="tags_click" value="165" >Eberron</option>
-
-            <option class="tags_click" value="32" >Elves</option>
-
-            <option class="tags_click" value="126" >English Fiction</option>
-
-            <option class="tags_click" value="26" >Entreri; Artemis (Fictitious Character)</option>
-
-            <option class="tags_click" value="20" >Epic</option>
-
-            <option class="tags_click" value="19" >Epic Fiction</option>
-
-            <option class="tags_click" value="74" >Erotica</option>
-
-            <option class="tags_click" value="33" >Exiles</option>
-
-            <option class="tags_click" value="87" >Fairy Tales &amp; Folklore</option>
-
-            <option class="tags_click" value="188" >Family &amp; Relationships</option>
-
-            <option class="tags_click" value="10" >Fantasy</option>
-
-            <option class="tags_click" value="7" >Fantasy &amp; Magic</option>
-
-            <option class="tags_click" value="31" >Fantasy Comic Books; Strips; Etc</option>
-
-            <option class="tags_click" value="13" >Fantasy Fiction</option>
-
-            <option class="tags_click" value="128" >Fantasy Fiction Comic Books; Strips; Etc</option>
-
-            <option class="tags_click" value="18" >Fantasy Fiction; American</option>
-
-            <option class="tags_click" value="91" >Fantasy fiction; English</option>
-
-            <option class="tags_click" value="115" >Fantasy Games</option>
-
-            <option class="tags_click" value="88" >Ferrets</option>
-
-            <option class="tags_click" value="5">Fiction</option>
-
-            <option class="tags_click" value="183" >Fiction / Action &amp; Adventure</option>
-
-            <option class="tags_click" value="184" >Fiction / Fantasy - Epic</option>
-
-            <option class="tags_click" value="185" >Fiction / Fantasy - Historical</option>
-
-            <option class="tags_click" value="181" >Fiction / Fantasy / Epic</option>
-
-            <option class="tags_click" value="182" >Fiction / Fantasy / Historical</option>
-
-            <option class="tags_click" value="167" >forgotten realms</option>
-
-            <option class="tags_click" value="9" >Forgotten Realms (Imaginary Place)</option>
-
-            <option class="tags_click" value="141" >Forgotten Realms Campaign Expansion #9589</option>
-
-            <option class="tags_click" value="160" >Forgotten Realms Campaign Setting #1055</option>
-
-            <option class="tags_click" value="113" >Games</option>
-
-            <option class="tags_click" value="8" >General</option>
-
-            <option class="tags_click" value="69" >Ghost</option>
-
-            <option class="tags_click" value="123" >Gladiators</option>
-
-            <option class="tags_click" value="17" >Gods and Goddesses</option>
-
-            <option class="tags_click" value="11" >Good and Evil</option>
-
-            <option class="tags_click" value="30" >Graphic Novels</option>
-
-            <option class="tags_click" value="150" >Guidelines for creating characters in the new 3rd Edition Forgotten Realms Camapaign for Living City</option>
-
-            <option class="tags_click" value="57" >Hard-Boiled</option>
-
-            <option class="tags_click" value="103" >Hares</option>
-
-            <option class="tags_click" value="186" >Health &amp; Fitness</option>
-
-            <option class="tags_click" value="157" >Hedge</option>
-
-            <option class="tags_click" value="105" >Heroes</option>
-
-            <option class="tags_click" value="89" >Heroes and heroines</option>
-
-            <option class="tags_click" value="101" >Historical</option>
-
-            <option class="tags_click" value="173" >History</option>
-
-            <option class="tags_click" value="161" >Hobgoblin1</option>
-
-            <option class="tags_click" value="39" >Horror</option>
-
-            <option class="tags_click" value="55" >Horror Fiction</option>
-
-            <option class="tags_click" value="65" >Horror Stories</option>
-
-            <option class="tags_click" value="54" >Horror Tales</option>
-
-            <option class="tags_click" value="67" >Horror Tales; American</option>
-
-            <option class="tags_click" value="177" >Humanities</option>
-
-            <option class="tags_click" value="62" >Imaginary Interviews</option>
-
-            <option class="tags_click" value="27" >Imaginary Places</option>
-
-            <option class="tags_click" value="104" >Imaginary Wars and Battles</option>
-
-            <option class="tags_click" value="163" >Information on Drow Elves</option>
-
-            <option class="tags_click" value="68" >Inspirational</option>
-
-            <option class="tags_click" value="6" >Juvenile Fiction</option>
-
-            <option class="tags_click" value="40" >Kiev (Ukraine)</option>
-
-            <option class="tags_click" value="41" >Kievan Rus</option>
-
-            <option class="tags_click" value="73" >Lestat (Ficticious Character)</option>
-
-            <option class="tags_click" value="47" >Lestat (Fictitious Character)</option>
-
-            <option class="tags_click" value="64" >Lestat (Fictitious Character) - Fiction</option>
-
-            <option class="tags_click" value="15" >Libraries</option>
-
-            <option class="tags_click" value="72" >Literary</option>
-
-            <option class="tags_click" value="175" >Literature &amp; Fiction</option>
-
-            <option class="tags_click" value="52" >Louisiana</option>
-
-            <option class="tags_click" value="59" >Love Stories</option>
-
-            <option class="tags_click" value="12" >Magic</option>
-
-            <option class="tags_click" value="77" >Mammals</option>
-
-            <option class="tags_click" value="132" >Manga</option>
-
-            <option class="tags_click" value="98" >Marine Life</option>
-
-            <option class="tags_click" value="50" >Mayfair Family (Fictitious Characters)</option>
-
-            <option class="tags_click" value="117" >Media Tie-In</option>
-
-            <option class="tags_click" value="58" >Medical</option>
-
-            <option class="tags_click" value="153" >MGP</option>
-
-            <option class="tags_click" value="85" >Mice</option>
-
-            <option class="tags_click" value="84" >Mice; Hamsters; Guinea Pigs; etc</option>
-
-            <option class="tags_click" value="136" >Military</option>
-
-            <option class="tags_click" value="100" >Military &amp; Wars</option>
-
-            <option class="tags_click" value="155" >Mongoose</option>
-
-            <option class="tags_click" value="142" >Monster Compendium - Monsters of Faerun</option>
-
-            <option class="tags_click" value="56" >Mystery &amp; Detective</option>
-
-            <option class="tags_click" value="42" >New Orleans (La.)</option>
-
-            <option class="tags_click" value="48" >Occult &amp; Supernatural</option>
-
-            <option class="tags_click" value="46" >Occult Fiction</option>
-
-            <option class="tags_click" value="99" >Otters</option>
-
-            <option class="tags_click" value="170" >Oz (Imaginary place) -- Fiction</option>
-
-            <option class="tags_click" value="45" >Paris (France)</option>
-
-            <option class="tags_click" value="93" >Pearls</option>
-
-            <option class="tags_click" value="83" >Pirates</option>
-
-            <option class="tags_click" value="37" >Poetry</option>
-
-            <option class="tags_click" value="109" >Popular Works</option>
-
-            <option class="tags_click" value="14" >Priests</option>
-
-            <option class="tags_click" value="60" >Psychological</option>
-
-            <option class="tags_click" value="35" >Quests</option>
-
-            <option class="tags_click" value="22" >Quests (Expeditions)</option>
-
-            <option class="tags_click" value="102" >Rabbits</option>
-
-            <option class="tags_click" value="90" >Rats</option>
-
-            <option class="tags_click" value="76" >Redwall (Fictitious place)</option>
-
-            <option class="tags_click" value="82" >Redwall Abbey (Imaginary place)</option>
-
-            <option class="tags_click" value="148" >released at chaos wasteland by Damador</option>
-
-            <option class="tags_click" value="66" >Religion</option>
-
-            <option class="tags_click" value="43" >Renaissance</option>
-
-            <option class="tags_click" value="180" >Robert Jordan's The Wheel of Time: New Spring</option>
-
-            <option class="tags_click" value="70" >Romance</option>
-
-            <option class="tags_click" value="61" >Sagas</option>
-
-            <option class="tags_click" value="107" >Science</option>
-
-            <option class="tags_click" value="1" >Science Fiction</option>
-
-            <option class="tags_click" value="71" >Science Fiction Fantasy</option>
-
-            <option class="tags_click" value="36" >Science Fiction/Fantasy</option>
-
-            <option class="tags_click" value="78" >Science Fiction; Fantasy; Magic</option>
-
-            <option class="tags_click" value="24" >Short Stories</option>
-
-            <option class="tags_click" value="122" >Slaves</option>
-
-            <option class="tags_click" value="2" >Space Opera</option>
-
-            <option class="tags_click" value="108" >Space Vehicles</option>
-
-            <option class="tags_click" value="134" >Space Warfare</option>
-
-            <option class="tags_click" value="53" >Spirit Possession</option>
-
-            <option class="tags_click" value="133" >StarCraft</option>
-
-            <option class="tags_click" value="106" >Technology &amp; Engineering</option>
-
-            <option class="tags_click" value="124" >Time Travel</option>
-
-            <option class="tags_click" value="38" >Vampires</option>
-
-            <option class="tags_click" value="63" >Vampires - Fiction</option>
-
-            <option class="tags_click" value="44" >Venice (Italy)</option>
-
-            <option class="tags_click" value="112" >Video &amp; Electronic</option>
-
-            <option class="tags_click" value="125" >Video Game Characters</option>
-
-            <option class="tags_click" value="120" >WarCraft</option>
-
-            <option class="tags_click" value="96" >Weasels</option>
-
-            <option class="tags_click" value="49" >Witches</option>
-
-            <option class="tags_click" value="152" >wizard</option>
-
-            <option class="tags_click" value="16" >Wizards</option>
-
-            <option class="tags_click" value="135" >Women Soldiers</option>
-
-            <option class="tags_click" value="174" >World</option>
-
-            <option class="tags_click" value="86" >Young Adult Fiction</option>
-
-        </select>
+    <div class="row mb-3">
+        <div class="col-md-6 col-lg-6 col-xl-6 d-inline-flex justify-content-between">
+        <div class="col-md-6 col-lg-4 col-xl-6 align-content-center">
+            <label for="ratingAbove" class="fw-bold">Rating Above</label>
+            @await Component.InvokeAsync(typeof(RatingComponent), new { RatingValue = 0, id = 1, prefix = "RatingAbove", isDisabled = false })
+            <input type="hidden" id="ratingAboveValue" name="RatingAbove" asp-for="RatingAbove" />
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-6 align-content-center">
+            <label for="ratingBelow" class="fw-bold">Rating Below</label>
+            @await Component.InvokeAsync(typeof(RatingComponent), new { RatingValue = 0, id = 2, prefix = "RatingBelow", isDisabled = false })
+            <input type="hidden" id="ratingBelowValue" name="RatingBelow" asp-for="RatingBelow" />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="tags">Tags</label>
-        <select id="tags" name="Tags" class="form-control" asp-for="Tags" multiple>
-            @foreach (var tag in _metadataDBContext.Tags.ToList())
-            {
-                <option value="@tag.Id">@tag.Name</option>
-            }
-        </select>
+
+    <div class="row mb-3">
+        <div class="col-md-6 col-lg-4">
+            <label for="description" class="fw-bold">Description</label>
+            <input type="text" id="description" name="Description" class="form-control" asp-for="Description" />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="series">Series</label>
-        <select id="series" name="Series" class="form-control" asp-for="Series" multiple>
-            @foreach (var series in _metadataDBContext.Series.ToList())
-            {
-                <option value="@series.Id">@series.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="shelves">Shelves</label>
-        <select id="shelves" name="Shelves" class="form-control" asp-for="Shelves" multiple>
-            @foreach (var shelf in await _shelfRepository.GetAllAsync())
-            {
-                <option value="@shelf.Id">@shelf.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="languages">Languages</label>
-        <select id="languages" name="Languages" class="form-control" asp-for="Languages">
-            @foreach (var lang in _metadataDBContext.Languages.ToList())
-            {
-                <option value="@lang.Id">@lang.LangCode</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="ratingAbove">Rating Above</label>
-        <input type="number" id="ratingAbove" name="RatingAbove" class="form-control" min="0" max="5" asp-for="RatingAbove" />
-    </div>
-
-    <div class="form-group">
-        <label for="ratingBelow">Rating Below</label>
-        <input type="number" id="ratingBelow" name="RatingBelow" class="form-control" min="0" max="5" asp-for="RatingBelow" />
-    </div>
-
-    <div class="form-group">
-        <label for="description">Description</label>
-        <input type="text" id="description" name="Description" class="form-control" asp-for="Description" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Search</button>
+    <button type="submit" class="ms-2 col-md-2 col-lg-1 mt-2 btn btn-primary">Search</button>
 </form>
+
+@section Scripts {
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const ratingAboveStarRating = document.querySelector('#RatingAbovestarRating1');
+            const ratingBelowStarRating = document.querySelector('#RatingBelowstarRating2');
+
+            ratingAboveStarRating.addEventListener('change', function (e) {
+                document.getElementById('ratingAboveValue').value = e.target.value;
+            });
+
+            ratingBelowStarRating.addEventListener('change', function (e) {
+                document.getElementById('ratingBelowValue').value = e.target.value;
+            });
+
+        });
+</script>
+}

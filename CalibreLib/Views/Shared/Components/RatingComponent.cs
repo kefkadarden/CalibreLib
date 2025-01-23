@@ -12,12 +12,15 @@ namespace CalibreLib.Views.Shared.Components
         {
             _metadataDBContext = metadataDBContext;
         }
-        public IViewComponentResult Invoke(int RatingValue)
+        public IViewComponentResult Invoke(int RatingValue, int id = -1, string prefix = "", bool isDisabled = true)
         {
             BookCardModel bookCardModel = new BookCardModel()
             {
-                RatingValue = RatingValue
+                RatingValue = RatingValue,
+                id = id,
+                title = prefix
             };
+            ViewData["isDisabled"] = isDisabled;
             return View("~/Views/Shared/Components/RatingPartial.cshtml", bookCardModel);
         }
     }

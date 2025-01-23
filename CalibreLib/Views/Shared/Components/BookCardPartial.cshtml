@@ -21,7 +21,7 @@
             }
         </p>
 
-        @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue })
+        @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue, Model.id, prefix = "card" })
         @* @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model) *@
     </div>
 </div>
