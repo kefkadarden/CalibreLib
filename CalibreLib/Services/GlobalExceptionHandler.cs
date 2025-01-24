@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using CalibreLib.Models;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
@@ -21,14 +22,32 @@ namespace CalibreLib.Services
         {
             logger.LogError(exception, exception.Message);
 
-            var problemDetails = CreateProblemDetails(context, exception);
-            var json = ToJson(problemDetails);
+            if (IsApiRequest(context))
+            {
+                var problemDetails = CreateProblemDetails(context, exception);
+                var json = ToJson(problemDetails);
+                var errorViewModel = new ErrorViewModel
+                {
+                    RequestId = context.TraceIdentifier,
+                    ProblemDetails = problemDetails
+                };
 
-            const string contentType = "application/problem+json";
-            context.Response.ContentType = contentType;
-            await context.Response.WriteAsync(json, cancellationToken);
+                context.Response.StatusCode = problemDetails.Status ?? 500;
 
-            return true;
+                const string contentType = "application/problem+json";
+                context.Response.ContentType = contentType;
+                await context.Response.WriteAsync(json, cancellationToken);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsApiRequest(HttpContext context)
+        {
+            return context.Request.Path.StartsWithSegments("/api") ||
+                   context.Request.Headers["Accept"].ToString().Contains("application/json");
         }
 
         private ProblemDetails CreateProblemDetails(in HttpContext context, in Exception exception)
