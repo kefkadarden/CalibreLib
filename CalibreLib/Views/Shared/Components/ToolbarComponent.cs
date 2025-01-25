@@ -52,18 +52,24 @@ namespace CalibreLib.Views.Shared.Components
             return new HtmlContentViewComponentResult(new HtmlString(content));
         }
 
-        private string AlphaNumericSortToolbar
+        private struct EAlphaNumericSortType
         {
-            get
-            {
+            public string name;
+            public string funcName;
+        }
+
+        private EAlphaNumericSortType sortByList = new EAlphaNumericSortType() { funcName = "updateListSortBy", name = "btnradioSort" };
+        private EAlphaNumericSortType sortByBook = new EAlphaNumericSortType() { funcName = "updateSortBy", name = "btnradio" };
+
+        private string AlphaNumericSortToolbar(EAlphaNumericSortType sortType)
+        {
                 return $"""
-                        <input type="radio" class="btn-check" name="btnradioSort" id="title" autocomplete="off" onclick="updateListSortBy('title');">
+                        <input type="radio" class="btn-check" name="{sortType.name}" id="title" autocomplete="off" onclick="{sortType.funcName}('title');">
                           <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
 
-                          <input type="radio" class="btn-check" name="btnradioSort" id="titledesc" autocomplete="off" onclick="updateListSortBy('titledesc');">
+                          <input type="radio" class="btn-check" name="{sortType.name}" id="titledesc" autocomplete="off" onclick="{sortType.funcName}('titledesc');">
                           <label class="btn btn-outline-primary" for="titledesc"><i class="fa-solid fa-arrow-down-z-a"></i></label>
                     """;
-            }
         }
 
         private string AlphaNumericToolbar
@@ -93,7 +99,7 @@ namespace CalibreLib.Views.Shared.Components
                 }
 
                 return $"""
-                        {AlphaNumericSortToolbar}
+                        {AlphaNumericSortToolbar(sortByList)}
                         {All}
                         {numbers}
                         {letters}
@@ -124,7 +130,7 @@ namespace CalibreLib.Views.Shared.Components
                           <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
                           <label class="btn btn-outline-primary" for="date"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-up-long"></i></label>
 
-                          {{AlphaNumericSortToolbar}}
+                          {{AlphaNumericSortToolbar(sortByBook)}}
 
                           <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
                           <label class="btn btn-outline-primary" for="author"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-down-long"></i></label>
@@ -139,30 +145,31 @@ namespace CalibreLib.Views.Shared.Components
         {
             get
             {
+                //{{PagerToolbar}}
                 return $$"""
                 <div class="btn-group mb-4" role="group">
                   {{MultiSortToolbar}}
-                  {{PagerToolbar}}
+                  
                 </div>
                 """;
             }
         }
 
-        private string PagerToolbar
-        {
-            get
-            {
-                return $$"""
-                        <label class="btn-group-vertical ms-3 me-1" for="btnPage">Toggle Pages</label>
-                        <input type="checkbox" class="ms-1" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; togglePagingEnabled(btnPage.checked); });" /> <!--Need to implement the pagination here with hide and show. -->
+        //private string PagerToolbar
+        //{
+        //    get
+        //    {
+        //        return $$"""
+        //                <label class="btn-group-vertical ms-3 me-1" for="btnPage">Toggle Pages</label>
+        //                <input type="checkbox" class="ms-1" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; togglePagingEnabled(btnPage.checked); });" /> <!--Need to implement the pagination here with hide and show. -->
   
-                        <div id="divPageSize">
-                        <label class="btn-group-vertical ms-3 ps-3 me-1 border-start border-dark" for="btnPage">Page Size</label>
-                        <input type="text" autocomplete="false" inputmode="numeric" id="lblPageSize" class="fw-bold p-1 text-center" style="width:50px;" value="10" />
-                        </div>
-                        """;
-            }
-        }
+        //                <div id="divPageSize">
+        //                <label class="btn-group-vertical ms-3 ps-3 me-1 border-start border-dark" for="btnPage">Page Size</label>
+        //                <input type="text" autocomplete="false" inputmode="numeric" id="lblPageSize" class="fw-bold p-1 text-center" style="width:50px;" value="10" />
+        //                </div>
+        //                """;
+        //    }
+        //}
 
         private string ArchivedBooksToolbar
         {
