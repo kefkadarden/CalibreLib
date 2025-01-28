@@ -1,0 +1,17 @@
+﻿@using CalibreLib.Models.Metadata
+@using CalibreLib.Views.Shared.Components
+@model IEnumerable<BookCardModel>
+
+@{
+    var filterType = EFilterType.Archived;
+}
+
+<script>
+    disableJS = true;
+</script>
+<div id="main-container" class="container-fluid">
+    @{
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
+    }
+</div>
+

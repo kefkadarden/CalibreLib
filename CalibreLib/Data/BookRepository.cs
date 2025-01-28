@@ -47,13 +47,18 @@ namespace CalibreLib.Data
             return Convert.ToInt32(Math.Ceiling( Convert.ToDecimal(count / dPageSize) ));
         }
 
-        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, EFilterType type = EFilterType.BookCardGrid, int? filterid = null)
+        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, EFilterType type = EFilterType.BookCardGrid, int? filterid = null, SearchModel? searchModel = null)
         {
             var numRecordsToSkip = pageNumber * PageSize;
             IQueryable<Book> books = Enumerable.Empty<Book>().AsQueryable();
             if (query != null && type != EFilterType.SearchList)
             {
                 var queryResult = await GetByQueryAsync(query);
+                books = queryResult.AsQueryable();
+            }
+            else if (searchModel != null)
+            {
+                var queryResult = await GetByQueryAsync(searchModel);
                 books = queryResult.AsQueryable();
             }
             else
@@ -90,6 +95,9 @@ namespace CalibreLib.Data
                 case EFilterType.Languages:
                     booksList = await this.GetByLanguageAsync(filterID);
                     break;
+                case EFilterType.Archived:
+                    booksList = await this.GetByArchivedAsync();
+                    break;
                 default:
                     booksList = books.ToList();
                     break;
@@ -109,6 +117,13 @@ namespace CalibreLib.Data
         public async Task<IEnumerable<Book>> GetByBookListAsync(IEnumerable<int> bookids)
         {
             return await context.Books.Where(x => bookids.Contains(x.Id)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetByArchivedAsync()
+        {
+            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
+            var bookIds = user?.ArchivedBooks.Where(x => x.IsArchived).Select(x => x.BookId);
+            return await context.Books.Where(x => bookIds.Contains(x.Id)).ToListAsync();
         }
         
         public async Task<IEnumerable<Book>> GetByQueryAsync(string query)

@@ -19,6 +19,7 @@ var ajaxCallUrl = '/CardGrid/BookList',
     filterBy,
     $scroll;
 
+
 function toggleScroll() {
     if (disableJS) {
         $('#cardGridRow').infiniteScroll('destroy');
@@ -45,8 +46,8 @@ function updateSortBy(_sortBy) {
         behavior: "smooth",
     });
 
-
-    loadBooks(ajaxCallUrl, true);
+    $scroll.infiniteScroll('loadNextPage');
+    //loadBooks(ajaxCallUrl, true);
 }  
 
 function updateListSortBy(_sortBy) {
@@ -168,32 +169,37 @@ async function getPageCount() {
 }
 
 function loadBooksQuery(pageIncrement = false) {
-    var url = 'pageNumber=' + page + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
+    var url;
+    if (typeof searchParamJSON !== 'undefined' && searchParamJSON) {
+        url = `pageNumber=${page}&sortBy=${sortBy}&pageSize=${pageSize}&searchModel=${JSON.stringify(searchParamJSON)}`;
+    } else {
+        url = 'pageNumber=' + page + '&sortBy=' + sortBy + "&pageSize=" + pageSize + "&" + window.location.search.replace("?", "");
 
-    if (pageIncrement)
-        page++;
+        if (pageIncrement)
+            page++;
 
-    if (shelf != null)
-        url += "&shelf=" + shelf;
+        if (shelf != null)
+            url += "&shelf=" + shelf;
 
-    if (author != null)
-        url += "&author=" + author;
+        if (author != null)
+            url += "&author=" + author;
 
-    if (publisher != null)
-        url += "&publisher=" + publisher;
+        if (publisher != null)
+            url += "&publisher=" + publisher;
 
-    if (rating != null)
-        url += "&rating=" + rating;
+        if (rating != null)
+            url += "&rating=" + rating;
 
-    if (category != null)
-        url += "&category=" + category;
+        if (category != null)
+            url += "&category=" + category;
 
-    if (series != null)
-        url += "&series=" + series;
+        if (series != null)
+            url += "&series=" + series;
 
-    if (language != null)
-        url += "&language=" + language;
-
+        if (language != null)
+            url += "&language=" + language;
+    }
+    console.log(url);
     return url;
 }
 
