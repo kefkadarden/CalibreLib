@@ -46,8 +46,18 @@ function updateSortBy(_sortBy) {
         behavior: "smooth",
     });
 
+    $('#cardGridRow')[0].innerHTML = '';
+    $scroll.infiniteScroll('destroy');
+    $scroll = $scroll.infiniteScroll({
+        path: function () {
+            page = this.loadCount;
+
+            return ajaxCallUrl + "?" + loadBooksQuery(false);
+        },
+        append: '.grid-item',
+        history: false,
+    });
     $scroll.infiniteScroll('loadNextPage');
-    //loadBooks(ajaxCallUrl, true);
 }  
 
 function updateListSortBy(_sortBy) {
@@ -199,7 +209,7 @@ function loadBooksQuery(pageIncrement = false) {
         if (language != null)
             url += "&language=" + language;
     }
-    console.log(url);
+
     return url;
 }
 
