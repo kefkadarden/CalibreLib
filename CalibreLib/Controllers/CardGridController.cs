@@ -151,7 +151,8 @@ namespace CalibreLib.Controllers
                                                     , string? language = null
                                                     , string? rating = null
                                                     , string? series = null
-                                                    , string? searchModel = null)
+                                                    , string? searchModel = null
+                                                    , bool? archived = null)
         {
             SearchModel searchModel2 = new SearchModel();
             if (searchModel != null)
@@ -159,7 +160,7 @@ namespace CalibreLib.Controllers
                 searchModel2 = JsonConvert.DeserializeObject<SearchModel>(searchModel);
             }
             
-            var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series, false, searchModel2);
+            var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series, false, searchModel2,archived);
             var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }
@@ -172,7 +173,8 @@ namespace CalibreLib.Controllers
                                                     , string? rating = null
                                                     , string? series = null
                                                     , bool restorePageSize = false
-                                                    , SearchModel? searchModel = null)
+                                                    , SearchModel? searchModel = null
+                                                    , bool? archived = null)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -195,7 +197,12 @@ namespace CalibreLib.Controllers
 
             int id;
             EFilterType type = EFilterType.BookCardGrid;
-            if (shelf != "null" && shelf != null)
+            if (archived != null)
+            {
+                id = -1;
+                type = EFilterType.Archived;
+            }
+            else if (shelf != "null" && shelf != null)
             {
                 Int32.TryParse(shelf, out id);
                 type = EFilterType.Shelf;

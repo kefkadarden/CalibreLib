@@ -7,11 +7,12 @@
 }
 
 <script>
-    disableJS = true;
+   // disableJS = true;
+    archived = true;
 </script>
 <div id="main-container" class="container-fluid">
     @{
-        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", new List<BookCardModel>())
     }
 </div>
 

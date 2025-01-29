@@ -13,6 +13,7 @@ var ajaxCallUrl = '/CardGrid/BookList',
     publisher = null,
     rating = null,
     series = null,
+    archived = null,
     //pageCount = 0,
     disableJS = false,
     currentPageType = '',
@@ -208,6 +209,9 @@ function loadBooksQuery(pageIncrement = false) {
 
         if (language != null)
             url += "&language=" + language;
+
+        if (archived != null)
+            url += "&archived=true"
     }
 
     return url;
