@@ -20,9 +20,7 @@ namespace CalibreLib.Controllers
         }
         public async Task<IActionResult> Index(string? query)
         {
-            var books = await _bookRepository.GetByQueryAsync(query);
-            var bc = await _bookRepository.GetBookCardModels(books);
-            return View(bc);
+            return View();
         }
 
         [HttpGet]
@@ -34,10 +32,7 @@ namespace CalibreLib.Controllers
         [HttpPost]
         public async Task<IActionResult> Advanced(SearchModel model)
         {
-            //Convert Search Model to query string
-            var books = await _bookRepository.GetByQueryAsync(model);
-            var bc = await _bookRepository.GetBookCardModels(books);
-            return View("Index", bc);
+            return View("Index", model);
         }
     }
 }

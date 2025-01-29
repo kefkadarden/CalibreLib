@@ -1,14 +1,20 @@
-﻿@model IEnumerable<BookCardModel>
+﻿@model SearchModel //IEnumerable<BookCardModel>
 
 @{
     ViewData["Title"] = "Search";
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
+        WriteIndented = false
+    };
+    var searchParamJSON = System.Text.Json.JsonSerializer.Serialize(Model,options);
 }
 
 <script>
-    disableJS = true;
+    const searchParamJSON = @Html.Raw(searchParamJSON);
 </script>
 <div id="main-container" class="container-fluid">
      @{
-        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", Model)
+        @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", new List<BookCardModel>())
     }
 </div>

@@ -16,6 +16,7 @@ using System;
 using CalibreLib.Models.MailService;
 using System.IO.Compression;
 using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
+using Newtonsoft.Json;
 
 namespace CalibreLib.Controllers
 {
@@ -149,9 +150,16 @@ namespace CalibreLib.Controllers
                                                     , string? publisher = null
                                                     , string? language = null
                                                     , string? rating = null
-                                                    , string? series = null)
+                                                    , string? series = null
+                                                    , string? searchModel = null)
         {
-            var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series);
+            SearchModel searchModel2 = new SearchModel();
+            if (searchModel != null)
+            {
+                searchModel2 = JsonConvert.DeserializeObject<SearchModel>(searchModel);
+            }
+            
+            var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series, false, searchModel2);
             var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }
@@ -163,7 +171,8 @@ namespace CalibreLib.Controllers
                                                     , string? language = null
                                                     , string? rating = null
                                                     , string? series = null
-                                                    , bool restorePageSize = false)
+                                                    , bool restorePageSize = false
+                                                    , SearchModel? searchModel = null)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -239,7 +248,7 @@ namespace CalibreLib.Controllers
                 bookRepository.PageSize = booksAll.Count();
             }
 
-            var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id);
+            var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id, searchModel);
 
             if (restorePageSize)
                 bookRepository.PageSize = savedPageSize;

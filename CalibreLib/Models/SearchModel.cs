@@ -2,6 +2,8 @@
 using CalibreLib.Data;
 using CalibreLib.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 namespace CalibreLib.Models
 {
     public class SearchModel
@@ -23,6 +25,7 @@ namespace CalibreLib.Models
         public int? RatingAbove { get; set; }
         public int? RatingBelow { get; set; }
         public string Description { get; set; }
+
 
     }
 }
