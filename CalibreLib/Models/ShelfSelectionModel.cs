@@ -5,6 +5,7 @@ namespace CalibreLib.Models
     public class ShelfSelectionModel
     {
         public List<Shelf> UserShelves { get; set; } = [];
-        public int BookId { get; set; }
+        //public int BookId { get; set; }
+        public List<int> BookIds { get; set; } = new List<int>();
     }
 }

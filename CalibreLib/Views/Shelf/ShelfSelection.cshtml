@@ -4,13 +4,13 @@
 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Add to Shelf</button>
 <ul class="dropdown-menu">
 @{
-    var shelvesContainingBook = Model.UserShelves.Where(x => x.BookShelves.Find(y => y.BookId == Model.BookId) != null);
-    var shelvesNotContainingBook = Model.UserShelves.Where(x => x.BookShelves.Find(y => y.BookId == Model.BookId) == null);
+    var shelvesContainingBook = Model.UserShelves.Where(x => x.BookShelves.Find(y => Model.BookIds.Contains(y.BookId)) != null);
+    var shelvesNotContainingBook = Model.UserShelves.Where(x => x.BookShelves.Find(y => Model.BookIds.Contains(y.BookId)) == null);
     if (shelvesNotContainingBook != null && shelvesNotContainingBook.Count() > 0)
     {
         foreach (var shelf in shelvesNotContainingBook)
         {
-            <li><a class="dropdown-item user-select-none" onclick="addToShelf(@shelf.Id,@Model.BookId);">@shelf.Name</a></li>
+            <li><a class="dropdown-item user-select-none" onclick="addToShelf(@shelf.Id, @Html.Raw(Json.Serialize(Model.BookIds.ToArray())));">@shelf.Name</a></li>
         }
     }
     if (shelvesContainingBook != null && shelvesContainingBook.Count() > 0)
@@ -20,7 +20,7 @@
                                 
         foreach (var shelf in shelvesContainingBook)
         {
-            <li><a class="dropdown-item user-select-none" onclick="removeFromShelf(@shelf.Id,@Model.BookId);">@shelf.Name</a></li>
+            <li><a class="dropdown-item user-select-none" onclick="removeFromShelf(@shelf.Id,@Html.Raw(Json.Serialize(Model.BookIds.ToArray())));">@shelf.Name</a></li>
         }
     }
 }

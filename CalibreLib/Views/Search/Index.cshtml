@@ -1,4 +1,5 @@
 ﻿@model SearchModel //IEnumerable<BookCardModel>
+@using CalibreLib.Views.Shared.Components;
 
 @{
     ViewData["Title"] = "Search";
@@ -13,6 +14,7 @@
 <script>
     const searchParamJSON = @Html.Raw(searchParamJSON);
 </script>
+@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.SearchList })
 <div id="main-container" class="container-fluid">
      @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", new List<BookCardModel>())

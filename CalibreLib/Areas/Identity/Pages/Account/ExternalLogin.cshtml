@@ -4,8 +4,8 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
+<h3>@ViewData["Title"]</h3>
+<h4 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h4>
 <hr />
 
 <p id="external-login-description" class="text-info">
@@ -23,7 +23,7 @@
                 <label asp-for="Input.Email" class="form-label"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button type="submit" class="w-100 btn  btn-primary">Register</button>
         </form>
     </div>
 </div>

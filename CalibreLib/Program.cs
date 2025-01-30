@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +30,7 @@ builder.Services.AddDbContext<MetadataDBContext>(options => options.UseLazyLoadi
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<CalibreLibContext>();
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddTransient<IEmailSender, MailService>();
+builder.Services.AddTransient<IViewComponentHelper, DefaultViewComponentHelper>();
 
 //builder.Services.AddTransient<Func<MailSettings, IMailService>>((provider) =>
 //{

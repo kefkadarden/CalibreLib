@@ -13,13 +13,13 @@ namespace CalibreLib.Views.Shared.Components
         {
             _userManager = userManager;
         }
-        public IViewComponentResult Invoke(int BookId)
+        public IViewComponentResult Invoke(List<int> BookIds)
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
             var model = new ShelfSelectionModel()
             {
                 UserShelves = user?.Shelves ?? new List<Shelf>(),
-                BookId = BookId
+                BookIds = BookIds
             };
             return View("~/Views/Shelf/ShelfSelection.cshtml", model);
         }

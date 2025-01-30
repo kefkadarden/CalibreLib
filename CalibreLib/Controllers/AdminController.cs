@@ -46,7 +46,7 @@ namespace CalibreLib.Controllers
         {
             UserViewModel model = new UserViewModel();
             var appUser = _calibreLibContext.Users.FirstOrDefault(x => x.Id == id);
-
+   
             if (appUser != null)
             {
                 model.Id = appUser.Id;
@@ -55,6 +55,7 @@ namespace CalibreLib.Controllers
                 model.Email = appUser.Email;
                 model.FirstName = appUser.FirstName;
                 model.LastName = appUser.LastName;
+                model.IsAdmin = await _userManager.IsInRoleAsync(appUser, "Admin");
             }
             return PartialView("EditUserPartial", model);
         }
@@ -176,7 +177,11 @@ namespace CalibreLib.Controllers
             user.LastName = model.LastName;
             user.Email = model.Email;
             user.EReaderEmail = model.EReaderEmail;
-            
+            if (model.IsAdmin)
+                await _userManager.AddToRoleAsync(user, "Admin");
+            else
+                await _userManager.RemoveFromRoleAsync(user, "Admin");
+
             if (model.SetPassword && !string.IsNullOrEmpty(model.Password))
             {
                 var removePasswordResult = await _userManager.RemovePasswordAsync(user);
@@ -243,7 +248,8 @@ namespace CalibreLib.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     EReaderEmail = user.EReaderEmail,
-                    Email = user.Email
+                    Email = user.Email,
+                    IsAdmin = _userManager.IsInRoleAsync(user, "Admin").Result
                 });
             });
             var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = apUsers };
@@ -272,5 +278,10 @@ namespace CalibreLib.Controllers
         public string? Password { get; set; }
         [DisplayName("Confirm Password")]
         public string? ConfirmPassword { get; set; }
+
+        public bool IsAdmin
+        {
+            get; set;
+        } = false;
     }
 }

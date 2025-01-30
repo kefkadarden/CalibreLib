@@ -49,40 +49,64 @@ function sendToReader(bookid, format) {
     });
 }
 
-function addToShelf(shelfId, bookid) {
-    $.ajax({
-        type: 'POST',
-        url: '/Shelf/Add',
-        data: "shelfId="+shelfId+"&bookId=" + bookid,
-        success: function (data) {
-            refreshShelfSelection(bookid);
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(XMLHttpRequest.responseJSON.detail);
-        }
+function addToShelf(shelfId, bookids) {
+    console.log(bookids);
+    let ajaxCalls = [];
+    bookids.forEach(function (bookid) {
+        ajaxCalls.push(
+            $.ajax({
+                type: 'POST',
+                url: '/Shelf/Add',
+                data: "shelfId=" + shelfId + "&bookId=" + bookid,
+                success: function (data) {
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseJSON.detail);
+                }
+            })
+        );
+    });
+
+$.when.apply($, ajaxCalls).done(function () {
+    refreshShelfSelection(bookids);
+});
+}
+
+function removeFromShelf(shelfId, bookids) {
+    console.log(bookids);
+    let ajaxCalls = [];
+    bookids.forEach(function (bookid) {
+        ajaxCalls.push(
+            $.ajax({
+                type: 'POST',
+                url: '/Shelf/Remove',
+                data: "shelfId=" + shelfId + "&bookId=" + bookid,
+                success: function (data) {
+                   
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseJSON.detail);
+                }
+            })
+        );
+    });
+
+    $.when.apply($, ajaxCalls).done(function() {
+        refreshShelfSelection(bookids);
     });
 }
 
-function removeFromShelf(shelfId, bookid) {
-    $.ajax({
-        type: 'POST',
-        url: '/Shelf/Remove',
-        data: "shelfId="+shelfId+"&bookId=" + bookid,
-        success: function (data) {
-            refreshShelfSelection(bookid);
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(XMLHttpRequest.responseJSON.detail);
-        }
-    });
-}
+function refreshShelfSelection(bookids) {
 
-function refreshShelfSelection(bookid) {
-    $.ajax({
-        type: 'GET',
-        url: '/Shelf/RefreshShelfSelection?BookId='+bookid,
-        success: function (data) {
-            $('#shelfSelection' + bookid).html(data);
-        },
+    bookids.forEach(function (bookid) {
+        $.ajax({
+            type: 'GET',
+            url: '/Shelf/RefreshShelfSelection?BookId=' + bookid,
+            success: function (data) {
+                $('#shelfSelection' + bookid).html(data);
+            },
+        });
     });
+    
 }

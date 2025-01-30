@@ -1,6 +1,7 @@
 ﻿using CalibreLib.Models;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 
 namespace CalibreLib.Views.Shared.Components
@@ -20,7 +21,14 @@ namespace CalibreLib.Views.Shared.Components
     //}
     public class ToolbarComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(EFilterType type)
+
+        private readonly IViewComponentHelper _viewComponentHelper;
+        public ToolbarComponent(IViewComponentHelper viewComponentHelper)
+        {
+            _viewComponentHelper = viewComponentHelper;
+        }
+
+        public IViewComponentResult Invoke(EFilterType type, object? args= null)
         {
             string content = string.Empty;
             switch (type)
@@ -46,6 +54,10 @@ namespace CalibreLib.Views.Shared.Components
                     break;
                 case EFilterType.Shelf:
                     content = MultiSortToolbar;
+                    break;
+                case EFilterType.SearchList:
+                    if (args != null && args.GetType() == typeof(List<int>))
+                        content = AddToShelfToolbar((List<int>)args);
                     break;
             }
                 
@@ -170,6 +182,13 @@ namespace CalibreLib.Views.Shared.Components
         //                """;
         //    }
         //}
+
+        private string AddToShelfToolbar(List<int> _bookIds)
+        {
+            var innerViewComponentResult = _viewComponentHelper.InvokeAsync("ShelfSelectionComponent", new { bookIds = _bookIds }).Result;
+
+            return innerViewComponentResult?.ToString() ?? "";
+        }
 
         private string ArchivedBooksToolbar
         {

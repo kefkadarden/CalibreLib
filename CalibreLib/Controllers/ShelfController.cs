@@ -50,9 +50,9 @@ namespace CalibreLib.Controllers
         }
 
         [HttpGet]
-        public IActionResult RefreshShelfSelection(int bookId)
+        public IActionResult RefreshShelfSelection(List<int> bookIds)
         {
-            return ViewComponent("ShelfSelectionComponent", new { bookId = bookId });
+            return ViewComponent("ShelfSelectionComponent", new { BookIds = bookIds });
         }
 
         [HttpPost]
