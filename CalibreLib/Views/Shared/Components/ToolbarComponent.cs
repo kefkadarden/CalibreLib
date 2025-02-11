@@ -1,4 +1,6 @@
-﻿using CalibreLib.Models;
+﻿using CalibreLib.Data;
+using CalibreLib.Models;
+using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,12 +25,16 @@ namespace CalibreLib.Views.Shared.Components
     {
 
         private readonly IViewComponentHelper _viewComponentHelper;
-        public ToolbarComponent(IViewComponentHelper viewComponentHelper)
+        private readonly BookRepository _bookRepository;
+        public ToolbarComponent(IViewComponentHelper viewComponentHelper, BookRepository bookRepository)
         {
             _viewComponentHelper = viewComponentHelper;
+            _bookRepository = bookRepository;
         }
 
-        public IViewComponentResult Invoke(EFilterType type, object? args= null)
+        
+
+        public async Task<IViewComponentResult> InvokeAsync(EFilterType type, SearchModel searchModel)
         {
             string content = string.Empty;
             switch (type)
@@ -56,8 +62,13 @@ namespace CalibreLib.Views.Shared.Components
                     content = MultiSortToolbar;
                     break;
                 case EFilterType.SearchList:
-                    if (args != null && args.GetType() == typeof(List<int>))
-                        content = AddToShelfToolbar((List<int>)args);
+                    if (searchModel != null)
+                    {
+                       List<int> bookids = _bookRepository.GetByQueryAsync(searchModel).Result.Select(x => x.Id).ToList();
+                        
+                        content = await AddToShelfToolbar(bookids);
+                    }
+                        
                     break;
             }
                 
@@ -183,9 +194,9 @@ namespace CalibreLib.Views.Shared.Components
         //    }
         //}
 
-        private string AddToShelfToolbar(List<int> _bookIds)
+        private async Task<string> AddToShelfToolbar(List<int> _bookIds)
         {
-            var innerViewComponentResult = _viewComponentHelper.InvokeAsync("ShelfSelectionComponent", new { bookIds = _bookIds }).Result;
+            var innerViewComponentResult = await _viewComponentHelper.InvokeAsync("ShelfSelectionComponent", new { bookIds = _bookIds });
 
             return innerViewComponentResult?.ToString() ?? "";
         }

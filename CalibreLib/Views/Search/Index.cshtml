@@ -1,4 +1,7 @@
 ﻿@model SearchModel //IEnumerable<BookCardModel>
+@inject BookRepository _bookRepository
+@using CalibreLib.Data
+@using System.Collections.Generic
 @using CalibreLib.Views.Shared.Components;
 
 @{
@@ -9,12 +12,14 @@
         WriteIndented = false
     };
     var searchParamJSON = System.Text.Json.JsonSerializer.Serialize(Model,options);
+    var list = await _bookRepository.GetByQueryAsync(Model);
+    var bookIds = list.Select(x => x.Id).ToList();
 }
 
 <script>
     const searchParamJSON = @Html.Raw(searchParamJSON);
 </script>
-@await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.SearchList })
+@await Component.InvokeAsync(typeof(ShelfSelectionComponent), new { BookIds = bookIds })
 <div id="main-container" class="container-fluid">
      @{
         @await Html.PartialAsync("~/Views/Shared/Components/BookCardGrid.cshtml", new List<BookCardModel>())
