@@ -25,19 +25,26 @@ git clone https://github.com/kefkadarden/CalibreLib.git
 cd CalibreLib
 ```
 
-2. Restore the dependencies:
+2. Add directory for Calibre book library:
+
+```
+mkdir calibre
+cd CalibreLib
+```
+
+3. Restore the dependencies:
 
 ```bash
 dotnet restore
 ```
 
-3. Build the application:
+4. Build the application:
 
 ```bash
 dotnet build
 ```
 
-4. Run the application:
+5. Run the application:
 
 ```bash
 dotnet run

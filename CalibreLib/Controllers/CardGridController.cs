@@ -99,7 +99,7 @@ namespace CalibreLib.Controllers
             {
                 return File(result, "application/octet-stream", book.Title + "." + Format);
             }
-            return Ok();
+            return NotFound();
         }
 
         public async Task<IActionResult> DownloadShelf(int ShelfID, string format)

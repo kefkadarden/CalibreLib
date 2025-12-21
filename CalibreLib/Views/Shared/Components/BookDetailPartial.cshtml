@@ -40,8 +40,12 @@
         text-decoration: underline;
     }
 </style>
+@{
+  var alertid = "alert-container" + Model.id;
+}
 <div class="container-fluid">
-              <div class="row">                  
+              <div class="row"> 
+                  <div id="@alertid"></div>
                   <div class="col-sm-3 col-lg-3 col-xs-5">
                         <img src="@Model.CoverImage" class="card-img-top container-fluid img shadow rounded" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;height: auto;max-height: 100%;" alt="@Model.title">
                   </div>
@@ -116,3 +120,5 @@
                   </div>
               </div>
           </div>
+
+

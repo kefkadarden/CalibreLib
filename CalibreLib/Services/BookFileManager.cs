@@ -62,11 +62,20 @@ namespace CalibreLib.Services
             // URL of the file to be downloaded
             var fileUrl = new System.Uri(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format.ToLower());
 
+            // var localFilePath = Path.Combine(_env.WebRootPath, "/book/", book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format.ToLower());
+            // Console.WriteLine("LOCALFILEPATH: " + _env.WebRootPath);
+            // if (!File.Exists(localFilePath))
+            //   return null;
+            // Console.WriteLine("made it past the spot");
+            //
             using (var httpClient = new HttpClient())
             {
                 // Send a GET request to the specified Uri
                 using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead))
+                {
+                  Console.WriteLine("Content Length: " + response.Content.Headers.ContentLength);
                     return response.IsSuccessStatusCode ? await response.Content.ReadAsByteArrayAsync() : null;
+                }
             }
         }
 

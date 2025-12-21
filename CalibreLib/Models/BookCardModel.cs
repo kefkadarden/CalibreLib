@@ -127,7 +127,8 @@ namespace CalibreLib.Models
 
                 foreach(var datum in this.Book.Data)
                 {
-                    html += $"<li><a class=\"dropdown-item\" href=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&Format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" +"</a></li>\r\n    ";
+                   // html += $"<li><a class=\"dropdown-item\" href=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&Format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" +"</a></li>\r\n    ";
+                    html += $"<li><button class=\"dropdown-item\" id=\"download-link{this.Book.Id}\" onclick=\"downloadBook(this);\" data-url=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" + "</button></li>\r\n    ";
                 }
                 html += "</ul>\r\n";
 

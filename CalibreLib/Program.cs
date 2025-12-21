@@ -46,7 +46,8 @@ builder.Services.AddAuthentication()
 
 
 builder.Logging.ClearProviders();
-builder.Logging.AddEventLog(x => { x.SourceName = "CalibreLib"; x.LogName = "Application"; });
+builder.Logging.AddConsole();
+//builder.Logging.AddEventLog(x => { x.SourceName = "CalibreLib"; x.LogName = "Application"; });
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
