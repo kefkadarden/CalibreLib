@@ -32,7 +32,7 @@ mkdir calibre
 cd CalibreLib
 ```
 
-(Need to add instructions for setting up default db files: [calibre.db metadata.db])
+(Need to add instructions for setting up default db files: [calibre.db; metadata.db])
 
 3. Restore the dependencies:
 
