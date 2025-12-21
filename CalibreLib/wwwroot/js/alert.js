@@ -1,32 +1,36 @@
-﻿function showAlert(message, type) {
-    let alertTypeClass;
-    switch (type) {
-        case 'success':
-            alertTypeClass = 'alert-success';
-            break;
-        case 'error':
-            alertTypeClass = 'alert-danger';
-            break;
-        case 'warning':
-            alertTypeClass = 'alert-warning';
-            break;
-        default:
-            alertTypeClass = 'alert-primary';
-            break;
-    }
+﻿function showAlert(message, type, alertId) {
+  alertId = alertId ?? "";
+  let alertContainer = `#alert-container${alertId}`;
 
-    const alertHtml = `
-        <div id="dynamicAlert" class="alert ${alertTypeClass} alert-dismissible fade show" role="alert">
+  let alertTypeClass;
+  switch (type) {
+    case "success":
+      alertTypeClass = "alert-success";
+      break;
+    case "error":
+      alertTypeClass = "alert-danger";
+      break;
+    case "warning":
+      alertTypeClass = "alert-warning";
+      break;
+    default:
+      alertTypeClass = "alert-primary";
+      break;
+  }
+
+  const alertHtml = `
+        <div id="dynamicAlert${alertId}" class="alert ${alertTypeClass} alert-dismissible fade show" role="alert">
             <span id="alertMessage" class="flex-grow-1">${message}</span>
-            <button type="button" class="btn-close-c" aria-label="Close" onclick="hideAlert()">
+            <button type="button" class="btn-close-c" aria-label="Close" onclick="hideAlert(${alertId})">
             <i class="fas fa-times"></i>
             </button>
         </div>
     `;
 
-    $('#alert-container').html(alertHtml);
+  $(alertContainer).html(alertHtml);
 }
 
-function hideAlert() {
-    $('#dynamicAlert').alert('close');
+function hideAlert(alertId) {
+  alertId = alertId ?? "";
+  $(`#dynamicAlert${alertId}`).hide();
 }
