@@ -32,6 +32,8 @@ mkdir calibre
 cd CalibreLib
 ```
 
+(Need to add instructions for setting up default db files)
+
 3. Restore the dependencies:
 
 ```bash
