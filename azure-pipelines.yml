@@ -9,8 +9,8 @@ trigger:
     include:
       - v*
   branches:
-    include:
-      - main
+    exclude:
+      - '*'
 #pr:
 # branches:
 #   include:
