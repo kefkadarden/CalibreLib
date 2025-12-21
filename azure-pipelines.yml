@@ -11,7 +11,7 @@ trigger:
   branches:
     exclude:
       - '*'
-#pr:
+pr: none
 # branches:
 #   include:
 #     - main
