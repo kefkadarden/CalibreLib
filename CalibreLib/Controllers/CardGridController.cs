@@ -185,6 +185,7 @@ namespace CalibreLib.Controllers
            return books.ToList(); 
         }
 
+#region Old BookList code (REMOVE LATER)
         // public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
         //                                             , string? category = null
         //                                             , string? author = null
@@ -303,6 +304,7 @@ namespace CalibreLib.Controllers
         //
         //     return books.ToList();
         // }
+#endregion
 
         public async Task<IActionResult> UpdateArchivedStatus(int bookid = -1, bool isArchived = false)
         {
