@@ -38,19 +38,19 @@ namespace CalibreLib.Controllers
             _mailService = mailService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPageCount(string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
-                                                    , string? category = null
-                                                    , string? author = null
-                                                    , string? publisher = null
-                                                    , string? language = null
-                                                    , string? rating = null
-                                                    , string? series = null)
-        {
-            var books = await GetBookList(0, query, sortBy, null, shelf, category, author, publisher, language, rating, series, true);
-            var count = bookRepository.GetPageCount(books);
-            return Json(new { pageCount = count });
-        }
+        // [HttpGet]
+        // public async Task<IActionResult> GetPageCount(string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
+        //                                             , string? category = null
+        //                                             , string? author = null
+        //                                             , string? publisher = null
+        //                                             , string? language = null
+        //                                             , string? rating = null
+        //                                             , string? series = null)
+        // {
+        //     var books = await GetBookList(0, query, sortBy, null, shelf, category, author, publisher, language, rating, series, true);
+        //     var count = bookRepository.GetPageCount(books);
+        //     return Json(new { pageCount = count });
+        // }
 
         public IActionResult ViewEPub(string BookPath)
         {
@@ -143,38 +143,24 @@ namespace CalibreLib.Controllers
             }
         }
 
-
-        public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
-                                                    , string? category = null
-                                                    , string? author = null
-                                                    , string? publisher = null
-                                                    , string? language = null
-                                                    , string? rating = null
-                                                    , string? series = null
-                                                    , string? searchModel = null
-                                                    , bool? archived = null)
+        [HttpGet]
+        public async Task<IActionResult> BookList(int? pageNumber, string? sortBy = "date", string? type = null, int? id = null, string? searchModel = null, string? query = null)
         {
             SearchModel searchModel2 = new SearchModel();
             if (searchModel != null)
             {
                 searchModel2 = JsonConvert.DeserializeObject<SearchModel>(searchModel);
             }
-            
-            var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series, false, searchModel2,archived);
+
+            if(!Enum.TryParse<EFilterType>(type, true, out EFilterType eType))
+              eType = EFilterType.BookCardGrid; 
+          
+            var books = await GetBookList(pageNumber, sortBy, eType, id, searchModel2, query);
             var model = await bookRepository.GetBookCardModels(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }
 
-        private async Task<List<Book>> GetBookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
-                                                    , string? category = null
-                                                    , string? author = null
-                                                    , string? publisher = null
-                                                    , string? language = null
-                                                    , string? rating = null
-                                                    , string? series = null
-                                                    , bool restorePageSize = false
-                                                    , SearchModel? searchModel = null
-                                                    , bool? archived = null)
+        private async Task<List<Book>> GetBookList(int? pageNumber, string? sortBy = "date", EFilterType type = EFilterType.BookCardGrid, int? id = null, SearchModel? searchModel = null, string? query = null)
         {
             bool ascending = true;
             if (sortBy.EndsWith("desc"))
@@ -195,73 +181,128 @@ namespace CalibreLib.Controllers
                 }
             };
 
-            int id;
-            EFilterType type = EFilterType.BookCardGrid;
-            if (archived != null)
-            {
-                id = -1;
-                type = EFilterType.Archived;
-            }
-            else if (shelf != "null" && shelf != null)
-            {
-                Int32.TryParse(shelf, out id);
-                type = EFilterType.Shelf;
-            }
-            else if (category != "null" && category != null)
-            {
-                Int32.TryParse(category, out id);
-                type = EFilterType.Categories;
-            }
-            else if (author != "null" && author != null)
-            {
-                Int32.TryParse(author, out id);
-                type = EFilterType.Authors;
-            }
-            else if (publisher != "null" && publisher != null)
-            {
-                Int32.TryParse(publisher, out id);
-                type = EFilterType.Publishers;
-            }
-            else if (language != "null" && language != null)
-            {
-                Int32.TryParse(language, out id);
-                type = EFilterType.Languages;
-            }
-            else if (rating != "null" && rating != null)
-            {
-                Int32.TryParse(rating, out id);
-                type = EFilterType.Ratings;
-            }
-            else if (series != "null" && series != null)
-            {
-                Int32.TryParse(series, out id);
-                type = EFilterType.Series;
-            }
-            else
-            {
-                id = -1;
-                type = EFilterType.BookCardGrid;
-            }
-
-            var savedPageSize = bookRepository.PageSize;
-
-            if (pageSize != null)
-            {
-                bookRepository.PageSize = (int)pageSize;
-            }
-            else
-            {
-                var booksAll = await bookRepository.GetAllAsync();
-                bookRepository.PageSize = booksAll.Count();
-            }
-
-            var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id, searchModel);
-
-            if (restorePageSize)
-                bookRepository.PageSize = savedPageSize;
-
-            return books.ToList();
+           var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id, searchModel); 
+           return books.ToList(); 
         }
+
+        // public async Task<IActionResult> BookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
+        //                                             , string? category = null
+        //                                             , string? author = null
+        //                                             , string? publisher = null
+        //                                             , string? language = null
+        //                                             , string? rating = null
+        //                                             , string? series = null
+        //                                             , string? searchModel = null
+        //                                             , bool? archived = null)
+        // {
+        //     SearchModel searchModel2 = new SearchModel();
+        //     if (searchModel != null)
+        //     {
+        //         searchModel2 = JsonConvert.DeserializeObject<SearchModel>(searchModel);
+        //     }
+        //
+        //     var books = await GetBookList(pageNumber, query, sortBy, pageSize, shelf, category, author, publisher, language, rating, series, false, searchModel2,archived);
+        //     var model = await bookRepository.GetBookCardModels(books);
+        //     return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
+        // }
+        //
+        // private async Task<List<Book>> GetBookList(int? pageNumber, string? query, string? sortBy = "date", int? pageSize = 30, string? shelf = null
+        //                                             , string? category = null
+        //                                             , string? author = null
+        //                                             , string? publisher = null
+        //                                             , string? language = null
+        //                                             , string? rating = null
+        //                                             , string? series = null
+        //                                             , bool restorePageSize = false
+        //                                             , SearchModel? searchModel = null
+        //                                             , bool? archived = null)
+        // {
+        //     bool ascending = true;
+        //     if (sortBy.EndsWith("desc"))
+        //         ascending = false;
+        //
+        //     Func<Book, object> orderBy = book =>
+        //     {
+        //         switch (sortBy)
+        //         {
+        //             case "title":
+        //                 return book.Title;
+        //             case "date":
+        //                 return book.Pubdate;
+        //             case "author":
+        //                 return book.AuthorSort;
+        //             default:
+        //                 return book.Title;
+        //         }
+        //     };
+        //
+        //     int id;
+        //     EFilterType type = EFilterType.BookCardGrid;
+        //     if (archived != null)
+        //     {
+        //         id = -1;
+        //         type = EFilterType.Archived;
+        //     }
+        //     else if (shelf != "null" && shelf != null)
+        //     {
+        //         Int32.TryParse(shelf, out id);
+        //         type = EFilterType.Shelf;
+        //     }
+        //     else if (category != "null" && category != null)
+        //     {
+        //         Int32.TryParse(category, out id);
+        //         type = EFilterType.Categories;
+        //     }
+        //     else if (author != "null" && author != null)
+        //     {
+        //         Int32.TryParse(author, out id);
+        //         type = EFilterType.Authors;
+        //     }
+        //     else if (publisher != "null" && publisher != null)
+        //     {
+        //         Int32.TryParse(publisher, out id);
+        //         type = EFilterType.Publishers;
+        //     }
+        //     else if (language != "null" && language != null)
+        //     {
+        //         Int32.TryParse(language, out id);
+        //         type = EFilterType.Languages;
+        //     }
+        //     else if (rating != "null" && rating != null)
+        //     {
+        //         Int32.TryParse(rating, out id);
+        //         type = EFilterType.Ratings;
+        //     }
+        //     else if (series != "null" && series != null)
+        //     {
+        //         Int32.TryParse(series, out id);
+        //         type = EFilterType.Series;
+        //     }
+        //     else
+        //     {
+        //         id = -1;
+        //         type = EFilterType.BookCardGrid;
+        //     }
+        //
+        //     var savedPageSize = bookRepository.PageSize;
+        //
+        //     if (pageSize != null)
+        //     {
+        //         bookRepository.PageSize = (int)pageSize;
+        //     }
+        //     else
+        //     {
+        //         var booksAll = await bookRepository.GetAllAsync();
+        //         bookRepository.PageSize = booksAll.Count();
+        //     }
+        //
+        //     var books =  await bookRepository.GetBooks(pageNumber, orderBy, query, ascending, type, id, searchModel);
+        //
+        //     if (restorePageSize)
+        //         bookRepository.PageSize = savedPageSize;
+        //
+        //     return books.ToList();
+        // }
 
         public async Task<IActionResult> UpdateArchivedStatus(int bookid = -1, bool isArchived = false)
         {

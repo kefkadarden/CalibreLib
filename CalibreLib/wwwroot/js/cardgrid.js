@@ -87,52 +87,63 @@ function loadListViewComponent(type, filter, sortBy) {
   });
 }
 
-async function getPageCount() {
-  $.ajax({
-    type: "GET",
-    url: "/CardGrid/GetPageCount",
-    data: loadBooksQuery(false),
-    success: function (data) {
-      pageCount = data.pageCount;
-    },
-    error: function (XMLHttpRequest, textStatus, errorThrown) {
-      alert(errorThrown);
-    },
-  });
-}
+// async function getPageCount() {
+//   $.ajax({
+//     type: "GET",
+//     url: "/CardGrid/GetPageCount",
+//     data: loadBooksQuery(false),
+//     success: function (data) {
+//       pageCount = data.pageCount;
+//     },
+//     error: function (XMLHttpRequest, textStatus, errorThrown) {
+//       alert(errorThrown);
+//     },
+//   });
+// }
 
-function loadBooksQuery(pageIncrement = false) {
+function loadBooksQuery() {
   var url;
   if (typeof searchParamJSON !== "undefined" && searchParamJSON) {
-    url = `pageNumber=${page}&sortBy=${sortBy}&pageSize=${pageSize}&searchModel=${JSON.stringify(searchParamJSON)}`;
+    url = `pageNumber=${page}&sortBy=${sortBy}&searchModel=${JSON.stringify(searchParamJSON)}`;
   } else {
     url =
       "pageNumber=" +
       page +
       "&sortBy=" +
       sortBy +
-      "&pageSize=" +
-      pageSize +
       "&" +
       window.location.search.replace("?", "");
 
-    if (pageIncrement) page++;
+    var type, id;
 
-    if (shelf != null) url += "&shelf=" + shelf;
-
-    if (author != null) url += "&author=" + author;
-
-    if (publisher != null) url += "&publisher=" + publisher;
-
-    if (rating != null) url += "&rating=" + rating;
-
-    if (category != null) url += "&category=" + category;
-
-    if (series != null) url += "&series=" + series;
-
-    if (language != null) url += "&language=" + language;
-
-    if (archived != null) url += "&archived=true";
+    if (shelf != null) {
+      type = "shelf";
+      id = shelf;
+    } else if (author != null) {
+      type = "authors";
+      id = author;
+    } else if (publisher != null) {
+      type = "publishers";
+      id = publisher;
+    } else if (rating != null) {
+      type = "ratings";
+      id = rating;
+    } else if (category != null) {
+      type = "categories";
+      id = category;
+    } else if (series != null) {
+      type = "series";
+      id = series;
+    } else if (language != null) {
+      type = "languages";
+      id = language;
+    } else if (archived != null) {
+      type = "archived";
+      id = archived;
+    }
+    if (type && id) {
+      url += "&type=" + type + "&id=" + id;
+    }
   }
 
   return url;
