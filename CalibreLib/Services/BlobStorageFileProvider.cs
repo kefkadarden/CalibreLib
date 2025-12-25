@@ -26,7 +26,7 @@ namespace CalibreLib.Services
 
         public IFileInfo GetFileInfo(string subpath)
         {
-            
+
             var blobClient = _containerClient.GetBlobClient(subpath.TrimStart('/'));
             return new AzureBlobFileInfo(blobClient);
         }

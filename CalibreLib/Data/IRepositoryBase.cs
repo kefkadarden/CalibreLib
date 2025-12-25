@@ -1,6 +1,6 @@
 ﻿namespace CalibreLib.Data
 {
-    public interface IRepositoryBase<T> : IDisposable where T:class
+    public interface IRepositoryBase<T> : IDisposable where T : class
     {
         public Task<IEnumerable<T>> GetAllAsync();
         public Task<T> GetByIDAsync(int id);

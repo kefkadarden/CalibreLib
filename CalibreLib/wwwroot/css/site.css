@@ -1,11 +1,19 @@
+/*Added this for a .NET 10 bug https://github.com/dotnet/sdk/issues/51825#issuecomment-3558725813 
+ * Test in later SDK releases to see if resolved.
+ * */
+#dotnet-compile-error:empty {
+  visibility: hidden;
+  display: none;
+}
+
 html {
   font-size: 14px;
 }
 
 .bi {
-    width: 1em;
-    height: 1em;
-    fill: currentcolor;
+  width: 1em;
+  height: 1em;
+  fill: currentcolor;
 }
 
 @media (min-width: 768px) {
@@ -14,8 +22,14 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow:
+    0 0 0 0.1rem white,
+    0 0 0 0.25rem #258cfb;
 }
 
 html {
@@ -38,165 +52,164 @@ body {
 */
 
 .dropdown-menu-right {
-    right: 0 !important;
-    left: auto !important;
+  right: 0 !important;
+  left: auto !important;
 }
 
 /* Account */
 .account-background {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.1);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-    .account-background div {
-        border-radius: 50%;
-    }
+.account-background div {
+  border-radius: 50%;
+}
 
-    .account-background .empty-image {
-        width: 16px;
-        height: 16px;
-        margin: 8px;
-        display: inline-block;
-        background: url('/images/user.svg');
-    }
+.account-background .empty-image {
+  width: 16px;
+  height: 16px;
+  margin: 8px;
+  display: inline-block;
+  background: url("/images/user.svg");
+}
 
-    .account-background .account-image {
-        width: 32px;
-        height: 32px;
-        font-size: 0.8em;
-        font-weight: 600;
-        line-height: 32px;
-        text-align: center;
-        margin: 0 auto;
-        display: table;
-        background-size: 100%;
-    }
+.account-background .account-image {
+  width: 32px;
+  height: 32px;
+  font-size: 0.8em;
+  font-weight: 600;
+  line-height: 32px;
+  text-align: center;
+  margin: 0 auto;
+  display: table;
+  background-size: 100%;
+}
 
 .user-info .avatar img {
-    float: left;
-    height: 43px;
-    border-radius: 50%;
+  float: left;
+  height: 43px;
+  border-radius: 50%;
 }
 
 .user-info .text-container {
-    height: 3.13rem;
-    margin-left: 60px;
+  height: 3.13rem;
+  margin-left: 60px;
 }
 
-    .user-info .text-container .user-name {
-        color: #444444;
-        font-size: 1.14em;
-    }
+.user-info .text-container .user-name {
+  color: #444444;
+  font-size: 1.14em;
+}
 
-    .user-info .text-container .email {
-        display: block;
-        color: #666666;
-        font-size: 0.86em;
-    }
+.user-info .text-container .email {
+  display: block;
+  color: #666666;
+  font-size: 0.86em;
+}
 
 .myaccount-item {
-    background-color: #e4e4e4;
+  background-color: #e4e4e4;
 }
 
 .sign-out-image {
-    width: 20px;
-    height: 100%;
-    vertical-align: middle;
+  width: 20px;
+  height: 100%;
+  vertical-align: middle;
 }
 
 .sign-out-container {
-    display: inline-block;
-    height: 100%;
-    width: 100%;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
 }
 
-    .sign-out-container .sign-out-button {
-        text-align: left;
-        width: 100%;
-    }
+.sign-out-container .sign-out-button {
+  text-align: left;
+  width: 100%;
+}
 
 .grid-item {
-    width: 200px;
-    height: 450px;
-    float: left;
-    margin: 10px;
+  width: 200px;
+  height: 450px;
+  float: left;
+  margin: 10px;
 }
 
 .loading-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
 }
 
 .loading-blur {
-    filter: blur(2px);
+  filter: blur(2px);
 }
 
 .svgLoading {
-    animation: 2s linear infinite svg-animation;
-    max-width: 100px;
-    width:100px;
-    height:100px;
+  animation: 2s linear infinite svg-animation;
+  max-width: 100px;
+  width: 100px;
+  height: 100px;
 }
 
 .loading-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .loading-text {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: bolder;
-    color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
-}   
-
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bolder;
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+}
 
 @keyframes svg-animation {
-    0% {
-        transform: rotateZ(0deg);
-    }
+  0% {
+    transform: rotateZ(0deg);
+  }
 
-    100% {
-        transform: rotateZ(360deg)
-    }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }
 
 .loadingCircle {
-    animation: 1.4s ease-in-out infinite both circle-animation;
-    display: block;
-    fill: transparent;
-    stroke: rgba(var(--bs-body-color-rgb),1);
-    stroke-linecap: round;
-    stroke-dasharray: 283;
-    stroke-dashoffset: 280;
-    stroke-width: 10px;
-    transform-origin: 50% 50%;
+  animation: 1.4s ease-in-out infinite both circle-animation;
+  display: block;
+  fill: transparent;
+  stroke: rgba(var(--bs-body-color-rgb), 1);
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 280;
+  stroke-width: 10px;
+  transform-origin: 50% 50%;
 }
 
 @keyframes circle-animation {
-    0%, 25%
-    {
-        stroke-dashoffset: 280;
-        transform: rotate(0);
-    }
+  0%,
+  25% {
+    stroke-dashoffset: 280;
+    transform: rotate(0);
+  }
 
-    50%,    
-    75% {
-        stroke-dashoffset: 75;
-        transform: rotate(45deg);
-    }
+  50%,
+  75% {
+    stroke-dashoffset: 75;
+    transform: rotate(45deg);
+  }
 
-    100% {
-        stroke-dashoffset: 280;
-        transform: rotate(360deg);
-    }
+  100% {
+    stroke-dashoffset: 280;
+    transform: rotate(360deg);
+  }
 }

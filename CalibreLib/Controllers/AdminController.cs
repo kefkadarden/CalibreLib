@@ -24,7 +24,7 @@ namespace CalibreLib.Controllers
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly IEmailSender _emailSender;
 
-        public AdminController(CalibreLibContext calibreLibContext, 
+        public AdminController(CalibreLibContext calibreLibContext,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             IEmailSender emailSender)
@@ -35,7 +35,7 @@ namespace CalibreLib.Controllers
             _emailStore = GetEmailStore();
             _emailSender = emailSender;
         }
-    
+
         public IActionResult Index()
         {
             return View();
@@ -147,7 +147,8 @@ namespace CalibreLib.Controllers
                         {
                             await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                        }catch
+                        }
+                        catch
                         {
 
                         }
@@ -168,7 +169,7 @@ namespace CalibreLib.Controllers
                     var errorsCreate2 = string.Empty;
                     ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate2 += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
                     return BadRequest(errorsCreate2);
-                } 
+                }
             }
 
             user.UserName = model.UserName;
@@ -176,7 +177,7 @@ namespace CalibreLib.Controllers
             user.LastName = model.LastName;
             user.Email = model.Email;
             user.EReaderEmail = model.EReaderEmail;
-            
+
             if (model.SetPassword && !string.IsNullOrEmpty(model.Password))
             {
                 var removePasswordResult = await _userManager.RemovePasswordAsync(user);
@@ -231,11 +232,12 @@ namespace CalibreLib.Controllers
                                             || m.UserName.Contains(searchValue)
                                             || m.Email.Contains(searchValue));
             }
-            
-            
+
+
             recordsTotal = users.Count();
             var data = users.Skip(skip).Take(pageSize).ToList();
-            data.ForEach(user => {
+            data.ForEach(user =>
+            {
                 apUsers.Add(new UserViewModel()
                 {
                     Id = user.Id,

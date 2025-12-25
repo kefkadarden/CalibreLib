@@ -10,7 +10,7 @@ namespace CalibreLib.Controllers
     {
         private readonly BookRepository _bookRepository;
         private readonly MetadataDBContext _metadataDBContext;
-        public AuthorController(BookRepository bookRepository, MetadataDBContext metadataDBContext) 
+        public AuthorController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
         {
             _bookRepository = bookRepository;
             _metadataDBContext = metadataDBContext;

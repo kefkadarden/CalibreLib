@@ -20,7 +20,7 @@ namespace CalibreLib.Controllers
             {
                 return book.Title;
             };
-            var books = await _bookRepository.GetBooks(0, orderBy ,null, true, Models.EFilterType.Archived);
+            var books = await _bookRepository.GetBooks(0, orderBy, null, true, Models.EFilterType.Archived);
             var bookCards = await _bookRepository.GetBookCardModels(books);
             return View(bookCards);
 

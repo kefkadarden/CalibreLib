@@ -31,7 +31,7 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Authors:
-                    foreach (var author in _metadataDBContext.Authors.AsEnumerable().Where(x => filter == "All" 
+                    foreach (var author in _metadataDBContext.Authors.AsEnumerable().Where(x => filter == "All"
                         || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
@@ -57,7 +57,7 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Categories:
-                    foreach (var tag in _metadataDBContext.Tags.AsEnumerable().Where(x => filter == "All" 
+                    foreach (var tag in _metadataDBContext.Tags.AsEnumerable().Where(x => filter == "All"
                         || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();
@@ -96,7 +96,7 @@ namespace CalibreLib.Views.Shared.Components
                     }
                     break;
                 case EFilterType.Publishers:
-                    foreach (var publisher in _metadataDBContext.Publishers.AsEnumerable().Where(x => filter == "All" 
+                    foreach (var publisher in _metadataDBContext.Publishers.AsEnumerable().Where(x => filter == "All"
                         || x.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)))
                     {
                         var m = new ListViewModel();

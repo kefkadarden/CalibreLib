@@ -27,7 +27,7 @@ namespace CalibreLib.Services
         private readonly HttpRequest _httpRequest;
         private string? _pathBase = string.Empty;
 
-        public BookFileManager(IWebHostEnvironment env, HttpRequest httpRequest) 
+        public BookFileManager(IWebHostEnvironment env, HttpRequest httpRequest)
         {
             _env = env;
             _httpRequest = httpRequest;
@@ -57,7 +57,7 @@ namespace CalibreLib.Services
             }
         }
 
-        public async Task<byte[]?> DownloadBookAsync(Book book, string Format) 
+        public async Task<byte[]?> DownloadBookAsync(Book book, string Format)
         {
             // URL of the file to be downloaded
             var fileUrl = new System.Uri(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format.ToLower());
@@ -73,7 +73,7 @@ namespace CalibreLib.Services
                 // Send a GET request to the specified Uri
                 using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead))
                 {
-                  Console.WriteLine("Content Length: " + response.Content.Headers.ContentLength);
+                    Console.WriteLine("Content Length: " + response.Content.Headers.ContentLength);
                     return response.IsSuccessStatusCode ? await response.Content.ReadAsByteArrayAsync() : null;
                 }
             }

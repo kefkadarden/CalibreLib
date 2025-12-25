@@ -44,7 +44,7 @@ namespace CalibreLib.Data
 
             decimal dPageSize = Convert.ToDecimal(PageSize);
             var count = books.Count();
-            return Convert.ToInt32(Math.Ceiling( Convert.ToDecimal(count / dPageSize) ));
+            return Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(count / dPageSize)));
         }
 
         public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, EFilterType type = EFilterType.BookCardGrid, int? filterid = null, SearchModel? searchModel = null)
@@ -72,7 +72,7 @@ namespace CalibreLib.Data
                 filterID = (int)filterid;
 
             IEnumerable<Book> booksList = new List<Book>();
-            switch(type)
+            switch (type)
             {
                 case EFilterType.Authors:
                     booksList = await this.GetByAuthorAsync(filterID);
@@ -125,23 +125,23 @@ namespace CalibreLib.Data
             var bookIds = user?.ArchivedBooks.Where(x => x.IsArchived).Select(x => x.BookId);
             return await context.Books.Where(x => bookIds.Contains(x.Id)).ToListAsync();
         }
-        
+
         public async Task<IEnumerable<Book>> GetByQueryAsync(string query)
         {
             //Contains() Ignore Case causes Sqlite EF exception currently. Still need to investigate why. Using ToLower() currently for case insenstive comparsion.
             //Potential lead: https://github.com/dotnet/efcore/issues/8033
             query = query.ToLower();
 
-            
-                return await context.Books.Where(x => x.Title.ToLower().Contains(query) ||
-                                                      x.Isbn.ToLower().Contains(query) ||
-                                                      x.Lccn.ToLower().Contains(query) ||
-                                                      x.Identifiers.Any(x => x.Val.ToLower().Contains(query)) || 
-                                                      x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
-                                                      x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
-                                                      x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||
-                                                      x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))).ToListAsync();
-            
+
+            return await context.Books.Where(x => x.Title.ToLower().Contains(query) ||
+                                                  x.Isbn.ToLower().Contains(query) ||
+                                                  x.Lccn.ToLower().Contains(query) ||
+                                                  x.Identifiers.Any(x => x.Val.ToLower().Contains(query)) ||
+                                                  x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
+                                                  x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
+                                                  x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||
+                                                  x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))).ToListAsync();
+
         }
 
         public async Task<IEnumerable<Book>> GetByQueryAsync(SearchModel model)
@@ -288,7 +288,7 @@ namespace CalibreLib.Data
         public async Task<List<BookCardModel>> GetBookCardModels(IEnumerable<Book> books)
         {
             List<BookCardModel> model = new List<BookCardModel>();
-            foreach(Book book in books)
+            foreach (Book book in books)
             {
                 var bcModel = await GetBookCardModel(book);
                 model.Add(bcModel);
@@ -299,7 +299,7 @@ namespace CalibreLib.Data
 
         public async Task<BookCardModel> GetBookCardModel(Book book)
         {
-            BookFileManager manager = new BookFileManager(_env, _contextAccessor.HttpContext.Request); 
+            BookFileManager manager = new BookFileManager(_env, _contextAccessor.HttpContext.Request);
             var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
             List<Identifier> identifiers = await this.GetIdentifiersAsync();
             var cover = await manager.GetBookCoverAsync(book);

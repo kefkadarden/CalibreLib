@@ -18,10 +18,10 @@ namespace CalibreLib.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly UserManager<ApplicationUser>   _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly BookRepository _bookRepository;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, BookRepository bookRepository )
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, BookRepository bookRepository)
         {
             _logger = logger;
             _userManager = userManager;

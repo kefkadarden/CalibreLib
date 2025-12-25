@@ -27,39 +27,39 @@ namespace CalibreLib.Models
             }
         }
         public string AuthorsHTML
-        { 
+        {
             get
             {
-                return String.Join(" & ",this.Authors.Select(x => @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/author/" + x.Author.Id + @""">" + x.Author.Name + @"</a>"));
-            } 
+                return String.Join(" & ", this.Authors.Select(x => @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/author/" + x.Author.Id + @""">" + x.Author.Name + @"</a>"));
+            }
         }
 
         public string SeriesHTML
         {
             get
             {
-                return String.Join(" & ", this.Series.Select(x => @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/series/" + x.Series.Id + @""">" + x.Series.Name +"</a>" + @" (" + x.Book.SeriesIndex + ")"));
+                return String.Join(" & ", this.Series.Select(x => @"<a class=""link-underline link-underline-opacity-0 link-underline-opacity-100-hover"" href=""/series/" + x.Series.Id + @""">" + x.Series.Name + "</a>" + @" (" + x.Book.SeriesIndex + ")"));
             }
         }
-        
+
         public int RatingValue { get; set; }
 
-        public string PublishDateHTML 
-        { 
-            get 
+        public string PublishDateHTML
+        {
+            get
             {
-                
+
                 return (this.Book.Pubdate != DateTime.Parse("1/1/0101") && !string.IsNullOrEmpty(this.Book.Pubdate?.ToString())) ? "Published: " + ((DateTime)this.Book.Pubdate).ToShortDateString() : "";
-            } 
+            }
         }
 
-        public string PublisherHTML 
-        { 
-            get 
+        public string PublisherHTML
+        {
+            get
             {
 
                 return String.Join(" & ", this.Book.BookPublishers.Select(x => @"Publisher: " + @"<a class=""link-primary"" href=""/publisher/" + x.Publisher.Id + @""">" + x.Publisher.Name + "</a>"));
-            } 
+            }
         }
 
         public string LanguageHTML
@@ -70,7 +70,7 @@ namespace CalibreLib.Models
             }
         }
 
-        public string TagsHTML 
+        public string TagsHTML
         {
             get
             {
@@ -79,7 +79,7 @@ namespace CalibreLib.Models
                 {
                     tags = String.Join("", this.Tags.Select(x => @"<p class=""label label-blue mb-1 me-1""><a class=""link-light link-primary"" href=""/category/" + x.TagId.ToString() + @""">" + x.Tag.Name + "</a></p>"));
                 }
-                 
+
                 return tags;
             }
         }
@@ -88,9 +88,10 @@ namespace CalibreLib.Models
         {
             get
             {
-                return String.Join("", this.Book.Identifiers.Select(x => {
+                return String.Join("", this.Book.Identifiers.Select(x =>
+                {
                     string? url = "/identifier/";
-                    switch(x.Type?.ToLower())
+                    switch (x.Type?.ToLower())
                     {
                         case "google":
                             url = "https://books.google.com/books?id=" + x.Val;
@@ -109,7 +110,7 @@ namespace CalibreLib.Models
                             break;
                     }
                     return @"<p class=""label label-green mb-1 me-1""><a class=""link-light link-primary"" target=""_blank"" href=""" + url + @""">" + x.Type + "</a></p>";
-                    }));
+                }));
             }
         }
 
@@ -125,10 +126,10 @@ namespace CalibreLib.Models
                 var html = "<button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">\r\n    Download\r\n  </button>\r\n  " +
                     "<ul class=\"dropdown-menu\">\r\n    ";
 
-                foreach(var datum in this.Book.Data)
+                foreach (var datum in this.Book.Data)
                 {
-                   // html += $"<li><a class=\"dropdown-item\" href=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&Format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" +"</a></li>\r\n    ";
-                    html += $"<li><button class=\"dropdown-item\" id=\"download-link{this.Book.Id}\" onclick=\"downloadBook(this);\" data-url=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" + "</button></li>\r\n    ";
+                    // html += $"<li><a class=\"dropdown-item\" href=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&Format={datum.Format}\">"+datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0)/1000.0,1).ToString() + " KB)" +"</a></li>\r\n    ";
+                    html += $"<li><button class=\"dropdown-item\" id=\"download-link{this.Book.Id}\" onclick=\"downloadBook(this);\" data-url=\"/CardGrid/DownloadBook?BookID={this.Book.Id}&format={datum.Format}\">" + datum.Format + " (" + Math.Round((datum.UncompressedSize ?? 0) / 1000.0, 1).ToString() + " KB)" + "</button></li>\r\n    ";
                 }
                 html += "</ul>\r\n";
 
