@@ -17,46 +17,36 @@ variables:
   dotnetSdkVersion: '10.0.101'
 
 steps:
-- task: UseDotNet@2
-  displayName: 'Install .NET SDK'
-  inputs:
-    packageType: 'sdk'
-    version: '$(dotnetSdkVersion)'
+  - task: UseDotNet@2
+    displayName: 'Install .NET SDK $(dotnetVersion)'
+    inputs:
+      packageType: 'sdk'
+      version: '$(dotnetSdkVersion)'
 
-- script: dotnet --info
-  displayName: 'dotnet --info'
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet restore'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
 
-- script: dotnet restore "$(solution)"
-  displayName: 'dotnet restore'
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet build'
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
 
-- script: dotnet list package --include-transitive
-  displayName: 'dotnet list package (with transitive)'
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet publish'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: true
 
-- script: dotnet build "$(solution)" -c $(buildConfiguration) --no-restore
-  displayName: 'dotnet build solution'
-
-- script: |
-    echo "Preparing artifact staging folder..."
-    mkdir -p "$(Build.ArtifactStagingDirectory)"
-    echo "Publishing each project (this publishes all .csproj files found)."
-    for proj in $(find . -name '*.csproj'); do
-      echo "Publishing $proj"
-      dotnet publish "$proj" -c $(buildConfiguration) -o "$(Build.ArtifactStagingDirectory)/$(basename "$proj" .csproj)" --no-build
-    done
-  displayName: 'dotnet publish all projects'
-
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
-    replaceExistingArchive: true
-  displayName: 'Create artifact zip'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-  displayName: 'Publish build artifacts'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish pipeline artifact'
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)'
+      artifact: 'drop'
+      publishLocation: 'pipeline'
