@@ -1,8 +1,3 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 pr: none
 
 trigger:
@@ -14,11 +9,10 @@ trigger:
       - azure-pipelines.yml
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   dotnetSdkVersion: '10.0.101'
 
@@ -31,23 +25,38 @@ steps:
 
 - script: dotnet --info
   displayName: 'dotnet --info'
-  
-- task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+- script: dotnet restore "$(solution)"
+  displayName: 'dotnet restore'
 
-- task: VSBuild@1
+- script: dotnet list package --include-transitive
+  displayName: 'dotnet list package (with transitive)'
+
+- script: dotnet build "$(solution)" -c $(buildConfiguration) --no-restore
+  displayName: 'dotnet build solution'
+
+- script: |
+    echo "Preparing artifact staging folder..."
+    mkdir -p "$(Build.ArtifactStagingDirectory)"
+    echo "Publishing each project (this publishes all .csproj files found)."
+    for proj in $(find . -name '*.csproj'); do
+      echo "Publishing $proj"
+      dotnet publish "$proj" -c $(buildConfiguration) -o "$(Build.ArtifactStagingDirectory)/$(basename "$proj" .csproj)" --no-build
+    done
+  displayName: 'dotnet publish all projects'
+
+- task: ArchiveFiles@2
   inputs:
-    solution: '$(solution)'
-    vsVersion: '18.0'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
+    replaceExistingArchive: true
+  displayName: 'Create artifact zip'
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+  displayName: 'Publish build artifacts'
