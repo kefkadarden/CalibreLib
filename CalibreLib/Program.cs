@@ -141,7 +141,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "book",
     pattern: "book/{id?}",
-    defaults: new { controller="Home", action = "Book" });
+    defaults: new { controller = "Home", action = "Book" });
 
 app.MapControllerRoute(
     name: "author",

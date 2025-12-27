@@ -12,8 +12,8 @@ public partial class Rating
 
     [NotMapped]
     public int? RatingValue
-    { 
-        get 
+    {
+        get
         {
             int rating = 0;
             if (this.Rating1 > 0 && this.Rating1 < 4)
@@ -28,7 +28,7 @@ public partial class Rating
                 rating = 5;
 
             return rating;
-        } 
+        }
     }
 
     public virtual List<BooksRatingsLink> BookRatings { get; set; } = [];

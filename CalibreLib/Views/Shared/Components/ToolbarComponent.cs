@@ -39,8 +39,8 @@ namespace CalibreLib.Views.Shared.Components
                     break;
                 //case EFilterType.Ratings:
                 //case EFilterType.FileFormats:
-                  //  content = AlphaNumericSortToolbar;
-                    //break;
+                //  content = AlphaNumericSortToolbar;
+                //break;
                 case EFilterType.Archived:
                     content = ArchivedBooksToolbar;
                     break;
@@ -48,7 +48,7 @@ namespace CalibreLib.Views.Shared.Components
                     content = MultiSortToolbar;
                     break;
             }
-                
+
             return new HtmlContentViewComponentResult(new HtmlString(content));
         }
 
@@ -63,7 +63,7 @@ namespace CalibreLib.Views.Shared.Components
 
         private string AlphaNumericSortToolbar(EAlphaNumericSortType sortType)
         {
-                return $"""
+            return $"""
                         <input type="radio" class="btn-check" name="{sortType.name}" id="title" autocomplete="off" onclick="{sortType.funcName}('title');">
                           <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
 
@@ -82,15 +82,15 @@ namespace CalibreLib.Views.Shared.Components
                                 <input type="radio" class="btn-check" name="btnradio" id="allSort" checked autocomplete="off" onclick="updateFilterBy('All');">
                                 <label class="btn btn-outline-primary" for="allSort">All</label>
                               """;
-                for(int i = 0; i <= 9; i++)
+                for (int i = 0; i <= 9; i++)
                 {
                     numbers += $"""
                                     <input type="radio" class="btn-check" name="btnradio" id="numberSort{i}" autocomplete="off" onclick="updateFilterBy('{i}');">
                                     <label class="btn btn-outline-primary" for="numberSort{i}">{i}</label>
                                 """;
                 }
-                
-                for (char c = 'A'; c <= 'Z'; c++) 
+
+                for (char c = 'A'; c <= 'Z'; c++)
                 {
                     letters += $"""
                                     <input type="radio" class="btn-check" name="btnradio" id="letterSort{c}" autocomplete="off" onclick="updateFilterBy('{c}');">
@@ -162,7 +162,7 @@ namespace CalibreLib.Views.Shared.Components
         //        return $$"""
         //                <label class="btn-group-vertical ms-3 me-1" for="btnPage">Toggle Pages</label>
         //                <input type="checkbox" class="ms-1" name="btnPage" id="btnPage" onclick="$(function () { const btnPage = $('#btnPage')[0]; togglePagingEnabled(btnPage.checked); });" /> <!--Need to implement the pagination here with hide and show. -->
-  
+
         //                <div id="divPageSize">
         //                <label class="btn-group-vertical ms-3 ps-3 me-1 border-start border-dark" for="btnPage">Page Size</label>
         //                <input type="text" autocomplete="false" inputmode="numeric" id="lblPageSize" class="fw-bold p-1 text-center" style="width:50px;" value="10" />

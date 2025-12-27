@@ -28,7 +28,7 @@ namespace CalibreLib.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var shelf = user.Shelves.FirstOrDefault(x => x.Id == id);
             if (shelf != null)
-            {                
+            {
                 foreach (var item in shelf.BookShelves)
                 {
                     var book = await _bookRepository.GetByIDAsync(item.BookId);
@@ -46,7 +46,7 @@ namespace CalibreLib.Controllers
                 return NotFound();
             }
 
-            
+
         }
 
         [HttpGet]
@@ -184,7 +184,7 @@ namespace CalibreLib.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var shelf = user.Shelves.FirstOrDefault(x => x.Id == id);
 
-            if (shelf  == null) return NotFound();
+            if (shelf == null) return NotFound();
 
             if (!user.Shelves.Remove(shelf))
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Code = 500, Message = "Cannot Delete Shelf", ErrorMessage = "Cannot Delete Shelf" });
@@ -200,6 +200,6 @@ namespace CalibreLib.Controllers
             return View();
         }
 
-        
+
     }
 }

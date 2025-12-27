@@ -26,7 +26,7 @@ public class CalibreLibContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<ArchivedBook>(entity =>
         {
-            entity.ToTable("ArchivedBooks",(string)null);
+            entity.ToTable("ArchivedBooks", (string)null);
 
             entity.HasIndex(e => e.BookId, "IX_ArchivedBooks_BookID");
             entity.HasIndex(e => new { e.BookId, e.UserId }, "IX_ArchivedBooks_bookid_userid").IsUnique();
@@ -41,7 +41,7 @@ public class CalibreLibContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.IsArchived)
                 .HasColumnType("BOOLEAN")
                 .HasColumnName("is_archived");
-            entity.Property(e => e.LastModified)            
+            entity.Property(e => e.LastModified)
                 .HasColumnType("DATETIME")
                 .HasColumnName("last_modified");
             entity.HasOne(x => x.User).WithMany(x => x.ArchivedBooks).HasForeignKey(x => x.UserId).IsRequired();
@@ -95,7 +95,7 @@ public class CalibreLibContext : IdentityDbContext<ApplicationUser>
                 .ValueGeneratedOnAddOrUpdate()
                 .HasColumnName("last_modified");
 
-            entity.HasOne(x =>x.User).WithMany(x => x.Shelves).HasForeignKey(x => x.UserId).IsRequired();
+            entity.HasOne(x => x.User).WithMany(x => x.Shelves).HasForeignKey(x => x.UserId).IsRequired();
         });
 
         builder.Entity<BooksShelvesLink>(entity =>

@@ -13,7 +13,7 @@ namespace CalibreLib.Controllers
         public LanguageController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
         {
             _bookRepository = bookRepository;
-            _metadataDBContext = metadataDBContext; 
+            _metadataDBContext = metadataDBContext;
         }
 
 
