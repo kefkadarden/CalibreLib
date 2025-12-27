@@ -20,8 +20,15 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  dotnetSdkVersion: '10.0.101'
 
 steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '$(dotnetSdkVersion)'
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
