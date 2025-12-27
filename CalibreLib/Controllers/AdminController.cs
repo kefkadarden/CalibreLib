@@ -1,17 +1,15 @@
-﻿using CalibreLib.Areas.Identity.Data;
-using CalibreLib.Data;
-using CalibreLib.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Graph;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
+using CalibreLib.Areas.Identity.Data;
+using CalibreLib.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Graph;
 
 namespace CalibreLib.Controllers
 {
@@ -24,10 +22,12 @@ namespace CalibreLib.Controllers
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly IEmailSender _emailSender;
 
-        public AdminController(CalibreLibContext calibreLibContext,
+        public AdminController(
+            CalibreLibContext calibreLibContext,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
-            IEmailSender emailSender)
+            IEmailSender emailSender
+        )
         {
             _calibreLibContext = calibreLibContext;
             _userManager = userManager;
@@ -67,9 +67,11 @@ namespace CalibreLib.Controllers
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                    $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+                throw new InvalidOperationException(
+                    $"Can't create an instance of '{nameof(ApplicationUser)}'. "
+                        + $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively "
+                        + $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml"
+                );
             }
         }
 
@@ -77,7 +79,9 @@ namespace CalibreLib.Controllers
         {
             if (!_userManager.SupportsUserEmail)
             {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
+                throw new NotSupportedException(
+                    "The default UI requires a user store with email support."
+                );
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
@@ -102,7 +106,12 @@ namespace CalibreLib.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
                 var errorsCreate = string.Empty;
-                ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
+                ModelState
+                    .AsEnumerable()
+                    .ToList()
+                    .ForEach(x =>
+                        errorsCreate += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage))
+                    );
                 return BadRequest(errorsCreate);
             }
             return Ok();
@@ -140,18 +149,30 @@ namespace CalibreLib.Controllers
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code, returnUrl = Url.Content("~/") },
-                            protocol: Request.Scheme);
+                            values: new
+                            {
+                                area = "Identity",
+                                userId = userId,
+                                code = code,
+                                returnUrl = Url.Content("~/"),
+                            },
+                            protocol: Request.Scheme
+                        );
+
+                        if (callbackUrl == null)
+                        {
+                            return BadRequest("Invalid callbackUrl for confirmation email.");
+                        }
 
                         try
                         {
-                            await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
-                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                            await _emailSender.SendEmailAsync(
+                                model.Email,
+                                "Confirm your email",
+                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."
+                            );
                         }
-                        catch
-                        {
-
-                        }
+                        catch { }
                     }
                     else
                     {
@@ -160,14 +181,30 @@ namespace CalibreLib.Controllers
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
                         var errorsCreate = string.Empty;
-                        ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
+                        ModelState
+                            .AsEnumerable()
+                            .ToList()
+                            .ForEach(x =>
+                                errorsCreate += String.Join(
+                                    ' ',
+                                    x.Value.Errors.Select(y => y.ErrorMessage)
+                                )
+                            );
                         return BadRequest(errorsCreate);
                     }
                 }
                 else
                 {
                     var errorsCreate2 = string.Empty;
-                    ModelState.AsEnumerable().ToList().ForEach(x => errorsCreate2 += String.Join(' ', x.Value.Errors.Select(y => y.ErrorMessage)));
+                    ModelState
+                        .AsEnumerable()
+                        .ToList()
+                        .ForEach(x =>
+                            errorsCreate2 += String.Join(
+                                ' ',
+                                x.Value.Errors.Select(y => y.ErrorMessage)
+                            )
+                        );
                     return BadRequest(errorsCreate2);
                 }
             }
@@ -186,7 +223,9 @@ namespace CalibreLib.Controllers
 
                 var addPasswordResult = await _userManager.AddPasswordAsync(user, model.Password);
                 if (!addPasswordResult.Succeeded)
-                    return BadRequest(String.Join(' ', addPasswordResult.Errors.Select(x => x.Description)));
+                    return BadRequest(
+                        String.Join(' ', addPasswordResult.Errors.Select(x => x.Description))
+                    );
             }
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -201,7 +240,9 @@ namespace CalibreLib.Controllers
             var draw = Request.Form["draw"].FirstOrDefault();
             var start = Request.Form["start"].FirstOrDefault();
             var length = Request.Form["length"].FirstOrDefault();
-            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumn = Request
+                .Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"]
+                .FirstOrDefault();
             var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
             var searchValue = Request.Form["search[value]"].FirstOrDefault();
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
@@ -211,15 +252,16 @@ namespace CalibreLib.Controllers
             var users = (from user in _calibreLibContext.Users select user);
             if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
             {
-                System.Linq.Expressions.Expression<Func<ApplicationUser, string>> sortBy = sortColumn switch
-                {
-                    nameof(ApplicationUser.Id) => user => user.Id,
-                    nameof(ApplicationUser.UserName) => user => user.UserName,
-                    nameof(ApplicationUser.FirstName) => user => user.FirstName,
-                    nameof(ApplicationUser.LastName) => user => user.LastName,
-                    nameof(ApplicationUser.Email) => user => user.Email,
-                    _ => throw new ArgumentException(),
-                };
+                System.Linq.Expressions.Expression<Func<ApplicationUser, string>> sortBy =
+                    sortColumn switch
+                    {
+                        nameof(ApplicationUser.Id) => user => user.Id,
+                        nameof(ApplicationUser.UserName) => user => user.UserName,
+                        nameof(ApplicationUser.FirstName) => user => user.FirstName,
+                        nameof(ApplicationUser.LastName) => user => user.LastName,
+                        nameof(ApplicationUser.Email) => user => user.Email,
+                        _ => throw new ArgumentException(),
+                    };
                 if (sortColumnDirection == "asc")
                     users = users.OrderBy(sortBy);
                 else
@@ -227,28 +269,37 @@ namespace CalibreLib.Controllers
             }
             if (!string.IsNullOrEmpty(searchValue))
             {
-                users = users.Where(m => m.FirstName.Contains(searchValue)
-                                            || m.LastName.Contains(searchValue)
-                                            || m.UserName.Contains(searchValue)
-                                            || m.Email.Contains(searchValue));
+                users = users.Where(m =>
+                    m.FirstName.Contains(searchValue)
+                    || m.LastName.Contains(searchValue)
+                    || m.UserName.Contains(searchValue)
+                    || m.Email.Contains(searchValue)
+                );
             }
-
 
             recordsTotal = users.Count();
             var data = users.Skip(skip).Take(pageSize).ToList();
             data.ForEach(user =>
             {
-                apUsers.Add(new UserViewModel()
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    EReaderEmail = user.EReaderEmail,
-                    Email = user.Email
-                });
+                apUsers.Add(
+                    new UserViewModel()
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        EReaderEmail = user.EReaderEmail,
+                        Email = user.Email,
+                    }
+                );
             });
-            var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = apUsers };
+            var jsonData = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = apUsers,
+            };
             return Ok(jsonData);
         }
     }
@@ -256,22 +307,28 @@ namespace CalibreLib.Controllers
     public class UserViewModel()
     {
         public string? Id { get; set; }
+
         [Required]
         public string UserName { get; set; }
+
         [Required]
         [DisplayName("First Name")]
         public string FirstName { get; set; }
+
         [Required]
         [DisplayName("Last Name")]
         public string LastName { get; set; }
+
         [EmailAddress]
         [DisplayName("Send to EReader Email")]
         public string? EReaderEmail { get; set; }
+
         [EmailAddress]
         [Required]
         public string Email { get; set; }
         public bool SetPassword { get; set; } = false;
         public string? Password { get; set; }
+
         [DisplayName("Confirm Password")]
         public string? ConfirmPassword { get; set; }
     }

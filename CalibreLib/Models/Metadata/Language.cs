@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CalibreLib.Models.Metadata;
+﻿namespace CalibreLib.Models.Metadata;
 
 public partial class Language
 {

@@ -1,5 +1,4 @@
 ﻿using CalibreLib.Models;
-using CalibreLib.Models.Metadata;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

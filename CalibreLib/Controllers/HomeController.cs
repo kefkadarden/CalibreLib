@@ -2,15 +2,9 @@ using CalibreLib.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Microsoft.Graph;
-using Microsoft.Identity.Web;
-using System.Security.Claims;
 using CalibreLib.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
-using CalibreLib.Models.Metadata;
-using Microsoft.EntityFrameworkCore;
 using CalibreLib.Data;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace CalibreLib.Controllers
 {

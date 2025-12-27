@@ -50,8 +50,14 @@ namespace CalibreLib.Controllers
 
             var emailAddress = _user.EReaderEmail;
 
+            if (emailAddress == null)
+                return BadRequest("EReaderEmail not set for user");
+
             BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
             var response = await fm.DownloadBookAsync(book, Format.ToLower());
+            if (response == null)
+                return BadRequest("Response from downloading book empty");
+
             Stream attachment = new MemoryStream(response);
 
             await _mailService.SendMailAsync(

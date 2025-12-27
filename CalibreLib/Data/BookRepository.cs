@@ -1,11 +1,9 @@
-﻿using Azure.Core;
-using CalibreLib.Areas.Identity.Data;
+﻿using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Models;
 using CalibreLib.Models.Metadata;
 using CalibreLib.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace CalibreLib.Data
 {

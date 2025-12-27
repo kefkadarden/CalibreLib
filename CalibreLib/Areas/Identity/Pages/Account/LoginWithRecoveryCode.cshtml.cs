@@ -2,15 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using CalibreLib.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+
 namespace CalibreLib.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
@@ -22,7 +19,8 @@ namespace CalibreLib.Areas.Identity.Pages.Account
         public LoginWithRecoveryCodeModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            ILogger<LoginWithRecoveryCodeModel> logger)
+            ILogger<LoginWithRecoveryCodeModel> logger
+        )
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -65,7 +63,9 @@ namespace CalibreLib.Areas.Identity.Pages.Account
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+                throw new InvalidOperationException(
+                    $"Unable to load two-factor authentication user."
+                );
             }
 
             ReturnUrl = returnUrl;
@@ -83,7 +83,9 @@ namespace CalibreLib.Areas.Identity.Pages.Account
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+                throw new InvalidOperationException(
+                    $"Unable to load two-factor authentication user."
+                );
             }
 
             var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
@@ -94,7 +96,10 @@ namespace CalibreLib.Areas.Identity.Pages.Account
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
+                _logger.LogInformation(
+                    "User with ID '{UserId}' logged in with a recovery code.",
+                    user.Id
+                );
                 return LocalRedirect(returnUrl ?? Url.Content("~/"));
             }
             if (result.IsLockedOut)
@@ -104,7 +109,10 @@ namespace CalibreLib.Areas.Identity.Pages.Account
             }
             else
             {
-                _logger.LogWarning("Invalid recovery code entered for user with ID '{UserId}' ", user.Id);
+                _logger.LogWarning(
+                    "Invalid recovery code entered for user with ID '{UserId}' ",
+                    user.Id
+                );
                 ModelState.AddModelError(string.Empty, "Invalid recovery code entered.");
                 return Page();
             }

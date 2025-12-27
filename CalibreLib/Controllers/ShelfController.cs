@@ -1,11 +1,8 @@
 ﻿using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph;
-using System;
 
 namespace CalibreLib.Controllers
 {

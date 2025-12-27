@@ -1,8 +1,4 @@
 ﻿using CalibreLib.Models.Metadata;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Security.Policy;
 
 namespace CalibreLib.Services
 {
