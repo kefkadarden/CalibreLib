@@ -11,7 +11,7 @@ trigger:
       - main
   paths:
     exclude:
-      - ./azure-pipelines.yml
+      - azure-pipelines.yml
 
 pool:
   vmImage: 'windows-latest'
