@@ -9,6 +9,9 @@ trigger:
   branches:
     include:
       - main
+  paths:
+    exclude:
+      - ./azure-pipelines.yml
 
 pool:
   vmImage: 'windows-latest'
