@@ -9,44 +9,46 @@ trigger:
       - azure-pipelines.yml
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 variables:
-  solution: '**/*.sln'
-  buildConfiguration: 'Release'
-  dotnetSdkVersion: '10.0.101'
+  solution: "**/*.sln"
+  buildConfiguration: "Release"
+  dotnetSdkVersion: "10.0.101"
+  MajorMinorVersion: 0.0.1
+  BuildNumber: $[counter(variables['MajorMinorVersion'], 22)]
 
 steps:
   - task: UseDotNet@2
-    displayName: 'Install .NET SDK $(dotnetVersion)'
+    displayName: "Install .NET SDK $(dotnetVersion)"
     inputs:
-      packageType: 'sdk'
-      version: '$(dotnetSdkVersion)'
+      packageType: "sdk"
+      version: "$(dotnetSdkVersion)"
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet restore'
+    displayName: "dotnet restore"
     inputs:
-      command: 'restore'
-      projects: '**/*.csproj'
+      command: "restore"
+      projects: "**/*.csproj"
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
+    displayName: "dotnet build"
     inputs:
-      command: 'build'
-      projects: '**/*.csproj'
-      arguments: '--configuration $(buildConfiguration) --no-restore'
+      command: "build"
+      projects: "**/*.csproj"
+      arguments: "--configuration $(buildConfiguration) /p:Version=$(MajorMinorVersion).$(BuildNumber) --no-restore"
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet publish'
+    displayName: "dotnet publish"
     inputs:
-      command: 'publish'
+      command: "publish"
       publishWebProjects: true
-      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+      arguments: "--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)"
       zipAfterPublish: true
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish pipeline artifact'
+    displayName: "Publish pipeline artifact"
     inputs:
-      targetPath: '$(Build.ArtifactStagingDirectory)'
-      artifact: 'drop'
-      publishLocation: 'pipeline'
+      targetPath: "$(Build.ArtifactStagingDirectory)"
+      artifact: "drop"
+      publishLocation: "pipeline"

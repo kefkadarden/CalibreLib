@@ -1,3 +1,5 @@
+@using CalibreLib.Extensions
+
 <!DOCTYPE html>
 
 <html lang="en" data-bs-theme="dark">
@@ -195,7 +197,14 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; @DateTime.Now.Year - CalibreLib - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+          <div class="row">
+            <div class="col-6">
+                &copy; @DateTime.Now.Year - CalibreLib - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+            <div class="col-4">
+                @Html.AppVersion()
+            </div>
+          </div>
         </div>
     </footer>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
