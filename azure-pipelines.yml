@@ -56,6 +56,3 @@ steps:
         {
           "user-ReleaseVersion": "$(MajorMinorVersion).$(BuildNumber)"
         }
-
-  - script: echo "##vso[task.setvariable variable=ReleaseVersion]$(MajorMinorVersion).$(BuildNumber)"
-    displayName: "Set Build Variables for Release"
