@@ -1,10 +1,10 @@
-using CalibreLib.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using CalibreLib.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using CalibreLib.Data;
+using CalibreLib.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CalibreLib.Controllers
 {
@@ -15,7 +15,11 @@ namespace CalibreLib.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly BookRepository _bookRepository;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, BookRepository bookRepository)
+        public HomeController(
+            ILogger<HomeController> logger,
+            UserManager<ApplicationUser> userManager,
+            BookRepository bookRepository
+        )
         {
             _logger = logger;
             _userManager = userManager;
@@ -111,11 +115,22 @@ namespace CalibreLib.Controllers
             return View();
         }
 
+        [HttpGet("cookie-policy")]
+        public IActionResult CookiePolicy()
+        {
+            return View();
+        }
+
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(
+                new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                }
+            );
         }
     }
 }

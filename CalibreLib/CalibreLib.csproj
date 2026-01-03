@@ -6,7 +6,7 @@
     <UserSecretsId>aspnet-CalibreLib-490f39a0-44ae-4918-8407-4cf64b7eead7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-    <Version Condition=" '$(Version)' != '' ">$(Version)</Version>
+    <Version Condition=" '$(Version)' == '' ">0.0.1.0</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>

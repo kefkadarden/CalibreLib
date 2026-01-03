@@ -11,19 +11,16 @@ namespace CalibreLib.Extensions
                 .GetExecutingAssembly()
                 .GetCustomAttribute<AssemblyVersionAttribute>()
                 ?.Version;
-            Console.WriteLine($"Version: {version}");
 
             //Use FileVersion if version not found.
             if (version is null)
             {
-                version =
-                    $" FileV:{Assembly
+                version = Assembly
                     .GetExecutingAssembly()
                     .GetCustomAttribute<AssemblyFileVersionAttribute>()
-                    .Version}";
+                    .Version;
             }
 
-            Console.WriteLine($"Version2: {version}");
             return $"v. {version}" ?? "UNKNOWN VERSION";
         }
     }
