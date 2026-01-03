@@ -56,20 +56,31 @@ namespace CalibreLib.Views.Shared.Components
         {
             public string name;
             public string funcName;
+            public string title;
         }
 
-        private EAlphaNumericSortType sortByList = new EAlphaNumericSortType() { funcName = "updateListSortBy", name = "btnradioSort" };
-        private EAlphaNumericSortType sortByBook = new EAlphaNumericSortType() { funcName = "updateSortBy", name = "btnradio" };
+        private EAlphaNumericSortType sortByList = new EAlphaNumericSortType()
+        {
+            funcName = "updateListSortBy",
+            name = "btnradioSort",
+            title = "Sort List",
+        };
+        private EAlphaNumericSortType sortByBook = new EAlphaNumericSortType()
+        {
+            funcName = "updateSortBy",
+            name = "btnradio",
+            title = "Sort by Title",
+        };
 
         private string AlphaNumericSortToolbar(EAlphaNumericSortType sortType)
         {
             return $"""
-                        <input type="radio" class="btn-check" name="{sortType.name}" id="title" autocomplete="off" onclick="{sortType.funcName}('title');">
-                          <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
+                    <input type="radio" class="btn-check" name="{sortType.name}" id="title" autocomplete="off" onclick="{sortType.funcName}('title');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="{sortType.title}" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
 
-                          <input type="radio" class="btn-check" name="{sortType.name}" id="titledesc" autocomplete="off" onclick="{sortType.funcName}('titledesc');">
-                          <label class="btn btn-outline-primary" for="titledesc"><i class="fa-solid fa-arrow-down-z-a"></i></label>
-                    """;
+                      <input type="radio" class="btn-check" name="{sortType.name}" id="titledesc" autocomplete="off" onclick="{sortType.funcName}('titledesc');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="{sortType.title} Desc" for="titledesc"><i class="fa-solid fa-arrow-down-z-a"></i></label>
+                """;
         }
 
         private string AlphaNumericToolbar
@@ -79,31 +90,31 @@ namespace CalibreLib.Views.Shared.Components
                 string numbers = string.Empty;
                 string letters = string.Empty;
                 string All = $"""
-                                <input type="radio" class="btn-check" name="btnradio" id="allSort" checked autocomplete="off" onclick="updateFilterBy('All');">
-                                <label class="btn btn-outline-primary" for="allSort">All</label>
-                              """;
+                      <input type="radio" class="btn-check" name="btnradio" id="allSort" checked autocomplete="off" onclick="updateFilterBy('All');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Show All" for="allSort">All</label>
+                    """;
                 for (int i = 0; i <= 9; i++)
                 {
                     numbers += $"""
-                                    <input type="radio" class="btn-check" name="btnradio" id="numberSort{i}" autocomplete="off" onclick="updateFilterBy('{i}');">
-                                    <label class="btn btn-outline-primary" for="numberSort{i}">{i}</label>
-                                """;
+                            <input type="radio" class="btn-check" name="btnradio" id="numberSort{i}" autocomplete="off" onclick="updateFilterBy('{i}');">
+                            <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Filter by {i}" for="numberSort{i}">{i}</label>
+                        """;
                 }
 
                 for (char c = 'A'; c <= 'Z'; c++)
                 {
                     letters += $"""
-                                    <input type="radio" class="btn-check" name="btnradio" id="letterSort{c}" autocomplete="off" onclick="updateFilterBy('{c}');">
-                                    <label class="btn btn-outline-primary" for="letterSort{c}">{c}</label>
-                                """;
+                            <input type="radio" class="btn-check" name="btnradio" id="letterSort{c}" autocomplete="off" onclick="updateFilterBy('{c}');">
+                            <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Filter by {c}" for="letterSort{c}">{c}</label>
+                        """;
                 }
 
                 return $"""
-                        {AlphaNumericSortToolbar(sortByList)}
-                        {All}
-                        {numbers}
-                        {letters}
-                        """;
+                    {AlphaNumericSortToolbar(sortByList)}
+                    {All}
+                    {numbers}
+                    {letters}
+                    """;
             }
         }
 
@@ -112,9 +123,9 @@ namespace CalibreLib.Views.Shared.Components
             get
             {
                 string flipSort = $"""
-                                        <input type="radio" class="btn-check" name="btnradioReverse" id="flipSort" autocomplete="off" onclick="reverseAuthor();">
-                                        <label class="btn btn-outline-primary" for="flipSort">B,A <-> A,B</label>
-                                    """;
+                        <input type="radio" class="btn-check" name="btnradioReverse" id="flipSort" autocomplete="off" onclick="reverseAuthor();">
+                        <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Flip Author Sort" for="flipSort">B,A <-> A,B</label>
+                    """;
                 return flipSort + AlphaNumericToolbar;
             }
         }
@@ -124,20 +135,20 @@ namespace CalibreLib.Views.Shared.Components
             get
             {
                 return $$"""
-                        <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
-                          <label class="btn btn-outline-primary" for="datedesc"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-down-long"></i></label>
+                    <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Sort by Date" for="date"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-up-long"></i></label>
 
-                          <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
-                          <label class="btn btn-outline-primary" for="date"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-up-long"></i></label>
+                      <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Sort by Date Desc" for="datedesc"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-down-long"></i></label>
 
-                          {{AlphaNumericSortToolbar(sortByBook)}}
+                      {{AlphaNumericSortToolbar(sortByBook)}}
 
-                          <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
-                          <label class="btn btn-outline-primary" for="author"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-down-long"></i></label>
+                      <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Sort by Author" for="author"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-up-long"></i></label>
 
-                          <input type="radio" class="btn-check" name="btnradio" id="authordesc" autocomplete="off" onclick="updateSortBy('authordesc');">
-                          <label class="btn btn-outline-primary" for="authordesc"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-up-long"></i></label>
-                        """;
+                      <input type="radio" class="btn-check" name="btnradio" id="authordesc" autocomplete="off" onclick="updateSortBy('authordesc');">
+                      <label class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Sort by Author Desc" for="authordesc"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-down-long"></i></label>
+                    """;
             }
         }
 
@@ -147,11 +158,11 @@ namespace CalibreLib.Views.Shared.Components
             {
                 //{{PagerToolbar}}
                 return $$"""
-                <div class="btn-group mb-4" role="group">
-                  {{MultiSortToolbar}}
-                  
-                </div>
-                """;
+                    <div class="btn-group mb-4" role="group">
+                      {{MultiSortToolbar}}
+                      
+                    </div>
+                    """;
             }
         }
 
@@ -173,10 +184,7 @@ namespace CalibreLib.Views.Shared.Components
 
         private string ArchivedBooksToolbar
         {
-            get
-            {
-                return MultiSortToolbar;
-            }
+            get { return MultiSortToolbar; }
         }
     }
 }

@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<BookCardModel>
 @using CalibreLib.Views.Shared.Components
-
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
 <h2>Books</h2>
 @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.BookCardGrid })
 <div id="mainCardGrid">
