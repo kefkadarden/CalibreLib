@@ -14,7 +14,7 @@
 <script>
     shelf = @Model.Id;
 </script>
-<h2>Shelf: @Model.Name</h2>
+<h2 id="shelf-name">Shelf: @Model.Name</h2>
 <div class="btn-group" role="group" aria-label="Shelf toolbar group">
     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
         <ul class="dropdown-menu">
@@ -83,6 +83,12 @@
             .then(data => {
                 if (data.message) {
                     showAlert(data.message,'success');
+
+                // Dynamically update the shelf name in Index page
+                if (data.updatedName) {
+                    document.querySelector("#shelf-name").textContent = `Shelf: ${data.updatedName}`;
+                }
+
                     const modalEl = document.querySelector("#myModal");
                     const myModal = bootstrap.Modal.getOrCreateInstance(modalEl); // returns existing or creates new
                     myModal.hide();

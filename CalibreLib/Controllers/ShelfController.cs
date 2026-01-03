@@ -177,7 +177,7 @@ namespace CalibreLib.Controllers
             await _userManager.UpdateAsync(user);
             ViewBag.SuccessMessage = "Shelf edited successfully.";
 
-            return Ok(new { message = ViewBag.SuccessMessage });
+            return Ok(new { message = "Shelf updated successfully.", updatedName = foundShelf.Name });
         }
 
         [HttpDelete]
