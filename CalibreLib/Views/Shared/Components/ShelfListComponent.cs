@@ -1,5 +1,4 @@
 ﻿using CalibreLib.Areas.Identity.Data;
-using CalibreLib.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

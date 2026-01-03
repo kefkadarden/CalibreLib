@@ -50,8 +50,14 @@ namespace CalibreLib.Controllers
 
             var emailAddress = _user.EReaderEmail;
 
+            if (emailAddress == null)
+                return BadRequest("EReaderEmail not set for user");
+
             BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
             var response = await fm.DownloadBookAsync(book, Format.ToLower());
+            if (response == null)
+                return BadRequest("Response from downloading book empty");
+
             Stream attachment = new MemoryStream(response);
 
             await _mailService.SendMailAsync(
@@ -167,10 +173,10 @@ namespace CalibreLib.Controllers
         )
         {
             bool ascending = true;
-            if (sortBy.EndsWith("desc"))
+            if (sortBy != null && sortBy.EndsWith("desc"))
                 ascending = false;
 
-            Func<Book, object> orderBy = book =>
+            Func<Book, object?> orderBy = book =>
             {
                 switch (sortBy)
                 {
@@ -210,14 +216,12 @@ namespace CalibreLib.Controllers
 
             ArgumentNullException.ThrowIfNull(user);
 
-            ArchivedBook archiveBook = null!;
-
             if (
                 user.ArchivedBooks.FirstOrDefault(x => x.BookId == book.Id && x.UserId == user.Id)
                 == null
             )
             {
-                archiveBook = new ArchivedBook()
+                var archiveBook = new ArchivedBook()
                 {
                     BookId = book.Id,
                     UserId = user.Id,
@@ -228,12 +232,12 @@ namespace CalibreLib.Controllers
             }
             else
             {
-                archiveBook = user.ArchivedBooks.FirstOrDefault(x =>
+                var archiveBook = user.ArchivedBooks.FirstOrDefault(x =>
                     x.BookId == book.Id && x.UserId == user.Id
                 );
 
-                archiveBook.IsArchived = isArchived;
-                archiveBook.LastModified = DateTime.Now;
+                archiveBook?.IsArchived = isArchived;
+                archiveBook?.LastModified = DateTime.Now;
             }
 
             await _userManager.UpdateAsync(user);
@@ -251,10 +255,12 @@ namespace CalibreLib.Controllers
 
             ArgumentNullException.ThrowIfNull(user);
 
-            ReadBook readBook = null!;
-            if (user.ReadBooks.FirstOrDefault(user => user.BookId == book.Id) == null)
+            if (
+                user.ReadBooks.FirstOrDefault(x => x.BookId == book.Id && x.UserId == user.Id)
+                == null
+            )
             {
-                readBook = new ReadBook()
+                var readBook = new ReadBook()
                 {
                     BookId = book.Id,
                     UserId = user.Id,
@@ -265,12 +271,12 @@ namespace CalibreLib.Controllers
             }
             else
             {
-                readBook = user.ReadBooks.FirstOrDefault(x =>
+                var readBook = user.ReadBooks.FirstOrDefault(x =>
                     x.BookId == book.Id && x.UserId == user.Id
                 );
 
-                readBook.ReadStatus = (readStatus) ? 1 : 0;
-                readBook.LastModified = DateTime.Now;
+                readBook?.ReadStatus = (readStatus) ? 1 : 0;
+                readBook?.LastModified = DateTime.Now;
             }
 
             await _userManager.UpdateAsync(user);

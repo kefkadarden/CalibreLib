@@ -1,11 +1,9 @@
-﻿using Azure.Core;
-using CalibreLib.Areas.Identity.Data;
+﻿using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Models;
 using CalibreLib.Models.Metadata;
 using CalibreLib.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace CalibreLib.Data
 {
@@ -19,7 +17,12 @@ namespace CalibreLib.Data
 
         public int PageSize { get; set; } = 30;
 
-        public BookRepository(MetadataDBContext context, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
+        public BookRepository(
+            MetadataDBContext context,
+            IWebHostEnvironment env,
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager
+        )
         {
             this.context = context;
             _env = env;
@@ -47,7 +50,15 @@ namespace CalibreLib.Data
             return Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(count / dPageSize)));
         }
 
-        public async Task<IEnumerable<Book>> GetBooks(int? pageNumber, Func<Book, object> orderBy, string? query, bool ascending = true, EFilterType type = EFilterType.BookCardGrid, int? filterid = null, SearchModel? searchModel = null)
+        public async Task<IEnumerable<Book>> GetBooks(
+            int? pageNumber,
+            Func<Book, object?> orderBy,
+            string? query,
+            bool ascending = true,
+            EFilterType type = EFilterType.BookCardGrid,
+            int? filterid = null,
+            SearchModel? searchModel = null
+        )
         {
             var numRecordsToSkip = pageNumber * PageSize;
             IQueryable<Book> books = Enumerable.Empty<Book>().AsQueryable();
@@ -65,7 +76,6 @@ namespace CalibreLib.Data
                 books = context.Books;
 
             var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-            var bookids = user?.Shelves.FirstOrDefault(x => x.Id == filterid)?.BookShelves.Select(x => x.BookId);
 
             int filterID = -1;
             if (filterid != null)
@@ -81,7 +91,11 @@ namespace CalibreLib.Data
                     booksList = await this.GetByTagAsync(filterID);
                     break;
                 case EFilterType.Shelf:
-                    booksList = await this.GetByBookListAsync(bookids);
+                    var bookids = user
+                        ?.Shelves.FirstOrDefault(x => x.Id == filterid)
+                        ?.BookShelves.Select(x => x.BookId);
+                    if (bookids != null)
+                        booksList = await this.GetByBookListAsync(bookids);
                     break;
                 case EFilterType.Series:
                     booksList = await this.GetBySeriesAsync(filterID);
@@ -104,12 +118,20 @@ namespace CalibreLib.Data
             }
 
             if (ascending)
-                return booksList.OrderBy(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+                return booksList
+                    .OrderBy(orderBy)
+                    .Skip(Convert.ToInt32(numRecordsToSkip))
+                    .Take(PageSize)
+                    .ToList();
             else
-                return booksList.OrderByDescending(orderBy).Skip(Convert.ToInt32(numRecordsToSkip)).Take(PageSize).ToList();
+                return booksList
+                    .OrderByDescending(orderBy)
+                    .Skip(Convert.ToInt32(numRecordsToSkip))
+                    .Take(PageSize)
+                    .ToList();
         }
 
-        public async Task<Book> GetByIDAsync(int id)
+        public async Task<Book?> GetByIDAsync(int id)
         {
             return await context.Books.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -132,16 +154,18 @@ namespace CalibreLib.Data
             //Potential lead: https://github.com/dotnet/efcore/issues/8033
             query = query.ToLower();
 
-
-            return await context.Books.Where(x => x.Title.ToLower().Contains(query) ||
-                                                  x.Isbn.ToLower().Contains(query) ||
-                                                  x.Lccn.ToLower().Contains(query) ||
-                                                  x.Identifiers.Any(x => x.Val.ToLower().Contains(query)) ||
-                                                  x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query)) ||
-                                                  x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query)) ||
-                                                  x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query)) ||
-                                                  x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))).ToListAsync();
-
+            return await context
+                .Books.Where(x =>
+                    x.Title.ToLower().Contains(query)
+                    || x.Isbn.ToLower().Contains(query)
+                    || x.Lccn.ToLower().Contains(query)
+                    || x.Identifiers.Any(x => x.Val.ToLower().Contains(query))
+                    || x.BookTags.Any(x => x.Tag.Name.ToLower().Contains(query))
+                    || x.BookPublishers.Any(x => x.Publisher.Name.ToLower().Contains(query))
+                    || x.BookAuthors.Any(x => x.Author.Name.ToLower().Contains(query))
+                    || x.BookSeries.Any(x => x.Series.Name.ToLower().Contains(query))
+                )
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByQueryAsync(SearchModel model)
@@ -155,12 +179,16 @@ namespace CalibreLib.Data
 
             if (model.Authors.Any())
             {
-                query = query.Where(x => x.BookAuthors.Any(y => model.Authors.Contains(y.AuthorId)));
+                query = query.Where(x =>
+                    x.BookAuthors.Any(y => model.Authors.Contains(y.AuthorId))
+                );
             }
 
             if (model.Publishers.Any())
             {
-                query = query.Where(x => x.BookPublishers.Any(y => model.Publishers.Contains(y.PublisherId)));
+                query = query.Where(x =>
+                    x.BookPublishers.Any(y => model.Publishers.Contains(y.PublisherId))
+                );
             }
 
             if (model.PublishedDateFrom.HasValue)
@@ -176,7 +204,9 @@ namespace CalibreLib.Data
             if (model.ReadStatus.HasValue)
             {
                 var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-                var bookIds = user?.ReadBooks.Where(x => x.ReadStatus == model.ReadStatus.Value).Select(x => x.BookId);
+                var bookIds = user
+                    ?.ReadBooks.Where(x => x.ReadStatus == model.ReadStatus.Value)
+                    .Select(x => x.BookId);
                 if (bookIds != null && bookIds.Any())
                     query = query.Where(x => bookIds.Contains(x.Id));
             }
@@ -194,14 +224,17 @@ namespace CalibreLib.Data
             if (model.Shelves.Any())
             {
                 var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-                var bookIds = user?.Shelves.Where(s => model.Shelves.Contains(s.Id))
-                                           .SelectMany(s => s.BookShelves.Select(bs => bs.BookId));
+                var bookIds = user
+                    ?.Shelves.Where(s => model.Shelves.Contains(s.Id))
+                    .SelectMany(s => s.BookShelves.Select(bs => bs.BookId));
                 query = query.Where(x => bookIds.Contains(x.Id));
             }
 
             if (model.Languages.Any())
             {
-                query = query.Where(x => x.BookLanguages.Any(y => model.Languages.Contains(y.LanguageId)));
+                query = query.Where(x =>
+                    x.BookLanguages.Any(y => model.Languages.Contains(y.LanguageId))
+                );
             }
 
             if (model.ExcludeTags.Any())
@@ -211,37 +244,58 @@ namespace CalibreLib.Data
 
             if (model.ExcludeSeries.Any())
             {
-                query = query.Where(x => x.BookSeries.Any(y => !model.ExcludeSeries.Contains(y.SeriesId)));
+                query = query.Where(x =>
+                    x.BookSeries.Any(y => !model.ExcludeSeries.Contains(y.SeriesId))
+                );
             }
 
             if (model.ExcludeShelves.Any())
             {
                 var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-                var bookIds = user?.Shelves.Where(s => !model.ExcludeShelves.Contains(s.Id))
-                                           .SelectMany(s => s.BookShelves.Select(bs => bs.BookId));
+                var bookIds = user
+                    ?.Shelves.Where(s => !model.ExcludeShelves.Contains(s.Id))
+                    .SelectMany(s => s.BookShelves.Select(bs => bs.BookId));
                 query = query.Where(x => bookIds.Contains(x.Id));
             }
 
             if (model.ExcludeLanguages.Any())
             {
-                query = query.Where(x => x.BookLanguages.Any(y => !model.ExcludeLanguages.Contains(y.LanguageId)));
+                query = query.Where(x =>
+                    x.BookLanguages.Any(y => !model.ExcludeLanguages.Contains(y.LanguageId))
+                );
             }
 
             if (!string.IsNullOrEmpty(model.Description))
             {
-                query = query.Where(x => x.Comment != null && x.Comment.Text.Contains(model.Description, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(x =>
+                    x.Comment != null
+                    && x.Comment.Text.Contains(
+                        model.Description,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                );
             }
 
             var books = await query.ToListAsync();
 
-
             if (model.RatingAbove.HasValue)
             {
-                books = books.Where(x => x.BookRatings.Any(y => y.Rating.RatingValue >= model.RatingAbove.Value && y.Rating.RatingValue <= model.RatingBelow.Value)).ToList();
+                books = books
+                    .Where(x =>
+                        x.BookRatings.Any(y =>
+                            y.Rating.RatingValue >= model.RatingAbove.Value
+                            && y.Rating.RatingValue <= model.RatingBelow.Value
+                        )
+                    )
+                    .ToList();
             }
             if (model.RatingBelow.HasValue)
             {
-                books = books.Where(x => x.BookRatings.Any(y => y.Rating.RatingValue <= model.RatingBelow.Value)).ToList();
+                books = books
+                    .Where(x =>
+                        x.BookRatings.Any(y => y.Rating.RatingValue <= model.RatingBelow.Value)
+                    )
+                    .ToList();
             }
 
             return books;
@@ -249,22 +303,30 @@ namespace CalibreLib.Data
 
         public async Task<IEnumerable<Book>> GetByAuthorAsync(int id)
         {
-            return await context.Books.Where(x => x.BookAuthors.Where(y => y.AuthorId == id).Any()).ToListAsync();
+            return await context
+                .Books.Where(x => x.BookAuthors.Where(y => y.AuthorId == id).Any())
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetBySeriesAsync(int id)
         {
-            return await context.Books.Where(x => x.BookSeries.Where(y => y.SeriesId == id).Any()).ToListAsync();
+            return await context
+                .Books.Where(x => x.BookSeries.Where(y => y.SeriesId == id).Any())
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByPublisherAsync(int id)
         {
-            return await context.Books.Where(x => x.BookPublishers.Where(y => y.PublisherId == id).Any()).ToListAsync();
+            return await context
+                .Books.Where(x => x.BookPublishers.Where(y => y.PublisherId == id).Any())
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByTagAsync(int id)
         {
-            return await context.Books.Where(x => x.BookTags.Where(y => y.TagId == id).Any()).ToListAsync();
+            return await context
+                .Books.Where(x => x.BookTags.Where(y => y.TagId == id).Any())
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByRatingAsync(int id)
@@ -272,12 +334,16 @@ namespace CalibreLib.Data
             if (id == -1)
                 return await context.Books.Where(x => x.BookRatings.Count() == 0).ToListAsync();
 
-            return await context.Books.Where(x => x.BookRatings.Where(y => y.RatingId == id).Any()).ToListAsync();
+            return await context
+                .Books.Where(x => x.BookRatings.Where(y => y.RatingId == id).Any())
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetByLanguageAsync(int id)
         {
-            return await context.Books.Where(x => x.BookLanguages.Where(y => y.LanguageId == id).Any()).ToListAsync();
+            return await context
+                .Books.Where(x => x.BookLanguages.Where(y => y.LanguageId == id).Any())
+                .ToListAsync();
         }
 
         public async Task<List<Identifier>> GetIdentifiersAsync()
@@ -299,7 +365,10 @@ namespace CalibreLib.Data
 
         public async Task<BookCardModel> GetBookCardModel(Book book)
         {
-            BookFileManager manager = new BookFileManager(_env, _contextAccessor.HttpContext.Request);
+            BookFileManager manager = new BookFileManager(
+                _env,
+                _contextAccessor.HttpContext.Request
+            );
             var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
             List<Identifier> identifiers = await this.GetIdentifiersAsync();
             var cover = await manager.GetBookCoverAsync(book);
@@ -314,14 +383,19 @@ namespace CalibreLib.Data
                 Tags = book.BookTags,
                 CoverImage = cover,
                 RatingValue = book.BookRatings.FirstOrDefault()?.Rating.RatingValue ?? 0,
-                Archived = (user != null) ? user.ArchivedBooks.Where(x => x.BookId == book.Id && x.IsArchived).Any() : false,
-                Read = (user != null) ? user.ReadBooks.Where(x => x.BookId == book.Id && x.ReadStatus == 1).Any() : false,
+                Archived =
+                    (user != null)
+                        ? user.ArchivedBooks.Where(x => x.BookId == book.Id && x.IsArchived).Any()
+                        : false,
+                Read =
+                    (user != null)
+                        ? user.ReadBooks.Where(x => x.BookId == book.Id && x.ReadStatus == 1).Any()
+                        : false,
                 Description = book.Comment?.Text ?? "",
             };
 
             return bcModel;
         }
-
 
         public void Insert(Book item)
         {

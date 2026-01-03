@@ -1,11 +1,5 @@
 ﻿using CalibreLib.Areas.Identity.Data;
-using Azure.Core;
-using CalibreLib.Models;
-using CalibreLib.Models.Metadata;
-using CalibreLib.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace CalibreLib.Data
 {
@@ -17,7 +11,12 @@ namespace CalibreLib.Data
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ShelfRepository(CalibreLibContext context, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
+        public ShelfRepository(
+            CalibreLibContext context,
+            IWebHostEnvironment env,
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager
+        )
         {
             this.context = context;
             _env = env;

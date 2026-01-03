@@ -2,7 +2,6 @@
 using CalibreLib.Models;
 using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 
 namespace CalibreLib.Controllers
 {

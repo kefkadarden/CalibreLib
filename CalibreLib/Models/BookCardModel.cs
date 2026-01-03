@@ -1,6 +1,5 @@
 ﻿using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using System.Drawing;
 
 namespace CalibreLib.Models
 {

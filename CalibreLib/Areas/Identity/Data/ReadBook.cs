@@ -1,7 +1,4 @@
-﻿using CalibreLib.Models.Metadata;
-using Microsoft.EntityFrameworkCore;
-
-namespace CalibreLib.Areas.Identity.Data
+﻿namespace CalibreLib.Areas.Identity.Data
 {
     public class ReadBook
     {

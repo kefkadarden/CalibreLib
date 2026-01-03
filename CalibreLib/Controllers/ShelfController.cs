@@ -1,11 +1,8 @@
-﻿using CalibreLib.Areas.Identity.Data;
+using CalibreLib.Areas.Identity.Data;
 using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph;
-using System;
 
 namespace CalibreLib.Controllers
 {
@@ -16,12 +13,17 @@ namespace CalibreLib.Controllers
         private readonly BookRepository _bookRepository;
         private readonly CalibreLibContext _calibreLibContext;
 
-        public ShelfController(UserManager<ApplicationUser> userManager, BookRepository bookRepository, CalibreLibContext calibreLibContext)
+        public ShelfController(
+            UserManager<ApplicationUser> userManager,
+            BookRepository bookRepository,
+            CalibreLibContext calibreLibContext
+        )
         {
             _userManager = userManager;
             _bookRepository = bookRepository;
             _calibreLibContext = calibreLibContext;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
@@ -45,8 +47,6 @@ namespace CalibreLib.Controllers
             {
                 return NotFound();
             }
-
-
         }
 
         [HttpGet]
@@ -66,13 +66,15 @@ namespace CalibreLib.Controllers
 
                 if (shelf != null)
                 {
-                    shelf.BookShelves.Add(new BooksShelvesLink()
-                    {
-                        BookId = bookId,
-                        DateAdded = DateTime.Now,
-                        ShelfId = shelfId,
-                        Order = shelf.BookShelves.Max(x => (int?)x.Order) ?? 0 + 1
-                    });
+                    shelf.BookShelves.Add(
+                        new BooksShelvesLink()
+                        {
+                            BookId = bookId,
+                            DateAdded = DateTime.Now,
+                            ShelfId = shelfId,
+                            Order = shelf.BookShelves.Max(x => (int?)x.Order) ?? 0 + 1,
+                        }
+                    );
                 }
 
                 await _userManager.UpdateAsync(user);
@@ -108,6 +110,7 @@ namespace CalibreLib.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(Shelf? shelf = null)
         {
@@ -146,8 +149,7 @@ namespace CalibreLib.Controllers
             if ((shelf = user.Shelves.FirstOrDefault(shelf => shelf.Id == id)) == null)
                 return NotFound();
 
-            return View(shelf);
-
+            return PartialView("Edit", shelf);
         }
 
         [HttpPost]
@@ -173,9 +175,10 @@ namespace CalibreLib.Controllers
             foundShelf.Name = shelf?.Name;
 
             await _userManager.UpdateAsync(user);
-            ViewBag.SuccessMessage = "Shelf edited successfully.";
 
-            return View(foundShelf);
+            return Ok(
+                new { message = "Shelf updated successfully.", updatedName = foundShelf.Name }
+            );
         }
 
         [HttpDelete]
@@ -184,10 +187,19 @@ namespace CalibreLib.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var shelf = user.Shelves.FirstOrDefault(x => x.Id == id);
 
-            if (shelf == null) return NotFound();
+            if (shelf == null)
+                return NotFound();
 
             if (!user.Shelves.Remove(shelf))
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Code = 500, Message = "Cannot Delete Shelf", ErrorMessage = "Cannot Delete Shelf" });
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        Code = 500,
+                        Message = "Cannot Delete Shelf",
+                        ErrorMessage = "Cannot Delete Shelf",
+                    }
+                );
 
             await _userManager.UpdateAsync(user);
 
@@ -199,7 +211,5 @@ namespace CalibreLib.Controllers
         {
             return View();
         }
-
-
     }
 }

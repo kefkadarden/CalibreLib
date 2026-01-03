@@ -1,10 +1,9 @@
-﻿using MimeKit;
-using MailKit.Net.Smtp;
+﻿using CalibreLib.Data;
 using CalibreLib.Models.MailService;
 using MailKit;
-using CalibreLib.Data;
-using Microsoft.AspNetCore.Identity;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using MimeKit;
 
 namespace CalibreLib.Services
 {
@@ -19,7 +18,15 @@ namespace CalibreLib.Services
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            await SendMailAsync(new MailData() { EmailAddress = email, Subject = subject, Body = htmlMessage, IsBodyHtml = true });
+            await SendMailAsync(
+                new MailData()
+                {
+                    EmailAddress = email,
+                    Subject = subject,
+                    Body = htmlMessage,
+                    IsBodyHtml = true,
+                }
+            );
         }
 
         public async Task SendMailAsync(MailData mailData)
@@ -28,8 +35,14 @@ namespace CalibreLib.Services
                 throw new Exception("Mail Settings null");
 
             MimeMessage message = new MimeMessage();
-            MailboxAddress fromAddress = new MailboxAddress(_mailsettings.FromEmail, _mailsettings.SMTP_UserName);
-            MailboxAddress toAddress = new MailboxAddress(mailData.EmailAddress, mailData.EmailAddress);
+            MailboxAddress fromAddress = new MailboxAddress(
+                _mailsettings.FromEmail,
+                _mailsettings.SMTP_UserName
+            );
+            MailboxAddress toAddress = new MailboxAddress(
+                mailData.EmailAddress,
+                mailData.EmailAddress
+            );
             message.From.Add(fromAddress);
             message.To.Add(toAddress);
             message.Subject = mailData.Subject;
@@ -46,7 +59,7 @@ namespace CalibreLib.Services
                     Content = new MimeContent(mailData.Attachment, ContentEncoding.Default),
                     ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
                     ContentTransferEncoding = ContentEncoding.Base64,
-                    FileName = mailData.AttachmentName
+                    FileName = mailData.AttachmentName,
                 };
 
                 bodyBuilder.Attachments.Add(attachment);
@@ -55,12 +68,18 @@ namespace CalibreLib.Services
 
             using (var client = new SmtpClient(new ProtocolLogger("./Logs/smtp.log")))
             {
-                await client.ConnectAsync(_mailsettings.SMTP_HostName, _mailsettings.SMTP_Port, _mailsettings.SMTP_Encryption);
-                await client.AuthenticateAsync(_mailsettings.SMTP_UserName, _mailsettings.SMTP_Password);
+                await client.ConnectAsync(
+                    _mailsettings.SMTP_HostName,
+                    _mailsettings.SMTP_Port,
+                    _mailsettings.SMTP_Encryption
+                );
+                await client.AuthenticateAsync(
+                    _mailsettings.SMTP_UserName,
+                    _mailsettings.SMTP_Password
+                );
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }
-
         }
     }
 }

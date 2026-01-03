@@ -1,6 +1,4 @@
-﻿using CalibreLib.Models.Metadata;
-
-namespace CalibreLib.Areas.Identity.Data
+﻿namespace CalibreLib.Areas.Identity.Data
 {
     public class ArchivedBook
     {
