@@ -38,6 +38,13 @@ steps:
       projects: "**/*.csproj"
       arguments: "--configuration $(buildConfiguration) /p:Version=$(MajorMinorVersion).$(BuildNumber) --no-restore"
 
+  - powershell: |
+      $version = "$(MajorMinorVersion).$(BuildNumber)"
+      Write-Host "Updating build name to: $version"
+      # This command renames the current build in Azure DevOps
+      Write-Host "##vso[build.updatebuildnumber]$version"
+    displayName: "Set Dynamic Build Number"
+
   - task: DotNetCoreCLI@2
     displayName: "dotnet publish"
     inputs:
@@ -52,7 +59,3 @@ steps:
       targetPath: "$(Build.ArtifactStagingDirectory)"
       artifact: "drop"
       publishLocation: "pipeline"
-      properties: |
-        {
-          "user-ReleaseVersion": "$(MajorMinorVersion).$(BuildNumber)"
-        }
