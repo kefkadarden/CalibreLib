@@ -176,6 +176,8 @@ namespace CalibreLib.Controllers
             if (sortBy != null && sortBy.EndsWith("desc"))
                 ascending = false;
 
+            sortBy = sortBy?.Replace("desc", "").Replace("asc", "");
+
             Func<Book, object?> orderBy = book =>
             {
                 switch (sortBy)
