@@ -65,10 +65,10 @@ namespace CalibreLib.Views.Shared.Components
         {
             return $"""
                         <input type="radio" class="btn-check" name="{sortType.name}" id="title" autocomplete="off" onclick="{sortType.funcName}('title');">
-                          <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z"></i></label>
+                          <label class="btn btn-outline-primary" for="title"><i class="fa-solid fa-arrow-up-a-z" data-bs-toggle="tooltip" data-bs-placement="top" title="Sort by title (A → Z)"></i></label>
 
                           <input type="radio" class="btn-check" name="{sortType.name}" id="titledesc" autocomplete="off" onclick="{sortType.funcName}('titledesc');">
-                          <label class="btn btn-outline-primary" for="titledesc"><i class="fa-solid fa-arrow-down-z-a"></i></label>
+                          <label class="btn btn-outline-primary" for="titledesc"><i class="fa-solid fa-arrow-down-z-a" data-bs-toggle="tooltip" data-bs-placement="top" title="Sort by title (Z → A)"></i></label>
                     """;
         }
 
@@ -124,19 +124,19 @@ namespace CalibreLib.Views.Shared.Components
             get
             {
                 return $$"""
-                        <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
-                          <label class="btn btn-outline-primary" for="datedesc"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-down-long"></i></label>
+                        <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
+                          <label class="btn btn-outline-primary" for="date"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-up-long" data-bs-toggle="tooltip" data-bs-placement="top" title="Sort by date (oldest → newest)"></i></label>
 
-                          <input type="radio" class="btn-check" name="btnradio" id="date" autocomplete="off" onclick="updateSortBy('date');">
-                          <label class="btn btn-outline-primary" for="date"><i class="fa-regular fa-calendar-days"></i><i class="fa-solid fa-up-long"></i></label>
+                        <input type="radio" class="btn-check" name="btnradio" id="datedesc" autocomplete="off" checked onclick="updateSortBy('datedesc');">
+                          <label class="btn btn-outline-primary" for="datedesc"><i class="fa-regular fa-calendar-days" data-bs-toggle="tooltip" data-bs-placement="top" title="Sort by date (newest → oldest)"></i><i class="fa-solid fa-down-long"></i></label>
 
                           {{AlphaNumericSortToolbar(sortByBook)}}
 
                           <input type="radio" class="btn-check" name="btnradio" id="author" autocomplete="off" onclick="updateSortBy('author');">
-                          <label class="btn btn-outline-primary" for="author"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-down-long"></i></label>
+                          <label class="btn btn-outline-primary" for="author" data-bs-toggle="tooltip" data-bs-placement="top" title="Sort by author (A → Z)"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-up-long"></i></label>
 
                           <input type="radio" class="btn-check" name="btnradio" id="authordesc" autocomplete="off" onclick="updateSortBy('authordesc');">
-                          <label class="btn btn-outline-primary" for="authordesc"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-up-long"></i></label>
+                          <label class="btn btn-outline-primary" for="authordesc" data-bs-toggle="tooltip" data-bs-placement="top" title="Sort by author (Z → A)"><i class="fa-solid fa-user-pen"></i><i class="fa-solid fa-down-long"></i></label>
                         """;
             }
         }
