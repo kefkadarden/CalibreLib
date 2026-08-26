@@ -27,6 +27,15 @@
                 <p>
                     <strong>Title:</strong> <code>@Model.ProblemDetails.Title</code>
                 </p>
+                <p>
+                  <strong>Instance:</strong><code>@Model.ProblemDetails.Instance</code>
+                </p>
+                @if(!string.IsNullOrEmpty(Model.ProblemDetails.Detail)) 
+                {
+                  <p>
+                    <strong>Details:</strong> <code>@Model.ProblemDetails.Detail</code>
+                  </p>
+                }
             }
         </div>
     </div>

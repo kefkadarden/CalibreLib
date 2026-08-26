@@ -25,7 +25,6 @@ namespace CalibreLib.Controllers
         public async Task<IActionResult> Index()
         {
             var user = _userManager.GetUserAsync(HttpContext.User).Result;
-
             return View();
         }
 
