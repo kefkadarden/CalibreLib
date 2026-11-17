@@ -174,7 +174,7 @@ namespace CalibreLib.Data
 
             if (!string.IsNullOrEmpty(model.Title))
             {
-                query = query.Where(x => x.Title.Contains(model.Title));
+                query = query.Where(x => x.Title.ToLower().Contains(model.Title.ToLower()));
             }
 
             if (model.Authors.Any())
@@ -201,11 +201,11 @@ namespace CalibreLib.Data
                 query = query.Where(x => x.Pubdate <= model.PublishedDateTo.Value);
             }
 
-            if (model.ReadStatus.HasValue)
+            if (model.ReadStatus.HasValue && model.ReadStatus == 1)
             {
                 var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
                 var bookIds = user
-                    ?.ReadBooks.Where(x => x.ReadStatus == model.ReadStatus.Value)
+                    ?.ReadBooks.Where(x => x.ReadStatus == model.ReadStatus.Value) 
                     .Select(x => x.BookId);
                 if (bookIds != null && bookIds.Any())
                     query = query.Where(x => bookIds.Contains(x.Id));

@@ -23,7 +23,7 @@
           @await Html.PartialAsync("/Views/Shared/Components/BookDetailPartial.cshtml", Model)
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearAndRefreshScroll()">Close</button>
       </div>
     </div>
   </div>

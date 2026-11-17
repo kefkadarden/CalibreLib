@@ -22,10 +22,21 @@ namespace CalibreLib.Services
         {
             logger.LogError(exception, exception.Message);
 
-            if (IsApiRequest(context))
+            var statusCode = exception switch
+            {
+                KeyNotFoundException or FileNotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedAccessException => StatusCodes.Status403Forbidden,
+                ArgumentException or InvalidOperationException => StatusCodes.Status400BadRequest,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            context.Response.StatusCode = statusCode;
+
+            if (IsApiOrAjaxRequest(context))
             {
                 var problemDetails = CreateProblemDetails(context, exception);
-                var json = ToJson(problemDetails);
+                //var json = ToJson(problemDetails);
+
                 var errorViewModel = new ErrorViewModel
                 {
                     RequestId = context.TraceIdentifier,
@@ -36,7 +47,7 @@ namespace CalibreLib.Services
 
                 const string contentType = "application/problem+json";
                 context.Response.ContentType = contentType;
-                await context.Response.WriteAsync(json, cancellationToken);
+                await context.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
                 return true;
             }
@@ -44,10 +55,12 @@ namespace CalibreLib.Services
             return false;
         }
 
-        private bool IsApiRequest(HttpContext context)
+        private bool IsApiOrAjaxRequest(HttpContext context)
         {
+            var headers = context.Request.Headers;
             return context.Request.Path.StartsWithSegments("/api") ||
-                   context.Request.Headers["Accept"].ToString().Contains("application/json");
+              headers["Accept"].ToString().Contains("application/json") ||
+              headers["X-Requested-With"] == "XMLHttpRequest";
         }
 
         private ProblemDetails CreateProblemDetails(in HttpContext context, in Exception exception)
@@ -77,19 +90,19 @@ namespace CalibreLib.Services
             return problemDetails;
         }
 
-        private string ToJson(in ProblemDetails problemDetails)
-        {
-            try
-            {
-                return JsonSerializer.Serialize(problemDetails, SerializerOptions);
-            }
-            catch (Exception ex)
-            {
-                const string msg = "An exception has occurred while serializing error to JSON.";
-                logger.LogError(ex, msg);
-            }
-
-            return string.Empty;
-        }
+        // private string ToJson(in ProblemDetails problemDetails)
+        // {
+        //     try
+        //     {
+        //         return JsonSerializer.Serialize(problemDetails, SerializerOptions);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         const string msg = "An exception has occurred while serializing error to JSON.";
+        //         logger.LogError(ex, msg);
+        //     }
+        //
+        //     return string.Empty;
+        // }
     }
 }

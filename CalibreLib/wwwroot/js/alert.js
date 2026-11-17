@@ -1,4 +1,4 @@
-﻿function showAlert(message, type, alertId) {
+﻿function showAlert(message, type, alertId, timeout) {
   alertId = alertId ?? "";
   let alertContainer = `#alert-container${alertId}`;
 
@@ -28,6 +28,12 @@
     `;
 
   $(alertContainer).html(alertHtml);
+
+  if (timeout) {
+    setTimeout(() => {
+      hideAlert(alertId); 
+    }, timeout);
+  }
 }
 
 function hideAlert(alertId) {
