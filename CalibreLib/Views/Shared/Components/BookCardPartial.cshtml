@@ -1,27 +1,35 @@
-﻿@model BookCardModel
+@model BookCardModel
 @using CalibreLib.Views.Shared.Components;
 
 @{
     var targetid = "#bookDetailModalCenter" + Model.id;
 }
-<div class="card" style="max-width:200px;min-width:200px;">
-    <button type="button" class="border-0" data-bs-toggle="modal" data-bs-target="@targetid">
-        <img src="@Model.CoverImage" class="card-img-top rounded" style="width:100%;height:225px;border:lightgray 1px solid;" alt="@Model.title">
+<div class="card book-card h-100 shadow-sm">
+    <button type="button" class="border-0 p-0 bg-transparent w-100 text-start" data-bs-toggle="modal" data-bs-target="@targetid">
+      <div class="book-cover-wrapper">
+        <img src="@Model.CoverImage" class="book-cover-img" alt="@Model.title" loading="lazy" />
+        </div>
     </button>
-    <div class="card-body">
-        <p class="text-center card-title">
+    <div class="card-body p-2 d-flex flex-column justify-content-between">
+      <div class="mb-1">
+        <p class="text-center card-title book-card-title mb-1">
             @{ ViewContext.Writer.WriteLine(@Model.BookHTML); }
         </p>
-        <p class="text-center card-subtitle fst-italic flex-wrap">
+        <p class="text-center card-subtitle book-card-subtitle text-muted fst-italic flex-wrap mb-1">
             @{ ViewContext.Writer.WriteLine(@Model.AuthorsHTML); }
         </p>
-        <p class="text-center card-subtitle fst-italic flex-wrap">
+        @if (Model.Series != null && Model.Series.Any())
+        {
+        <p class="text-center card-subtitle book-card-subtitle text-muted fst-italic mb-0">
             @{
                 ViewContext.Writer.WriteLine(@Model.SeriesHTML);
             }
         </p>
-
-        @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue, Model.id, prefix = "card" })
+        }
+        </div>
+        <div class="d-flex justify-content-center mt-auto pt-1">
+          @await Component.InvokeAsync(typeof(RatingComponent), new { Model.RatingValue, Model.id, prefix = "card" })
+        </div>
         @* @await Html.PartialAsync("~/Views/Shared/Components/RatingPartial.cshtml", Model) *@
     </div>
 </div>

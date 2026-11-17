@@ -1,21 +1,14 @@
-﻿@model IEnumerable<BookCardModel>
+@model IEnumerable<BookCardModel>
 @using CalibreLib.Views.Shared.Components
 
 <h2>Books</h2>
 @await Component.InvokeAsync(typeof(ToolbarComponent), new { type = EFilterType.BookCardGrid })
-<div id="mainCardGrid">
-    @{
-
-        var strHeader = @"<div class=""container-fluid row display-flex"">
-            <div id=""cardGridRow"" class=""grid h-100 w-100"">";
-        ViewContext.Writer.WriteLine(strHeader);
-
-        await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml", Model);
-
-        var strFooter = @"</div>
-        </div>";
-        ViewContext.Writer.WriteLine(strFooter);
-    }
+<div id="mainCardGrid" class="w-100">
+    <div id="cardGridRow" class="grid w-100">
+        @{
+            await Html.RenderPartialAsync("~/Views/Shared/Components/BookCardGridRecords.cshtml", Model);
+        }
+    </div>
 </div>
 
 
@@ -64,7 +57,7 @@
 
 @section Scripts{
     <script>
-        var $grid = $('.grid').isotope({
+        /*var $grid = $('.grid').isotope({
                 itemSelector: '.grid-item',
                 layoutMode: 'masonry',
                 masonry: {
@@ -73,7 +66,7 @@
                 getSortData: {
                     title: '.card-title',
                 }
-            });
+            });*/
 
     </script>
 }

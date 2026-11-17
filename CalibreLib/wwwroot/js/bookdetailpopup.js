@@ -4,7 +4,7 @@
     //update database 
     $.ajax({  
         type: 'POST',  
-        url: 'CardGrid/UpdateReadStatus',  
+        url: '/CardGrid/UpdateReadStatus',  
         data: "bookid=" + bookid + "&readStatus=" + e.checked,  
         success: function (data) { 
             
@@ -24,7 +24,7 @@ function chkArchived_Click(e) {
         url: '/CardGrid/UpdateArchivedStatus',  
         data: "bookid=" + bookid + "&isArchived=" + e.checked,  
         success: function (data) { 
-            
+
         },  
         error: function (XMLHttpRequest, textStatus, errorThrown) {  
             alert(XMLHttpRequest.responseJSON.detail);  

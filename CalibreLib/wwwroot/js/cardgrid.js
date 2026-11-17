@@ -27,17 +27,7 @@ function toggleScroll() {
     history: false,
   });
 }
-function updateSortBy(_sortBy) {
-  localStorage.setItem("gridSortBy", _sortBy);
-  sortBy = _sortBy;
-  page = 0;
-  //isReachedScrollEnd = false;
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-
+function clearAndRefreshScroll(){
   $("#cardGridRow")[0].innerHTML = "";
   $scroll.infiniteScroll("destroy");
   $scroll = $scroll.infiniteScroll({
@@ -50,6 +40,20 @@ function updateSortBy(_sortBy) {
     history: false,
   });
   $scroll.infiniteScroll("loadNextPage");
+}
+
+function updateSortBy(_sortBy) {
+  localStorage.setItem("gridSortBy", _sortBy);
+  sortBy = _sortBy;
+  page = 0;
+  //isReachedScrollEnd = false;
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+
+  clearAndRefreshScroll();
 }
 
 function updateListSortBy(_sortBy) {
