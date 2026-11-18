@@ -114,7 +114,7 @@
                       <div class="d-inline-flex">
                           <div class="btn-group mt-3">
                               <div id="shelfSelection@{@Model.Book.Id}">@await Component.InvokeAsync(typeof(ShelfSelectionComponent), new {bookId = Model.Book.Id })</div>
-                            <a class="btn btn-primary ms-1" href="/book/edit/@Model.id">Edit Metadata</a>
+                            <a class="btn btn-primary ms-1" href="/edit/@Model.id">Edit Metadata</a>
                           </div>
                       </div>
                   </div>
