@@ -1,19 +1,16 @@
-﻿using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CalibreLib.Services;
 
 namespace CalibreLib.Controllers
 {
     [Authorize]
     public class PublisherController : Controller
     {
-        private readonly BookRepository _bookRepository;
-        private readonly MetadataDBContext _metadataDBContext;
-        public PublisherController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
+        private readonly IMetadataService _metadataService;
+        public PublisherController(IMetadataService metadataService)
         {
-            _bookRepository = bookRepository;
-            _metadataDBContext = metadataDBContext;
+            _metadataService = metadataService;
         }
 
         [Route("publisher/{id?}")]
@@ -22,7 +19,7 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var publisher = _metadataDBContext.Publishers.FirstOrDefault(x => x.Id == id);
+            var publisher = await _metadataService.GetPublisherByIdAsync(id.Value);
 
             if (publisher == null)
                 return NotFound();

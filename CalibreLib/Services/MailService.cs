@@ -56,7 +56,7 @@ namespace CalibreLib.Services
             {
                 var attachment = new MimePart()
                 {
-                    Content = new MimeContent(mailData.Attachment, ContentEncoding.Default),
+                    Content = new MimeContent(mailData.Attachment, ContentEncoding.Unspecified),
                     ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
                     ContentTransferEncoding = ContentEncoding.Base64,
                     FileName = mailData.AttachmentName,

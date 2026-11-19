@@ -1,6 +1,6 @@
-﻿using System.IO.Compression;
+﻿using System.Globalization;
+using System.IO.Compression;
 using CalibreLib.Areas.Identity.Data;
-using CalibreLib.Data;
 using CalibreLib.Models;
 using CalibreLib.Models.MailService;
 using CalibreLib.Models.Metadata;
@@ -9,65 +9,54 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace CalibreLib.Controllers
 {
     [Authorize]
-    public class CardGridController : Controller
+    public class CardGridController(IBookService bookService,
+                                    UserManager<ApplicationUser> userManager,
+                                    IMailService mailService,
+                                    BookFileManager bookFileManager) : Controller
     {
-        private BookRepository bookRepository;
-        private UserManager<ApplicationUser> _userManager;
-        private IWebHostEnvironment _env;
-        private readonly IMailService _mailService;
-
-        public CardGridController(
-            BookRepository bookRepository,
-            IWebHostEnvironment env,
-            UserManager<ApplicationUser> userManager,
-            IMailService mailService
-        )
+        public IActionResult ViewEPub(string bookPath)
         {
-            this.bookRepository = bookRepository;
-            _env = env;
-            _userManager = userManager;
-            _mailService = mailService;
+            bookPath = "/books/" + bookPath + "";
+            return PartialView("~/Views/Shared/Components/EPubViewer.cshtml", bookPath);
         }
 
-        public IActionResult ViewEPub(string BookPath)
+        public async Task<IActionResult> SendToReader(int bookId, string format)
         {
-            BookPath = "/books/" + BookPath + "";
-            return PartialView("~/Views/Shared/Components/EPubViewer.cshtml", BookPath);
-        }
+            var book = await bookService.GetByIdAsync(bookId);
 
-        public async Task<IActionResult> SendToReader(int BookID, string Format)
-        {
-            var book = await bookRepository.GetByIDAsync(BookID);
+            if (book == null)
+                return NotFound();
 
-            var _user = await _userManager.GetUserAsync(User);
+            var user = await userManager.GetUserAsync(User);
 
-            if (_user == null)
-                return Unauthorized();
+            if (user == null)
+                return Challenge();
 
-            var emailAddress = _user.EReaderEmail;
+            var emailAddress = user.EReaderEmail;
 
             if (emailAddress == null)
                 return BadRequest("EReaderEmail not set for user");
 
-            BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
-            var response = await fm.DownloadBookAsync(book, Format.ToLower());
+            var response = await bookFileManager.DownloadBookAsync(book, format.ToLowerInvariant());
             if (response == null)
                 return BadRequest("Response from downloading book empty");
 
             Stream attachment = new MemoryStream(response);
 
-            await _mailService.SendMailAsync(
+            await mailService.SendMailAsync(
                 new MailData()
                 {
                     EmailAddress = emailAddress,
                     Body = "",
                     Subject = book.Title,
                     Attachment = attachment,
-                    AttachmentName = book.Title + $".{Format.ToLower()}",
+                    AttachmentName = book.Title + $".{format.ToLowerInvariant()}",
                     IsBodyHtml = false,
                 }
             );
@@ -75,68 +64,79 @@ namespace CalibreLib.Controllers
             return Ok($"Success! Book queued for sending to {emailAddress}");
         }
 
-        public async Task<IActionResult> DownloadBook(int BookID, string Format)
+        public async Task<IActionResult> DownloadBook(int bookId, string format)
         {
-            var book = await bookRepository.GetByIDAsync(BookID);
+            var book = await bookService.GetByIdAsync(bookId);
 
+            if (book == null)
+                return NotFound();
             //var datum = book.Data.FirstOrDefault(x => x.Format == Format);
 
-            BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
-            var result = await fm.DownloadBookAsync(book, Format);
+            var result = await bookFileManager.DownloadBookAsync(book, format);
 
             if (result != null)
             {
-                return File(result, "application/octet-stream", book.Title + "." + Format);
+                return File(result, "application/octet-stream", book.Title + "." + format);
             }
             return NotFound();
         }
 
-        public async Task<IActionResult> DownloadShelf(int ShelfID, string format)
+        public async Task<IActionResult> DownloadShelf(int shelfId, string format)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var zipName = $"Books_{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss")}.zip";
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            
             if (user == null)
-                return Unauthorized();
+                return Challenge();
 
-            var shelf = user.Shelves.Find(x => x.Id.Equals(ShelfID));
+            var shelf = user.Shelves.Find(x => x.Id.Equals(shelfId));
 
             if (shelf == null)
-                return BadRequest();
+                return NotFound();
+            
+            var safeShelfName = string.Concat(shelf.Name.Split(Path.GetInvalidFileNameChars()));
+            var zipName = $"{safeShelfName}_{format.ToLowerInvariant()}.zip";
+            
             var bookIds = shelf.BookShelves.Select(x => x.BookId).ToList();
-            var books = await bookRepository.GetByBookListAsync(bookIds);
+            var books = await bookService.GetByBookListAsync(bookIds);
             var booksFiltered = books
                 .SelectMany(x => x.Data)
-                .Where(x => x.Format?.ToLower() == format.ToLower())
+                .Where(x => x.Format?.Equals(format, StringComparison.OrdinalIgnoreCase) ?? false)
                 .ToList();
 
-            if (booksFiltered.Count() == 0)
-                return NotFound();
-
-            using (MemoryStream ms = new MemoryStream())
+            if (!booksFiltered.Any())
             {
-                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
-                {
-                    booksFiltered.ForEach(book =>
-                    {
-                        var entry = zip.CreateEntry(book.Book.Title + "." + format);
-                        BookFileManager fm = new BookFileManager(_env, HttpContext.Request);
-                        var result = fm.DownloadBookAsync(book.Book, format).Result;
-
-                        if (result != null)
-                        {
-                            using (var fileStream = new MemoryStream(result))
-                            {
-                                using (var entryStream = entry.Open())
-                                {
-                                    fileStream.CopyTo(entryStream);
-                                }
-                            }
-                        }
-                    });
-                }
-
-                return File(ms.ToArray(), "application/zip", zipName);
+                TempData["ErrorMessage"] = $"None of the books on this shelf are available in {format.ToUpperInvariant()} format.";
+                return RedirectToAction("Index", "Shelf", new { id = shelfId });
             }
+
+            using var ms = new MemoryStream();
+            var filesAdded = 0;
+            
+            {
+                await using var zip = new ZipArchive(ms, ZipArchiveMode.Create, true);
+                foreach (var book in booksFiltered)
+                {
+                    var result = await bookFileManager.DownloadBookAsync(book.Book, format);
+                    if (result is null)
+                        continue;
+                    
+                    var safeTitle = string.Concat(book.Book.Title.Split(Path.GetInvalidFileNameChars()));
+                    var entry = zip.CreateEntry($"{safeTitle}.{format.ToLowerInvariant()}");
+                    await using var entryStream = await entry.OpenAsync();
+                    await entryStream.WriteAsync(result);
+                    filesAdded++;
+
+                }
+            }
+            
+            // If books were on the shelf, but none had files in the requested format (e.g., no EPUBs found)
+            if (filesAdded == 0)
+            {
+                TempData["ErrorMessage"] = $"None of the books on this shelf are available in {format.ToUpperInvariant()} format.";
+                return RedirectToAction("Index", "Shelf", new { id = shelfId });
+            }
+            
+            return File(ms.ToArray(), "application/zip", zipName);
         }
 
         [HttpGet]
@@ -149,17 +149,17 @@ namespace CalibreLib.Controllers
             string? query = null
         )
         {
-            SearchModel searchModel2 = new SearchModel();
+            SearchModel? searchModel2 = null;
             if (searchModel != null)
             {
                 searchModel2 = JsonConvert.DeserializeObject<SearchModel>(searchModel);
             }
 
-            if (!Enum.TryParse<EFilterType>(type, true, out EFilterType eType))
+            if (!Enum.TryParse(type, true, out EFilterType eType))
                 eType = EFilterType.BookCardGrid;
 
             var books = await GetBookList(pageNumber, sortBy, eType, id, searchModel2, query);
-            var model = await bookRepository.GetBookCardModels(books);
+            var model = await bookService.GetBookCardModelsAsync(books);
             return PartialView("~/Views/Shared/Components/BookCardGridRecords.cshtml", model);
         }
 
@@ -172,49 +172,45 @@ namespace CalibreLib.Controllers
             string? query = null
         )
         {
-            bool ascending = true;
-            if (sortBy != null && sortBy.EndsWith("desc"))
-                ascending = false;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return new List<Book>();
 
+            bool ascending = sortBy != null && sortBy.EndsWith("desc");
             sortBy = sortBy?.Replace("desc", "").Replace("asc", "");
 
-            Func<Book, object?> orderBy = book =>
+            Expression<Func<Book, object?>> orderBy = sortBy switch
             {
-                switch (sortBy)
-                {
-                    case "title":
-                        return book.Title;
-                    case "date":
-                        return book.Pubdate;
-                    case "author":
-                        return book.AuthorSort;
-                    default:
-                        return book.Title;
-                }
+                "title" => book => book.Title,
+                "date" => book => book.Pubdate,
+                "author" => book => book.AuthorSort,
+                _ => book => book.Title
             };
 
-            var books = await bookRepository.GetBooks(
-                pageNumber,
-                orderBy,
-                query,
-                ascending,
-                type,
-                id,
-                searchModel
-            );
-            return books.ToList();
+            var books = await bookService.GetBooksAsync(new BookQueryParameters()
+            {
+                PageNumber = pageNumber,
+                OrderBy = orderBy,
+                Query = query,
+                Ascending = ascending,
+                FilterType = type,
+                FilterId = id,
+                SearchModel = searchModel,
+                UserId = userId
+            });
+            return books.Items;
         }
 
         public async Task<IActionResult> UpdateArchivedStatus(
-            int bookid = -1,
+            int bookId = -1,
             bool isArchived = false
         )
         {
-            var book = await bookRepository.GetByIDAsync(bookid);
+            var book = await bookService.GetByIdAsync(bookId);
 
             ArgumentNullException.ThrowIfNull(book);
 
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await userManager.GetUserAsync(HttpContext.User);
 
             ArgumentNullException.ThrowIfNull(user);
 
@@ -242,18 +238,18 @@ namespace CalibreLib.Controllers
                 archiveBook?.LastModified = DateTime.Now;
             }
 
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
 
             return Ok();
         }
 
-        public async Task<IActionResult> UpdateReadStatus(int bookid = -1, bool readStatus = false)
+        public async Task<IActionResult> UpdateReadStatus(int bookId = -1, bool readStatus = false)
         {
-            var book = await bookRepository.GetByIDAsync(bookid);
+            var book = await bookService.GetByIdAsync(bookId);
 
             ArgumentNullException.ThrowIfNull(book);
 
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await userManager.GetUserAsync(HttpContext.User);
 
             ArgumentNullException.ThrowIfNull(user);
 
@@ -281,7 +277,7 @@ namespace CalibreLib.Controllers
                 readBook?.LastModified = DateTime.Now;
             }
 
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
 
             return Ok();
         }

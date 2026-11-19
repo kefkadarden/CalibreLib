@@ -1,19 +1,17 @@
-﻿using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
+﻿using CalibreLib.Models.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CalibreLib.Services;
 
 namespace CalibreLib.Controllers
 {
     [Authorize]
     public class RatingController : Controller
     {
-        private readonly BookRepository _bookRepository;
-        private readonly MetadataDBContext _metadataDBContext;
-        public RatingController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
+        private readonly IMetadataService _metadataService;
+        public RatingController(IMetadataService metadataService)
         {
-            _bookRepository = bookRepository;
-            _metadataDBContext = metadataDBContext;
+            _metadataService = metadataService;
         }
 
         [Route("rating/{id?}")]
@@ -23,7 +21,7 @@ namespace CalibreLib.Controllers
                 return View();
 
 
-            var rating = _metadataDBContext.Ratings.FirstOrDefault(x => x.Id == id);
+            var rating = await _metadataService.GetRatingByIdAsync(id.Value);
 
             if (id == -1)
             {

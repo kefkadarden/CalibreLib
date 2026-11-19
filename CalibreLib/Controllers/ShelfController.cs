@@ -1,7 +1,7 @@
+using System.Security.Claims;
 using CalibreLib.Areas.Identity.Data;
-using CalibreLib.Data;
+using CalibreLib.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalibreLib.Controllers
@@ -9,38 +9,37 @@ namespace CalibreLib.Controllers
     [Authorize]
     public class ShelfController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly BookRepository _bookRepository;
-        private readonly CalibreLibContext _calibreLibContext;
+        private readonly IBookService _bookService;
+        private readonly IUserLibraryService _libraryService;
 
         public ShelfController(
-            UserManager<ApplicationUser> userManager,
-            BookRepository bookRepository,
-            CalibreLibContext calibreLibContext
+            IBookService bookService,
+            IUserLibraryService userLibraryService
         )
         {
-            _userManager = userManager;
-            _bookRepository = bookRepository;
-            _calibreLibContext = calibreLibContext;
+            _bookService = bookService;
+            _libraryService = userLibraryService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var shelf = user.Shelves.FirstOrDefault(x => x.Id == id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var shelf = await _libraryService.GetUserShelfByIdAsync(userId, id);
+            
             if (shelf != null)
             {
                 foreach (var item in shelf.BookShelves)
                 {
-                    var book = await _bookRepository.GetByIDAsync(item.BookId);
+                    var book = await _bookService.GetByIdAsync(item.BookId);
                     if (book != null)
                     {
                         item.Book = book;
                     }
                 }
+                
                 var books = shelf.BookShelves.Select(x => x.Book);
-                shelf.BookCards = await _bookRepository.GetBookCardModels(books);
+                shelf.BookCards = await _bookService.GetBookCardModelsAsync(books);
                 return View(shelf);
             }
             else
@@ -58,50 +57,54 @@ namespace CalibreLib.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(int shelfId, int bookId)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user != null)
+            if (userId == null)
+                return Unauthorized();
+            
+            var shelf = await _libraryService.GetUserShelfByIdAsync(userId, shelfId);
+
+            if (shelf != null)
             {
-                var shelf = user.Shelves.Find(x => x.Id.Equals(shelfId));
-
-                if (shelf != null)
-                {
-                    shelf.BookShelves.Add(
-                        new BooksShelvesLink()
-                        {
-                            BookId = bookId,
-                            DateAdded = DateTime.Now,
-                            ShelfId = shelfId,
-                            Order = shelf.BookShelves.Max(x => (int?)x.Order) ?? 0 + 1,
-                        }
-                    );
-                }
-
-                await _userManager.UpdateAsync(user);
+                shelf.BookShelves.Add(
+                    new BooksShelvesLink()
+                    {
+                        BookId = bookId,
+                        DateAdded = DateTime.Now,
+                        ShelfId = shelfId,
+                        Order = shelf.BookShelves.Max(x => (int?)x.Order) ?? 0 + 1,
+                    }
+                );
             }
+            
+            var added = await _libraryService.AddBookToShelfAsync(userId, shelfId, bookId);
 
+            if (!added)
+            {
+                return BadRequest("Book not added to shelf");
+            }
+            
             return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> Remove(int shelfId, int bookId)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user != null)
-            {
-                var shelf = user.Shelves.Find(x => x.Id.Equals(shelfId));
+            if (userId == null)
+                return Unauthorized();
 
-                if (shelf != null)
-                {
-                    var bookonshelf = shelf.BookShelves.Find(x => x.BookId == bookId);
-                    if (bookonshelf != null)
-                        shelf.BookShelves.Remove(bookonshelf);
-                }
+            var shelf = await _libraryService.GetUserShelfByIdAsync(userId, shelfId);
 
-                await _userManager.UpdateAsync(user);
-            }
+            if (shelf == null)
+                return NotFound();
 
+            var removed = await _libraryService.RemoveBookFromShelfAsync(userId, shelfId, bookId);
+
+            if (!removed)
+                return BadRequest("Book not removed from shelf");
+            
             return Ok();
         }
 
@@ -117,20 +120,28 @@ namespace CalibreLib.Controllers
             if (shelf == null)
                 return BadRequest();
 
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user == null)
+            if (userId == null)
                 return Unauthorized();
 
-            shelf.Created = DateTime.Now;
-            shelf.LastModified = DateTime.Now;
-            shelf.User = user;
-            shelf.UserId = user.Id;
+            if (String.IsNullOrWhiteSpace(shelf.Name))
+                return BadRequest("Shelf Name cannot be empty");
 
-            user.Shelves.Add(shelf);
+            var newShelf = await _libraryService.CreateShelfAsync(userId, shelf.Name);
 
-            await _userManager.UpdateAsync(user);
-            ViewBag.SuccessMessage = "Shelf created successfully.";
+            if (newShelf == null)
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        Code = 500,
+                        Message = "Could not create Shelf",
+                        ErrorMessage = "Could not create Shelf",
+                    }
+                );
+
+        ViewBag.SuccessMessage = "Shelf created successfully.";
             ModelState.Clear();
             return View();
         }
@@ -140,13 +151,13 @@ namespace CalibreLib.Controllers
         {
             if (id == null)
                 return BadRequest();
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user == null)
+            if (userId == null)
                 return Unauthorized();
 
-            Shelf? shelf;
-            if ((shelf = user.Shelves.FirstOrDefault(shelf => shelf.Id == id)) == null)
+            Shelf? shelf = await _libraryService.GetUserShelfByIdAsync(userId, id.Value);
+            if (shelf == null)
                 return NotFound();
 
             return PartialView("Edit", shelf);
@@ -161,47 +172,55 @@ namespace CalibreLib.Controllers
             if (shelf?.Id != id)
                 return BadRequest();
 
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user == null)
+            if (userId == null)
                 return Unauthorized();
 
-            var foundShelf = user.Shelves.Find(shelf => shelf.Id == id);
+            if (String.IsNullOrWhiteSpace(shelf.Name))
+                return BadRequest("Shelf Name cannot be empty");
+            
+            var updated = await _libraryService.UpdateShelfNameAsync(userId, id, shelf.Name);
 
-            if (foundShelf == null)
-                return NotFound();
-
-            foundShelf.LastModified = DateTime.Now;
-            foundShelf.Name = shelf?.Name;
-
-            await _userManager.UpdateAsync(user);
+            if (!updated)
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        Code = 500,
+                        Message = "Cannot Update Shelf",
+                        ErrorMessage = "Cannot Update Shelf",
+                    }
+                );
 
             return Ok(
-                new { message = "Shelf updated successfully.", updatedName = foundShelf.Name }
+                new { message = "Shelf updated successfully.", updatedName = shelf.Name }
             );
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var shelf = user.Shelves.FirstOrDefault(x => x.Id == id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (shelf == null)
-                return NotFound();
-
-            if (!user.Shelves.Remove(shelf))
+            if (userId == null)
+                return Unauthorized();
+            
+            if (!id.HasValue)
+                return BadRequest("ID  cannot be empty");
+            
+            var deleted = await _libraryService.DeleteShelfAsync(userId, id.Value);
+            
+            if  (!deleted)
                 return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    new
-                    {
-                        Code = 500,
-                        Message = "Cannot Delete Shelf",
-                        ErrorMessage = "Cannot Delete Shelf",
-                    }
-                );
-
-            await _userManager.UpdateAsync(user);
+                StatusCodes.Status500InternalServerError,
+                new
+                {
+                    Code = 500,
+                    Message = "Cannot Delete Shelf",
+                    ErrorMessage = "Cannot Delete Shelf",
+                }
+            );
 
             return Ok();
         }

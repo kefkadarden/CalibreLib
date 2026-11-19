@@ -46,6 +46,7 @@ builder.Logging.AddConsole();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 #if !DEBUG
 //Add Azure Blob Storage support
@@ -65,8 +66,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
 
-builder.Services.AddScoped<BookRepository>();
-builder.Services.AddScoped<ShelfRepository>();
+builder.Services.AddScoped<BookFileManager>();
+builder.Services.AddScoped<IUserLibraryService, UserLibraryService>();
+builder.Services.AddScoped<IMetadataService, MetadataService>();
+builder.Services.AddScoped<IBookService, BookService>();
 var app = builder.Build();
 
 app.UseExceptionHandler("/Error/{0}");

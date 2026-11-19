@@ -1,0 +1,169 @@
+@using CalibreLib.Views.Shared.Components;
+@using CalibreLib.Services;
+@inject MetadataService metadataService;
+@model BookCardModel
+
+@{
+    ViewBag.Title = $"Edit Book - {Model.Book.Title}";
+}
+@*
+    TODO:
+        - Author multiple select needs ability to add new Author
+        - Publisher multiple select needs ability to add new Publisher
+        - Description needs to be a RichTextEditor control
+        - Identifiers needs a grid to add identifier and identifier value (2 columns)
+        - Series selection need ability to add new Series
+        - Need Fetch Cover URL and Cover upload button
+        - Need upload button for formats
+        - Need Fetch metadata button to get from sources
+        - Need section for converting from one format to another
+*@
+<style>
+    .label {
+      display: inline;
+      padding: .2em .6em .3em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      color: white;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: .25em;
+      background-color: dimgray;
+    }
+
+    .label:empty {
+        display:none;
+    }
+
+    .label-blue {
+        background-color: cornflowerblue;
+    }
+
+    .label-green {
+        background-color: green;
+    }
+    .link-primary {
+        text-decoration: none !important;    
+    }
+
+    .link-primary:hover {
+        text-decoration: underline;
+    }
+</style>
+
+@{
+    var alertid = "alert-container" + Model.id;
+    var authors = await metadataService.GetAuthorsAsync();
+    var publishers = await metadataService.GetPublishersAsync();
+    var tags = await metadataService.GetTagsAsync();
+    var series = await metadataService.GetSeriesAsync();
+    var langugages = await metadataService.GetLanguagesAsync();
+}
+
+<h3>Advanced Search</h3>
+<hr class="w-50"/>
+<div class="container-fluid">
+    <div class="row"> 
+        <div id="@alertid"></div>
+        <form method="post" class="w-100 mt-4">
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-4">
+                    <label for="title" class="fw-bold">Title</label>
+                    <input type="text" id="title" name="Title" class="form-control" asp-for="Book.Title" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-4">
+                    <label for="author" class="fw-bold">Authors</label>
+                    @Html.DropDownListFor(m => m.Authors, new MultiSelectList(authors, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_authors", id = "select_authors", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-4">
+                    <label for="publisher" class="fw-bold">Publisher</label>
+                    @Html.DropDownListFor(m => m.Book.BookPublishers, new MultiSelectList(publishers, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_publishers", id = "select_publishers", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-8 col-lg-6 d-inline-flex justify-content-between">
+                    <div class="col-md-6 col-lg-4">
+                        <label for="publishedDate" class="fw-bold">Published Date</label>
+                        <input type="date" id="publishedDate" name="PublishedDate" class="form-control" asp-for="Book.Pubdate" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-4">
+                    <label for="description" class="fw-bold">Description</label>
+                    <input type="text" id="description" name="Description" class="form-control" asp-for="Description" />
+                </div>
+            </div>
+
+            <div class="row mb-3 w-100">
+                <div class="col-md-6 col-lg-6 col-xl-4">
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-lg-6">
+                            <label for="identifiers" class="fw-bold">Identifiers</label>
+                            @*Need to have a grid or method to add new identifier label with value*@
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-lg-6">
+                            <label for="tags" class="fw-bold">Tags</label>
+                            @Html.DropDownListFor(m => m.Tags, new MultiSelectList(tags, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_tags", id = "select_tags", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-lg-6">
+                            <label for="series" class="fw-bold">Series</label>
+                            @Html.DropDownListFor(m => m.Series, new MultiSelectList(series, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_series", id = "select_series", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-lg-6">
+                            <label for="languages" class="fw-bold">Languages</label>
+                            @Html.DropDownListFor(m => m.Languages, new MultiSelectList(langugages, "Id", "LangCode"), new { @class = "selectpicker form-control", name = "select_langs", id = "select_langs", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-6 col-xl-6 d-inline-flex justify-content-between">
+                    <div class="col-md-6 col-lg-4 col-xl-6 align-content-center">
+                        <label for="rating" class="fw-bold">Rating</label>
+                        @await Component.InvokeAsync(typeof(RatingComponent), new { RatingValue = 0, id = 1, prefix = "Rating", isDisabled = false })
+                        <input type="hidden" id="ratingValue" name="Rating" asp-for="RatingValue" />
+                    </div>
+                </div>
+            </div>
+
+            @*Need Fetch Cover URL and Cover upload button*@
+            @*Need upload button for formats*@
+            @*Need Fetch metadata button to get from sources*@
+            @*Need section for converting from one format to another*@
+            
+            <button type="submit" class="ms-2 col-md-2 col-lg-1 mt-2 btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const ratingStarRating = document.querySelector('#RatingstarRating1');
+
+            ratingStarRating.addEventListener('change', function (e) {
+                document.getElementById('ratingValue').value = e.target.value;
+            });
+        });
+</script>
+}

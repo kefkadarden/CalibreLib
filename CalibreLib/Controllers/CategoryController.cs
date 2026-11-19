@@ -1,5 +1,4 @@
-﻿using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
+﻿using CalibreLib.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,23 +7,21 @@ namespace CalibreLib.Controllers
     [Authorize]
     public class CategoryController : Controller
     {
-        private readonly BookRepository _bookRepository;
-        private readonly MetadataDBContext _metadataDBContext;
+        private readonly IMetadataService _metadataService;
 
-        public CategoryController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
+        public CategoryController(IMetadataService metadataService)
         {
-            _bookRepository = bookRepository;
-            _metadataDBContext = metadataDBContext;
+            _metadataService = metadataService;
         }
 
 
         [Route("category/{id?}")]
         public async Task<IActionResult> Index(int? id)
         {
-            if (id == null)
+            if (!id.HasValue)
                 return View();
 
-            var tag = _metadataDBContext.Tags.FirstOrDefault(x => x.Id == id);
+            var tag = await _metadataService.GetTagByIdAsync(id.Value);
 
             if (tag == null)
                 return NotFound();

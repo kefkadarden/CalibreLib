@@ -4,7 +4,6 @@
 @{
 }
 @using CalibreLib.Areas.Identity.Data
-@using CalibreLib.Views.Shared.Components
 @model Shelf
 @section Head 
 {
@@ -23,7 +22,7 @@
                 var format = datum.Format;
                 var count = Model.BookCards.SelectMany(x => x.Book.Data).Where(x => x.Format == format).Count();
                 
-                <li><a class="dropdown-item" href="/CardGrid/DownloadShelf/?ShelfID=@Model.Id&Format=@format">@format (@count books)</a></li>
+                <li><a class="dropdown-item" href="/CardGrid/DownloadShelf?shelfId=@Model.Id&format=@format">@format (@count books)</a></li>
             }
         </ul>
     <a class="btn btn-danger" onclick="openDeleteModal(@Model.Id);">Delete this Shelf</a>

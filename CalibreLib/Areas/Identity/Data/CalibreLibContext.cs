@@ -8,6 +8,9 @@ namespace CalibreLib.Data;
 public class CalibreLibContext : IdentityDbContext<ApplicationUser>
 {
     public virtual required DbSet<ArchivedBook> ArchivedBooks { get; set; }
+    public virtual required DbSet<ReadBook> ReadBooks { get; set; }
+    public virtual required DbSet<Shelf> Shelves { get; set; }
+    public virtual required DbSet<BooksShelvesLink> BooksShelvesLinks { get; set; }
     public virtual required DbSet<MailSettings> MailSettings { get; set; }
 
     public CalibreLibContext(DbContextOptions<CalibreLibContext> options)
