@@ -17,63 +17,70 @@ namespace CalibreLib.Services
         PDF,
         TXT
     }
-    public class BookFileManager
-    {
-        private readonly IWebHostEnvironment _env;
-        private readonly HttpRequest _httpRequest;
-        private string? _pathBase = string.Empty;
 
-        public BookFileManager(IWebHostEnvironment env, HttpRequest httpRequest)
+    public class BookFileManager(
+        IWebHostEnvironment env,
+        IHttpContextAccessor httpContextAccessor,
+        IHttpClientFactory httpClientFactory)
+    {
+        private string GetBaseBookUrl()
         {
-            _env = env;
-            _httpRequest = httpRequest;
+            var request = httpContextAccessor.HttpContext?.Request
+                ?? throw new InvalidOperationException("HttpContext is not available to construct the book URL.");
+
+            return $"{request.Scheme}://{request.Host}/books";
         }
+
         public async Task<string> GetBookCoverAsync(Book book)
         {
-            using (var client = new HttpClient())
+            byte[] file;
+            string type;
+
+            if (!string.IsNullOrWhiteSpace(book.Path))
             {
-                var file = await File.ReadAllBytesAsync(_env.WebRootPath + "/images/nocover.gif");
-                string type = "image/gif";
-
-                if (book.Path != null)
+                try
                 {
-                    try
-                    {
-                        file = await client.GetByteArrayAsync(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/cover.jpg");
-                        type = "image/jpeg";
-                    }
-                    catch
-                    {
+                    var client = httpClientFactory.CreateClient();
+                    var coverUrl = $"{GetBaseBookUrl()}/{book.Path.Replace("\\", "/")}/cover.jpg";
 
-                    }
+                    file = await client.GetByteArrayAsync(coverUrl);
+                    type = "image/jpeg";
+
+                    return $"data:{type};base64,{Convert.ToBase64String(file)}";
                 }
-                var base64 = Convert.ToBase64String(file);
-                var imgSrc = $"data:{type};base64,{base64}";
-                return imgSrc;
+                catch
+                {
+                    // Fall through to default nocover.gif if remote cover is missing or unreachable
+                }
             }
+
+            var fallbackPath = Path.Combine(env.WebRootPath, "images", "nocover.gif");
+            file = await File.ReadAllBytesAsync(fallbackPath);
+            type = "image/gif";
+
+            return $"data:{type};base64,{Convert.ToBase64String(file)}";
         }
 
-        public async Task<byte[]?> DownloadBookAsync(Book book, string Format)
+        public async Task<byte[]?> DownloadBookAsync(Book book, string format)
         {
-            // URL of the file to be downloaded
-            var fileUrl = new System.Uri(_httpRequest.Scheme + "://" + _httpRequest.Host + "/books/" + book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format.ToLower());
+            if (string.IsNullOrWhiteSpace(book.Path))
+                return null;
 
-            // var localFilePath = Path.Combine(_env.WebRootPath, "/book/", book.Path.Replace("\\", "/") + "/" + book.Data.FirstOrDefault(e => e.Format?.ToUpper() == Format.ToUpper()).Name + "." + Format.ToLower());
-            // Console.WriteLine("LOCALFILEPATH: " + _env.WebRootPath);
-            // if (!File.Exists(localFilePath))
-            //   return null;
-            // Console.WriteLine("made it past the spot");
-            //
-            using (var httpClient = new HttpClient())
-            {
-                // Send a GET request to the specified Uri
-                using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead))
-                {
-                    Console.WriteLine("Content Length: " + response.Content.Headers.ContentLength);
-                    return response.IsSuccessStatusCode ? await response.Content.ReadAsByteArrayAsync() : null;
-                }
-            }
+            var bookData = book.Data.FirstOrDefault(e =>
+                string.Equals(e.Format, format, StringComparison.OrdinalIgnoreCase));
+
+            if (bookData == null || string.IsNullOrWhiteSpace(bookData.Name))
+                return null;
+
+            var fileUrl = new Uri(
+                $"{GetBaseBookUrl()}/{book.Path.Replace("\\", "/")}/{bookData.Name}.{format.ToLowerInvariant()}");
+
+            var client = httpClientFactory.CreateClient();
+            using var response = await client.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead);
+
+            return response.IsSuccessStatusCode
+                ? await response.Content.ReadAsByteArrayAsync()
+                : null;
         }
-
     }
 }

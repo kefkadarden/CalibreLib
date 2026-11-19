@@ -1,19 +1,16 @@
-﻿using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CalibreLib.Services;
 
 namespace CalibreLib.Controllers
 {
     [Authorize]
     public class LanguageController : Controller
     {
-        private readonly BookRepository _bookRepository;
-        private readonly MetadataDBContext _metadataDBContext;
-        public LanguageController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
+        private readonly IMetadataService _metadataService;
+        public LanguageController(IMetadataService metadataService)
         {
-            _bookRepository = bookRepository;
-            _metadataDBContext = metadataDBContext;
+            _metadataService =  metadataService;
         }
 
 
@@ -23,7 +20,7 @@ namespace CalibreLib.Controllers
             if (id == null)
                 return View();
 
-            var language = _metadataDBContext.Languages.FirstOrDefault(x => x.Id == id);
+            var language = await _metadataService.GetLanguageByIdAsync(id.Value);
 
             if (language == null)
                 return NotFound();

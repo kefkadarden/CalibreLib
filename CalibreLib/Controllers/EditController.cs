@@ -1,17 +1,14 @@
-using CalibreLib.Data;
-using CalibreLib.Models;
-using CalibreLib.Models.Metadata;
-using Microsoft.AspNetCore.Authorization;
+using CalibreLib.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalibreLib.Controllers;
 
 public class EditController : Controller
 {
-    private readonly BookRepository _bookRepository;
-    public EditController(BookRepository bookRepository)
+    private readonly IBookService _bookService;
+    public EditController(IBookService bookService)
     {
-        _bookRepository = bookRepository;
+        _bookService = bookService;
     }
 
 
@@ -21,12 +18,12 @@ public class EditController : Controller
         if (id == null)
             return View();
 
-        var book = await _bookRepository.GetByIDAsync(id.Value);
+        var book = await _bookService.GetByIdAsync(id.Value);
         
         if (book == null)
             return NotFound();
 
-        var bookCard = await _bookRepository.GetBookCardModel(book);
+        var bookCard = await _bookService.GetBookCardModelAsync(book);
 
         return View(bookCard);
     }

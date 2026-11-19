@@ -14,6 +14,7 @@ namespace CalibreLib.Data
         private readonly IWebHostEnvironment _env;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly BookFileManager _bookFileManager;
 
         public int PageSize { get; set; } = 30;
 
@@ -21,13 +22,15 @@ namespace CalibreLib.Data
             MetadataDBContext context,
             IWebHostEnvironment env,
             IHttpContextAccessor httpContextAccessor,
-            UserManager<ApplicationUser> userManager
+            UserManager<ApplicationUser> userManager,
+            BookFileManager bookFileManager
         )
         {
             this.context = context;
             _env = env;
             _userManager = userManager;
             _contextAccessor = httpContextAccessor;
+            _bookFileManager = bookFileManager;
         }
 
         public void Delete(Book item)
@@ -365,13 +368,9 @@ namespace CalibreLib.Data
 
         public async Task<BookCardModel> GetBookCardModel(Book book)
         {
-            BookFileManager manager = new BookFileManager(
-                _env,
-                _contextAccessor.HttpContext.Request
-            );
             var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
             List<Identifier> identifiers = await this.GetIdentifiersAsync();
-            var cover = await manager.GetBookCoverAsync(book);
+            var cover = await _bookFileManager.GetBookCoverAsync(book);
             var bcModel = new BookCardModel()
             {
                 id = book.Id,

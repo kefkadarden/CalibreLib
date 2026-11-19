@@ -192,10 +192,8 @@ function loadBooksQuery() {
 // }
 
 async function downloadBook(button) {
-  console.log(button.getAttribute("data-url"));
   const url = button.getAttribute("data-url");
   const bookId = button.id.replace("download-link", "");
-  console.log(bookId);
 
   try {
     const response = await fetch(url);
@@ -203,20 +201,30 @@ async function downloadBook(button) {
     if (response.status === 200) {
       const contentDisposition = response.headers.get("Content-Disposition");
       let fileName = "downloaded-file"; // Fallback name
+
       if (contentDisposition) {
-        const fileNameMatch = contentDisposition.match(/filename=([^"]+;)/);
-        if (fileNameMatch && fileNameMatch[0]) {
-          fileName = fileNameMatch[1].replace(";", "");
+        // 1. Prefer UTF-8 encoded filename* (handles spaces, accents, punctuation)
+        const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+        if (utf8Match && utf8Match[1]) {
+          fileName = decodeURIComponent(utf8Match[1].trim());
+        } else {
+          // 2. Fallback to standard filename="..." or unquoted filename=...
+          const fileNameMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+          if (fileNameMatch && fileNameMatch[1]) {
+            fileName = fileNameMatch[1].trim();
+          }
         }
       }
 
       const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
       const downloadLink = document.createElement("a");
-      downloadLink.href = window.URL.createObjectURL(blob);
+      downloadLink.href = downloadUrl;
       downloadLink.download = fileName;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+      window.URL.revokeObjectURL(downloadUrl);
     } else if (response.status === 404) {
       showAlert("Error: The book file was not found.", "error", bookId);
     } else {

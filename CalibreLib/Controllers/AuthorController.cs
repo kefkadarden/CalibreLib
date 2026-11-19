@@ -1,28 +1,26 @@
-﻿using CalibreLib.Data;
-using CalibreLib.Models.Metadata;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CalibreLib.Services;
 
 namespace CalibreLib.Controllers
 {
     [Authorize]
     public class AuthorController : Controller
     {
-        private readonly BookRepository _bookRepository;
-        private readonly MetadataDBContext _metadataDBContext;
-        public AuthorController(BookRepository bookRepository, MetadataDBContext metadataDBContext)
+        private readonly IMetadataService _metadataService;
+        public AuthorController(IMetadataService metadataService)
         {
-            _bookRepository = bookRepository;
-            _metadataDBContext = metadataDBContext;
+            _metadataService = metadataService;
         }
 
         [Route("author/{id?}")]
         public async Task<IActionResult> Index(int? id)
         {
-            if (id == null)
+            if (!id.HasValue)
                 return View();
 
-            var author = _metadataDBContext.Authors.FirstOrDefault(x => x.Id == id);
+            var author = await _metadataService.GetAuthorByIdAsync(id.Value);
+            
             if (author == null)
                 return NotFound();
 

@@ -180,6 +180,14 @@
             </div>
             }
             <div id="alert-container"></div>
+            @if (TempData["ErrorMessage"] is string errorMessage)
+            {
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                        showAlert(@Html.Raw(Json.Serialize(errorMessage)), "error");
+                    });
+                </script>
+            }
             @RenderBody()
             <div id="loading" class="loading-container">
                 <div class="loading-content">
