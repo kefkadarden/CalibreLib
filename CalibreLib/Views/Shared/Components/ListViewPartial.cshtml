@@ -28,7 +28,9 @@
                         @if(Model[i].FilterType == EFilterType.Ratings)
                         {
                             var ratingValue = Convert.ToInt32(Model[i].Title);
-                            @await Component.InvokeAsync(typeof(RatingComponent), new { ratingValue })
+                            var id = Model[i].Id;
+                            var prefix = Model[i].Title;
+                            @await Component.InvokeAsync(typeof(RatingComponent), new { ratingValue, id, prefix })
                         }
                         else
                         {
@@ -60,7 +62,9 @@
                         @if(Model[i].FilterType == EFilterType.Ratings)
                         {
                             var ratingValue = Convert.ToInt32(Model[i].Title);
-                            @await Component.InvokeAsync(typeof(RatingComponent), new { ratingValue })
+                            var id = Model[i].Id;
+                            var prefix = Model[i].Title;
+                            @await Component.InvokeAsync(typeof(RatingComponent), new { ratingValue, id, prefix })
                         }
                         else
                         {

@@ -1,6 +1,6 @@
-@using CalibreLib.Models.Metadata
 @using CalibreLib.Views.Shared.Components;
-@inject MetadataDBContext _metadataDBContext
+@using CalibreLib.Services;
+@inject MetadataService metadataService;
 @model BookCardModel
 
 @{
@@ -55,6 +55,11 @@
 
 @{
     var alertid = "alert-container" + Model.id;
+    var authors = await metadataService.GetAuthorsAsync();
+    var publishers = await metadataService.GetPublishersAsync();
+    var tags = await metadataService.GetTagsAsync();
+    var series = await metadataService.GetSeriesAsync();
+    var langugages = await metadataService.GetLanguagesAsync();
 }
 
 <h3>Advanced Search</h3>
@@ -73,14 +78,14 @@
             <div class="row mb-3">
                 <div class="col-md-6 col-lg-4">
                     <label for="author" class="fw-bold">Authors</label>
-                    @Html.DropDownListFor(m => m.Authors, new MultiSelectList(_metadataDBContext.Authors.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_authors", id = "select_authors", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
+                    @Html.DropDownListFor(m => m.Authors, new MultiSelectList(authors, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_authors", id = "select_authors", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-6 col-lg-4">
                     <label for="publisher" class="fw-bold">Publisher</label>
-                    @Html.DropDownListFor(m => m.Book.BookPublishers, new MultiSelectList(_metadataDBContext.Publishers.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_publishers", id = "select_publishers", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
+                    @Html.DropDownListFor(m => m.Book.BookPublishers, new MultiSelectList(publishers, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_publishers", id = "select_publishers", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "" })
                 </div>
             </div>
 
@@ -112,21 +117,21 @@
                     <div class="row mb-3">
                         <div class="col-md-6 col-lg-6">
                             <label for="tags" class="fw-bold">Tags</label>
-                            @Html.DropDownListFor(m => m.Tags, new MultiSelectList(_metadataDBContext.Tags.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_tags", id = "select_tags", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                            @Html.DropDownListFor(m => m.Tags, new MultiSelectList(tags, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_tags", id = "select_tags", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6 col-lg-6">
                             <label for="series" class="fw-bold">Series</label>
-                            @Html.DropDownListFor(m => m.Series, new MultiSelectList(_metadataDBContext.Series.ToList(), "Id", "Name"), new { @class = "selectpicker form-control", name = "select_series", id = "select_series", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                            @Html.DropDownListFor(m => m.Series, new MultiSelectList(series, "Id", "Name"), new { @class = "selectpicker form-control", name = "select_series", id = "select_series", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6 col-lg-6">
                             <label for="languages" class="fw-bold">Languages</label>
-                            @Html.DropDownListFor(m => m.Languages, new MultiSelectList(_metadataDBContext.Languages.ToList(), "Id", "LangCode"), new { @class = "selectpicker form-control", name = "select_langs", id = "select_langs", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
+                            @Html.DropDownListFor(m => m.Languages, new MultiSelectList(langugages, "Id", "LangCode"), new { @class = "selectpicker form-control", name = "select_langs", id = "select_langs", data_actions_box = "true", data_live_search = "true", data_dropup_auto = "false", multiple = "", data_style = "btn-primary" })
                         </div>
                     </div>
                 </div>

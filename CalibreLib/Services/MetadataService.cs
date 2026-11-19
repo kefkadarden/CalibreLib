@@ -66,7 +66,7 @@ namespace CalibreLib.Services
         {
             return await context.Ratings
                 .AsNoTracking()
-                .OrderByDescending(r => r.RatingValue)
+                .OrderByDescending(r => r.Rating1)
                 .ToListAsync();
         }
 

@@ -66,8 +66,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
 
-// builder.Services.AddScoped<BookRepository>();
-// builder.Services.AddScoped<ShelfRepository>();
 builder.Services.AddScoped<BookFileManager>();
 builder.Services.AddScoped<IUserLibraryService, UserLibraryService>();
 builder.Services.AddScoped<IMetadataService, MetadataService>();
