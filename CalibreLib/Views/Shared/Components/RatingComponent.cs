@@ -6,12 +6,11 @@ namespace CalibreLib.Views.Shared.Components
 {
     public class RatingComponent : ViewComponent
     {
-        private MetadataDBContext _metadataDBContext;
 
-        public RatingComponent(MetadataDBContext metadataDBContext)
+        public RatingComponent()
         {
-            _metadataDBContext = metadataDBContext;
         }
+        
         public IViewComponentResult Invoke(int RatingValue, int id = -1, string prefix = "", bool isDisabled = true)
         {
             BookCardModel bookCardModel = new BookCardModel()
